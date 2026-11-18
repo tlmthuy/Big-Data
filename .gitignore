@@ -12,6 +12,7 @@ data/**/*.parquet
 /metrics/raw/
 /logs/
 *.log
+.agents/
 
 # Secrets and local environments
 .env
