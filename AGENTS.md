@@ -47,13 +47,11 @@ Mỗi subset phải báo cáo số event, session, user, item, category, brand, 
 
 ### Chia dữ liệu
 
-Dựa trên ngày của event đầu tiên trong session:
+Quyết định cập nhật ngày 19/11/2026: gom session theo ngày event đầu tiên UTC; trong mỗi ngày chia khoảng 80% session train, 10% validation, 10% test theo cách tutorial NVIDIA. Lưu seed, membership và counts thực tế để tái lập.
 
-- Ngày 1–5: train.  
-- Ngày 6: validation.  
-- Ngày 7: test.
+Daily fine-tuning: tiếp tục cập nhật cùng model trên train ngày t, đánh giá validation ngày t+1. Test không dùng chọn cấu hình hoặc cập nhật model; lịch test cuối cùng cần TV2 xác nhận trước benchmark.
 
-Không dùng event tương lai để tạo input, popularity table, product mapping hoặc feature cho test.
+Mapping, catalog và popularity chỉ dùng train đã khả dụng tại thời điểm dự đoán, không fit trước trên train của những ngày tương lai. TV1/TV2 cần chốt xử lý session kéo qua ngày và kiểm tra cutoff thực tế; chia theo ngày bắt đầu không tự bảo đảm không leakage.
 
 ## 4\. Repo và tài liệu nguồn được phép tận dụng
 

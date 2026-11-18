@@ -57,7 +57,7 @@ python scripts/fetch_nvidia_reference.py --ref <commit-trong-manifest>
 1. Đọc AGENTS.md và docs/modeling/model_protocol.md; kiểm tra manifest nguồn đã tồn tại. Nếu chưa có, báo trạng thái thiếu và hoàn thành nhập nguồn trước khi khẳng định code bám theo snapshot.
 2. Đọc notebook và mã thư viện liên quan trong snapshot; ghi commit, đường dẫn, class/hàm được tận dụng.
 3. Dựng code của nhóm ở pipeline/, models/, evaluation/ và configs/. Giữ bản upstream nguyên trạng để đối chiếu.
-4. Điều chỉnh đường dẫn, stable-hash session sampling, split 1–5/6/7, mapping/catalog train-only và K=20 theo đồ án. Popularity là baseline nhóm triển khai riêng, không khẳng định notebook 03 đã cung cấp model này.
+4. Điều chỉnh đường dẫn, stable-hash session sampling, split khoảng 80/10/10 trong từng ngày và daily fine-tuning train ngày t/validation ngày t+1, mapping/catalog train-only đã khả dụng và K=20 theo đồ án. Popularity là baseline nhóm triển khai riêng, không khẳng định notebook 03 đã cung cấp model này.
 5. Theo NVIDIA: cho phép seen items, đánh giá item cuối; GRU causal và XLNet MLM. Kiểm tra API masking ở package version thực tế, tránh tách target hai lần. Pin snapshot tham khảo không đồng nghĩa runtime đã tương thích.
 6. Giữ thông tin bản quyền/license của code tái sử dụng. Ghi phần sửa đổi và nguồn trong code nhóm, references và handoff. Số liệu notebook chỉ là ví dụ nguồn.
 7. Kiểm tra bằng toy session và smoke run trước benchmark; lưu command, output/log thật, cấu hình và phiên bản. Báo rõ phần chưa chạy.

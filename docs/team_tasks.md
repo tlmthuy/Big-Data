@@ -6,7 +6,7 @@ File này bổ sung hướng dẫn thực thi cho bảng giao việc. Mỗi task
 
 ## Phạm vi sampling dùng chung
 
-Tất cả thành viên dùng cùng phạm vi: `2019-Oct.csv`, 7 ngày đầu từ `2019-10-01` đến hết `2019-10-07` UTC, bỏ `user_session` null trước sampling, giữ `view`, `cart`, `purchase`, chọn session bằng stable hash ở mức 10%, 25%, 50%, 100%, giữ toàn bộ event của session, chỉ giữ sequence có ít nhất 2 tương tác, giới hạn sequence length 20, train ngày 1–5, validation ngày 6, test ngày 7.
+Tất cả thành viên dùng cùng phạm vi: `2019-Oct.csv`, 7 ngày đầu từ `2019-10-01` đến hết `2019-10-07` UTC, bỏ `user_session` null trước sampling, giữ `view`, `cart`, `purchase`, chọn session bằng stable hash ở mức 10%, 25%, 50%, 100%, giữ toàn bộ event của session, chỉ giữ sequence có ít nhất 2 tương tác, giới hạn sequence length 20, chia khoảng 80% train, 10% validation, 10% test theo session trong từng ngày; daily fine-tuning train ngày t và validation ngày t+1.
 
 ## TV1 — Data và preprocessing
 
@@ -18,7 +18,7 @@ Tất cả thành viên dùng cùng phạm vi: `2019-Oct.csv`, 7 ngày đầu t�
 | Xuất subset và manifest | Có manifest counts | Manifest phải ghi input path, seed, rule chọn session, số session/event/user/item, thời gian tạo và output path. TV2 chỉ được dùng subset có manifest. |
 | Chạy preliminary preprocessing | Có Parquet sơ bộ | Chạy lần lượt timestamp conversion, bỏ session null, categorify session, sort theo session/time, xử lý consecutive repeated item theo protocol đã thống nhất, tạo `prod_first_event_time_ts`. Ghi counts trước/sau từng bước. |
 | Chạy ETL NVTabular | Có Parquet + schema | Tận dụng [notebook 02](https://nvidia-merlin.github.io/Transformers4Rec/stable/examples/tutorial/02-ETL-with-NVTabular.html). Kiểm tra `Categorify`, time features, price normalization, Groupby theo `user_session`, `ListSlice`, minimum session length. Mở lại Parquet và in schema sau khi export. |
-| Tạo split và mapping | Có split files + mapping | Dùng ngày 1–5 train, ngày 6 validation, ngày 7 test theo ngày của session. Không random sau khi tạo target. Lưu counts, product ID train và mapping encoded ID ↔ original `product_id`. |
+| Tạo split và mapping | Có split files + mapping | Nhóm theo ngày bắt đầu session UTC, chia khoảng 80/10/10 theo tutorial; lưu seed và membership. Daily fine-tuning train ngày t, validation ngày t+1. Mapping chỉ dùng train đã khả dụng, không dùng ngày tương lai. Lưu counts, product ID train và mapping encoded ID ↔ original `product_id`. |
 | Tạo bốn subset | Có 10/25/50/100% manifests | Dùng cùng sampling rule và seed policy. Ghi event/session/user/item thực tế của từng mức. Không gọi 10% user là 10% event nếu chưa đo. |
 | Hỗ trợ sửa data/schema | Mọi run đọc cùng schema | Khi TV2 báo lỗi, tái tạo lỗi bằng command của TV2, sửa tại pipeline, tăng version output và gửi lại schema/counts. Không sửa trực tiếp file Parquet bằng tay. |
 | Reproduce preprocessing | Thành viên khác chạy lại được | Đưa command raw → sample → Parquet vào README. TV1 không tự chạy một mình, phải nhờ người khác chạy trong thư mục sạch và đối chiếu counts. |

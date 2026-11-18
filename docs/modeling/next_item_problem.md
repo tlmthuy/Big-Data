@@ -30,13 +30,9 @@ Cho phép gợi ý lại sản phẩm từng xuất hiện trong prefix. Ví d�
 
 ## 4. Dữ liệu để học và dữ liệu để kiểm tra
 
-Dataset là 2019-Oct.csv, giới hạn ngày 01–07/10/2019 UTC. Mỗi session được gán split theo ngày event đầu tiên:
+Dataset là 2019-Oct.csv, giới hạn ngày 01–07/10/2019 UTC. Session được nhóm theo ngày event đầu tiên; trong mỗi ngày chia khoảng 80% train, 10% validation, 10% test. Đây là quyết định cập nhật ngày 19/11/2026.
 
-| Split | Ngày bắt đầu session | Vai trò |
-|---|---|---|
-| Train | 01–05/10/2019 | Học tham số model; xây mapping, catalog và bảng popularity |
-| Validation | 06/10/2019 | Chọn cấu hình trước khi đánh giá cuối cùng |
-| Test | 07/10/2019 | Đo kết quả cuối cùng sau khi chọn cấu hình |
+Model được daily fine-tuning trên train ngày t rồi đánh giá validation ngày t+1, tiếp tục từ trạng thái model đã học. Test được giữ riêng; TV2 cần xác nhận lịch đánh giá test cuối cùng trước benchmark. Mapping/catalog/popularity chỉ dùng train đã khả dụng, không nhìn trước các ngày tương lai.
 
 Validation/test mặc định dùng item cuối không phải padding làm target, các item đứng trước làm prefix. Cách tạo nhãn khi train khác nhau: GRU học các bước next item; XLNet MLM học dự đoán item bị che.
 
@@ -59,20 +55,18 @@ nvt.ops.ListSlice(-SESSIONS_MAX_LENGTH, pad=True)
 
 Ví dụ có 30 item thì giữ item 11–30; khi đánh giá, item 30 là target, item 11–29 là prefix. **TV1 xác nhận áp dụng cách này.**
 
-**2. Session bắt đầu ngày 5 nhưng kéo sang ngày 6**
+**2. Chia 80/10/10 theo ngày và daily fine-tuning — đã thống nhất**
 
-**Vấn đề:** Nhóm đang chia ngày 1–5 để train, ngày 6 để validation, ngày 7 để test. Nhưng một session có thể bắt đầu ngày 5 và tiếp tục sang ngày 6. Nếu giữ nguyên session và xếp theo ngày bắt đầu, các event ngày 6 cũng bị đưa vào train. Vì vậy cần thống nhất cách chia dữ liệu và xử lý session qua ngày.
-
-**Đề xuất:** đổi cách chia dữ liệu và train theo repo gốc để tận dụng pipeline có sẵn: gom nguyên session, xếp ngày theo event đầu; trong mỗi ngày chia khoảng 80% session cho train, 10% validation, 10% test. Khi chạy model, train lần lượt trên phần train ngày t rồi đánh giá bằng phần validation ngày t+1:
+Gom session theo ngày event đầu tiên UTC, chia khoảng 80% train, 10% validation, 10% test trong từng ngày theo notebook 02. Lưu seed, danh sách session và counts. Notebook 03 cập nhật cùng model qua các ngày:
 
 ```python
 time_index_train = time_index
 time_index_eval = time_index + 1
 ```
 
-Ví dụ: train ngày 1 → đánh giá ngày 2; tiếp tục train ngày 2 → đánh giá ngày 3. Đây là cách train cập nhật model qua từng ngày trong Notebook 03.
+Train ngày t rồi đánh giá validation ngày t+1; không dùng validation/test để cập nhật model. Quyết định này thay thế split cố định trước đây. AGENTS.md và model_protocol.md đã được đồng bộ.
 
-**TV1/TV2 xác nhận có đổi từ split ngày 1–5/6/7 sang cách này không. Chưa chốt.** Nếu đổi, cần cập nhật AGENTS.md và protocol, thống nhất cách dùng test để báo kết quả cuối, đồng thời kiểm tra session kéo sang ngày sau để tránh dùng event tương lai. Giống repo gốc chưa tự bảo đảm điểm cuối này.
+Còn cần TV1/TV2 xác nhận cách xử lý session kéo sang ngày sau để train không chứa event vượt cutoff, cùng lịch dùng test cho kết quả cuối. Dùng pipeline gốc không tự bảo đảm hai điểm này; chưa có benchmark thật.
 
 **3. Hai event có cùng timestamp**
 
