@@ -8,4 +8,4 @@ Retrieved: 2026-11-19
 
 This snapshot is for source comparison; it is not an installable full checkout. Tutorial outputs are upstream examples, not this project's experiment results. Run against an explicitly pinned, compatible runtime before claiming reproducibility.
 
-Project adaptation instructions: [NVIDIA_REFERENCE_GUIDE.md](../../docs/NVIDIA_REFERENCE_GUIDE.md).
+Project adaptation instructions: [references.md](../../references.md).

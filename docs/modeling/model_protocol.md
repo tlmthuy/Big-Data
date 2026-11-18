@@ -2,7 +2,7 @@
 
 ## Quyết định ngày 19/11/2026
 
-Theo yêu cầu của Thúy, áp dụng cách xử lý seen item và ground truth mặc định của tutorial NVIDIA đã kiểm tra. Nguồn và cách đối chiếu: [NVIDIA_REFERENCE_GUIDE.md](NVIDIA_REFERENCE_GUIDE.md).
+Theo yêu cầu của Thúy, áp dụng cách xử lý seen item và ground truth mặc định của tutorial NVIDIA đã kiểm tra. Nguồn và cách đối chiếu: [references.md](../references.md).
 
 - K = 20. Mỗi danh sách chứa tối đa 20 product ID khác nhau, xếp theo điểm giảm dần.
 - Candidate catalog: các sản phẩm xuất hiện trong train của subset tương ứng. Padding, unknown và mask token không phải sản phẩm được gợi ý.

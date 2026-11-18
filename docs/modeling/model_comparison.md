@@ -46,7 +46,7 @@ Các chi tiết dữ liệu còn mở được liệt kê trong protocol. Snapsh
 
 ## 4. Đọc Notebook 03 theo thứ tự nào?
 
-Mở [notebook local](../references/nvidia-transformers4rec/upstream/examples/tutorial/03-Session-based-recsys.ipynb), chọn các heading sau; trước mắt có thể bỏ qua log và bảng số liệu đầu ra:
+Mở [notebook local](../vendor/nvidia-transformers4rec/upstream/examples/tutorial/03-Session-based-recsys.ipynb), chọn các heading sau; trước mắt có thể bỏ qua log và bảng số liệu đầu ra:
 
 1. **3.1 Training an RNN-based Session-based Recommendation Model**: tìm input schema chỉ dùng product ID; hiểu input → GRU → prediction head.
 2. **Defining the input block** và **Connecting the blocks**: tìm sequence_length=20, masking='causal', torch.nn.GRU.
@@ -57,8 +57,8 @@ Sau khi đọc, tự giải thích bằng lời ba câu: Popularity đếm gì? 
 
 ## 5. Nguồn và attribution
 
-- NVIDIA Transformers4Rec, commit `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`, [manifest](../references/nvidia-transformers4rec/manifest.json).
-- Notebook 03: [bản local](../references/nvidia-transformers4rec/upstream/examples/tutorial/03-Session-based-recsys.ipynb).
-- Default tạo nhãn: [masking.py](../references/nvidia-transformers4rec/upstream/transformers4rec/torch/masking.py).
-- Head, loss và Top-K: [prediction_task.py](../references/nvidia-transformers4rec/upstream/transformers4rec/torch/model/prediction_task.py).
-- Mã nguồn NVIDIA giữ [license Apache-2.0](../references/nvidia-transformers4rec/upstream/LICENSE). Tài liệu này diễn giải lại; không dùng metric của tutorial làm kết quả nhóm.
+- NVIDIA Transformers4Rec, commit `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`, [manifest](../vendor/nvidia-transformers4rec/manifest.json).
+- Notebook 03: [bản local](../vendor/nvidia-transformers4rec/upstream/examples/tutorial/03-Session-based-recsys.ipynb).
+- Default tạo nhãn: [masking.py](../vendor/nvidia-transformers4rec/upstream/transformers4rec/torch/masking.py).
+- Head, loss và Top-K: [prediction_task.py](../vendor/nvidia-transformers4rec/upstream/transformers4rec/torch/model/prediction_task.py).
+- Mã nguồn NVIDIA giữ [license Apache-2.0](../vendor/nvidia-transformers4rec/upstream/LICENSE). Tài liệu này diễn giải lại; không dùng metric của tutorial làm kết quả nhóm.

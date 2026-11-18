@@ -48,4 +48,4 @@ Recall@20 kiểm tra target có nằm trong Top-20 không. NDCG@20 thưởng cao
 
 Chưa chốt: giữ đầu/cuối khi cắt chuỗi, session qua ranh giới ngày, timestamp trùng và cách biểu diễn/báo cáo target ngoài catalog. Cần thống nhất với TV1 trước khi chạy benchmark. Tài liệu này hoàn thành phần định nghĩa khái niệm, chưa xác nhận pipeline/model đã chạy.
 
-Nguồn: [Notebook 03 trong snapshot NVIDIA](../references/nvidia-transformers4rec/upstream/examples/tutorial/03-Session-based-recsys.ipynb), [hướng dẫn nguồn](NVIDIA_REFERENCE_GUIDE.md), AGENTS.md. Các quy tắc sampling và split là yêu cầu đồ án.
+Nguồn: [Notebook 03 trong snapshot NVIDIA](../vendor/nvidia-transformers4rec/upstream/examples/tutorial/03-Session-based-recsys.ipynb), [hướng dẫn nguồn](../references.md), AGENTS.md. Các quy tắc sampling và split là yêu cầu đồ án.

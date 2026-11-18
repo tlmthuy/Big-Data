@@ -30,7 +30,7 @@ def main():
     parser.add_argument("--ref", default="main", help="Upstream commit, tag or branch")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    dest = root / "references" / "nvidia-transformers4rec"
+    dest = root / "docs" / "vendor" / "nvidia-transformers4rec"
     if (dest / "upstream").exists() or (dest / "manifest.json").exists():
         parser.error("Snapshot already exists; preserve it and review any update explicitly.")
     with tempfile.TemporaryDirectory(prefix="nvidia-reference-") as temporary:
@@ -58,7 +58,7 @@ def main():
             manifest["files"][relative.as_posix()] = hashlib.sha256(source.read_bytes()).hexdigest()
         (dest / "manifest.json").write_text(
             json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-        print(f"Imported {len(files)} files at {commit} into references/nvidia-transformers4rec")
+        print(f"Imported {len(files)} files at {commit} into docs/vendor/nvidia-transformers4rec")
 
 
 if __name__ == "__main__":

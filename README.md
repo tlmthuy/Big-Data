@@ -14,7 +14,7 @@ Repo khung chính thức cho đồ án Big Data in Cloud Computing của nhóm.
 ## Bắt đầu
 
 1. Đọc [AGENTS.md](AGENTS.md) trước khi sửa code hoặc chốt thiết kế.
-2. Đọc các tài liệu trong [`docs/context/`](docs/context/) để hiểu phạm vi, yêu cầu môn và quy tắc bàn giao.
+2. Đọc [phân công thực thi](docs/team_tasks.md) và [yêu cầu môn học](docs/course_requirements.txt).
 3. Tạo môi trường theo [`environment/README.md`](environment/README.md).
 4. Kiểm tra manifest và schema trong [`data/manifests/`](data/manifests/) trước khi chạy pipeline.
 5. Ghi mọi lần chạy vào [`metrics/`](metrics/) và cập nhật [`docs/handoff.md`](docs/handoff.md).
@@ -27,7 +27,9 @@ benchmark/            Collector runtime, memory, throughput
 configs/              Config model, subset, resource, experiment
 data/                 Manifest/schema; raw và Parquet không commit
 docs/                 Protocol, experiment matrix, handoff, references
-  context/            Tài liệu bối cảnh và quyết định đã chốt
+  modeling/           Bài toán, so sánh model và protocol
+  vendor/             Snapshot NVIDIA có license và manifest
+  archive/            Tài liệu lịch sử đã đóng gói
 environment/          Dockerfile, environment.yml, hướng dẫn cài đặt
 evaluation/           Recall@20, NDCG@20 và lệnh đánh giá
 metrics/              Metrics nhỏ, run registry, metadata
@@ -40,6 +42,21 @@ scripts/              Run scripts và tiện ích
 ## Quy tắc dữ liệu và Git
 
 Không commit raw CSV, Parquet lớn, checkpoint, GPU log, secret hoặc credentials. Chỉ commit manifest, schema, command, metrics nhỏ và đường dẫn artifact. Mỗi task hoàn thành phải có code/config/docs, lệnh kiểm tra, output hoặc log, commit hash và handoff.
+
+## Tài liệu đang dùng
+
+| Cần tìm | File |
+|---|---|
+| Phạm vi, lịch, quy tắc chung | [AGENTS.md](AGENTS.md) |
+| Nhiệm vụ và cách thực hiện của 4 thành viên | [team_tasks.md](docs/team_tasks.md) |
+| Input, target và Top-20 | [next_item_problem.md](docs/modeling/next_item_problem.md) |
+| Popularity, GRU và XLNet | [model_comparison.md](docs/modeling/model_comparison.md) |
+| Luật đánh giá | [model_protocol.md](docs/modeling/model_protocol.md) |
+| E1–E5 | [experiment_matrix.md](docs/experiment_matrix.md) |
+| Nguồn, license và hướng dẫn đối chiếu NVIDIA | [references.md](docs/references.md) |
+| Bàn giao | [handoff.md](docs/handoff.md) |
+
+Tám bản bối cảnh/đề xuất cũ được giữ nguyên trong [context-history.zip](docs/archive/context-history.zip), chỉ mở khi cần tra lịch sử. Phạm vi và lịch hiện hành lấy từ AGENTS.md.
 
 ## Trạng thái ban đầu
 
