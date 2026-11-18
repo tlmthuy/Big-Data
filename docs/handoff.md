@@ -29,3 +29,11 @@ Không ghi secret hoặc credential vào file này. Cập nhật sau mỗi bàn 
 - Gộp hướng dẫn đối chiếu NVIDIA vào `docs/references.md`; README là mục lục tài liệu hiện hành. Các đường dẫn bàn giao ở mục trước đã cập nhật theo vị trí mới; commit cũ vẫn là lịch sử tạo nội dung.
 - Kiểm tra: ZIP đọc được và khớp byte với 8 bản gốc trước khi dọn; 16 checksum upstream giữ nguyên; link Markdown local tồn tại; script nhập nguồn đúng cú pháp. Chưa có benchmark mới.
 - Note cá nhân giữ local và vẫn bị .gitignore loại khỏi commit.
+
+## Đồng bộ split và daily fine-tuning — 19/11/2026
+
+- Branch: `main`; commit thay đổi: `14e4341`.
+- Đã fetch và merge origin/main; local đã cập nhật, không có conflict.
+- Theo quyết định người dùng: đồng bộ next_item_problem, model_protocol, AGENTS, references và team_tasks sang khoảng 80/10/10 session trong từng ngày; daily fine-tuning train ngày t, validation ngày t+1.
+- Kiểm tra: `git diff --check`; tìm quy tắc split cũ trong các tài liệu hiện hành đã sửa; đối chiếu notebook 02/03 trong snapshot. Không sửa upstream.
+- Chưa chạy model/benchmark. Session vượt cutoff, lịch test cuối và mapping qua ngày còn cần TV1/TV2 xác nhận. Người nhận chưa xác nhận; chưa đánh dấu Done.
