@@ -1,0 +1,96 @@
+Đối với đồ án cuối kỳ, các bạn được tự do lựa chọn dataset và bài toán mà nhóm quan tâm, không giới hạn trong các ví dụ hoặc thuật toán đã được giới thiệu trên lớp.
+
+1. Về lựa chọn Dataset
+Các bạn có thể sử dụng bất kỳ dataset nào từ Kaggle, Hugging Face, UCI, các nguồn dữ liệu công khai hoặc dữ liệu tự thu thập.
+
+Dataset cần có các đặc trưng phù hợp với Big Data (5V: Volume, Velocity, Variety, Veracity, Value). Không bắt buộc phải đáp ứng đầy đủ cả 5V, nhưng nhóm cần phân tích và giải thích được các đặc trưng liên quan.
+
+Không bắt buộc xử lý toàn bộ dataset. Các bạn có thể lựa chọn một tập con (subset) phù hợp với tài nguyên tính toán hiện có.
+
+Tuy nhiên, subset được chọn cần đảm bảo tính đa dạng (diversity) và đủ tính đại diện cho bài toán. Ví dụ, dữ liệu nên bao gồm nhiều nhóm đối tượng, nhãn, đặc trưng hoặc trường hợp khác nhau, thay vì chỉ tập trung vào một nhóm nhỏ.
+
+Nhóm cần trình bày cách lựa chọn subset và giải thích vì sao dữ liệu được chọn phù hợp với bài toán.
+
+2. Về lựa chọn bài toán
+Các bạn có thể lựa chọn bất kỳ bài toán nào có thể triển khai và thực nghiệm (experiment), ví dụ:
+
+Recommendation: Gợi ý sản phẩmrên toàn bộ catalog sản phẩm, sau đó lấy Top-K, phim, bài hát, nội dung, ...
+
+Classification: Phân loại văn bản, cảm xúc, hình ảnh, spam, ...
+
+Retrieval / Search: Tìm kiếm văn bản, hình ảnh, sản phẩm tương tự, ...
+
+Clustering: Phân cụm khách hàng, tài liệu, hành vi người dùng, ...
+
+Prediction / Forecasting: Dự đoán nhu cầu, doanh số, xu hướng, ...
+
+Graph Analytics: PageRank, phân tích mạng xã hội, phát hiện cộng đồng, ...
+
+Hoặc các bài toán khác có thể xây dựng quy trình xử lý và đánh giá kết quả.
+
+3. Về thuật toán và mô hình
+Các bạn không bắt buộc phải sử dụng thuật toán mới hoặc tự phát triển thuật toán.
+
+Nhóm hoàn toàn có thể áp dụng lại những thuật toán, mô hình đã học hoặc đã thực hành trong các môn học khác như Machine Learning, Data Mining, Information Retrieval, Recommender Systems, Deep Learning, ...
+
+Điều quan trọng là các bạn hiểu bài toán, lựa chọn phương pháp phù hợp và có thể thực hiện các thí nghiệm để đánh giá, so sánh kết quả.
+
+4. Về môi trường triển khai
+Các nhóm có thể chủ động lựa chọn môi trường triển khai phù hợp:
+
+Public Cloud: AWS, Google Cloud, Microsoft Azure, ...
+
+Virtual Machine (VM): Ubuntu VM chạy trên VMware, VirtualBox, UTM, ...
+
+Có thể sử dụng Docker, Hadoop, Spark hoặc các công cụ phù hợp với bài toán.
+
+Không bắt buộc phải sử dụng Public Cloud hoặc thuê tài nguyên có trả phí. Sử dụng VM trên máy cá nhân vẫn được chấp nhận.
+
+5. Về phần thực nghiệm (Experiment)
+Ngoài kết quả của thuật toán, các nhóm nên quan tâm đến khía cạnh xử lý dữ liệu và hiệu năng hệ thống.
+
+Một số hướng thực nghiệm có thể lựa chọn:
+
+So sánh các thuật toán hoặc mô hình bằng các chỉ số phù hợp (Accuracy, F1, Recall@K, RMSE, ...).
+
+Thay đổi kích thước dataset hoặc subset để đánh giá thời gian xử lý.
+
+Thay đổi tài nguyên tính toán (CPU, RAM, số worker, ...) để đánh giá hiệu năng.
+
+So sánh các phương pháp lưu trữ, truy xuất hoặc xử lý dữ liệu.
+
+Phân tích khả năng mở rộng (scalability) khi khối lượng dữ liệu tăng lên.
+
+Không bắt buộc thực hiện tất cả các hướng trên. Các nhóm nên lựa chọn những thí nghiệm phù hợp với bài toán và tài nguyên hiện có.
+
+6. Báo cáo và thuyết trình cuối kỳ
+Báo cáo: Bắt buộc viết bằng tiếng Anh.
+
+Slide thuyết trình: Sử dụng tiếng Anh.
+
+Ngôn ngữ thuyết trình: Bắt buộc trình bày bằng tiếng Anh.
+
+Thời lượng mỗi nhóm:
+
+15 phút trình bày (Presentation).
+
+5 phút trả lời câu hỏi (Q&A).
+
+Tổng cộng 20 phút/nhóm.
+
+Nội dung báo cáo và thuyết trình nên tập trung vào bài toán, dataset, phương pháp, môi trường triển khai, thiết kế thực nghiệm, kết quả và nhận xét. Các nhóm cần phân bổ thời gian hợp lý, ưu tiên trình bày kết quả thực nghiệm và những phân tích rút ra thay vì dành quá nhiều thời gian giới thiệu lý thuyết.
+
+7. Một số lưu ý
+Không cần lựa chọn bài toán quá phức tạp hoặc sử dụng mô hình SOTA.
+
+Không cần xử lý toàn bộ dataset nếu vượt quá khả năng tài nguyên hiện có.
+
+Không nên chỉ chạy một mô hình và báo cáo kết quả mà thiếu phần phân tích, đánh giá.
+
+Khuyến khích tận dụng kiến thức, thuật toán và source code từ các môn học trước, sau đó mở rộng phần thực nghiệm theo hướng Big Data và Cloud Computing.
+
+Cần trình bày rõ dataset, cách chọn subset, bài toán, phương pháp, môi trường triển khai, kết quả thực nghiệm và nhận xét.
+
+Mục tiêu của đồ án không phải là xây dựng thuật toán tốt nhất hay xử lý dataset lớn nhất, mà là giúp các bạn biết cách lựa chọn dữ liệu phù hợp, xây dựng quy trình xử lý, triển khai và thực nghiệm, từ đó phân tích được kết quả cũng như ảnh hưởng của dữ liệu và tài nguyên tính toán đến hiệu năng hệ thống.
+
+Các nhóm có thể chủ động đề xuất đề tài theo hướng mình quan tâm, miễn là có dữ liệu, bài toán rõ ràng và phương án thực nghiệm phù hợp.
