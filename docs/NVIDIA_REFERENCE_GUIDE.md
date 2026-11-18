@@ -1,0 +1,50 @@
+# Dựng pipeline theo nguồn NVIDIA
+
+Branch dành cho việc nhập nguồn và hướng dẫn: `reference/nvidia-transformers4rec`.
+Repo nguồn: https://github.com/NVIDIA-Merlin/Transformers4Rec
+
+## Trạng thái
+
+Đã nhập nguồn tại commit `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`, giữ license Apache-2.0 và kiểm tra checksum trong manifest. Snapshot được tải ngày 19/11/2026. Chưa chạy GPU runtime hoặc huấn luyện model. Trạng thái commit/push xem docs/handoff.md và Git.
+
+## Lấy phần nguồn liên quan
+
+Từ thư mục gốc repo, sau khi khôi phục đăng nhập/quyền mạng:
+
+```powershell
+python scripts/fetch_nvidia_reference.py
+```
+
+Script sparse-clone vào thư mục tạm, giữ nguyên notebook 01–03 cùng mã thư viện liên quan trong `references/nvidia-transformers4rec/upstream/`, giữ LICENSE/NOTICE nếu có, và tạo `manifest.json` chứa commit nguồn cùng SHA-256 mỗi file. Thư mục này là bản tham khảo, không dùng thay package đã cài trong runtime. Mỗi lần tải dùng commit/ref được chỉ định; mặc định lấy main và ghi lại commit thật. Có thể tái lập bằng:
+
+```powershell
+python scripts/fetch_nvidia_reference.py --ref <commit-trong-manifest>
+```
+
+## Đối chiếu theo việc cần làm
+
+| Việc | Đường dẫn trong upstream |
+|---|---|
+| Đọc CSV, timestamp, lọc thời gian, event lặp | examples/tutorial/01-preprocess.ipynb |
+| Groupby session, sequence, schema và Parquet | examples/tutorial/02-ETL-with-NVTabular.ipynb |
+| Dựng GRU/XLNet, dataloader, trainer | examples/tutorial/03-Session-based-recsys.ipynb |
+| Nhãn cuối chuỗi và causal/MLM | transformers4rec/torch/masking.py |
+| Prediction head, điểm số và Top-K | transformers4rec/torch/model/prediction_task.py |
+| Recall và NDCG | transformers4rec/torch/ranking_metric.py |
+| Cách tutorial tạo split | transformers4rec/utils/data_utils.py |
+
+Đường dẫn phải được kiểm tra với manifest sau khi tải; nếu upstream đổi cấu trúc, dừng và cập nhật script thay vì đoán API.
+
+## Hướng dẫn cho agent khi triển khai
+
+1. Đọc AGENTS.md và docs/model_protocol.md; kiểm tra manifest nguồn đã tồn tại. Nếu chưa có, báo trạng thái thiếu và hoàn thành nhập nguồn trước khi khẳng định code bám theo snapshot.
+2. Đọc notebook và mã thư viện liên quan trong snapshot; ghi commit, đường dẫn, class/hàm được tận dụng.
+3. Dựng code của nhóm ở pipeline/, models/, evaluation/ và configs/. Giữ bản upstream nguyên trạng để đối chiếu.
+4. Điều chỉnh đường dẫn, stable-hash session sampling, split 1–5/6/7, mapping/catalog train-only và K=20 theo đồ án. Popularity là baseline nhóm triển khai riêng, không khẳng định notebook 03 đã cung cấp model này.
+5. Theo NVIDIA: cho phép seen items, đánh giá item cuối; GRU causal và XLNet MLM. Kiểm tra API masking ở package version thực tế, tránh tách target hai lần. Pin snapshot tham khảo không đồng nghĩa runtime đã tương thích.
+6. Giữ thông tin bản quyền/license của code tái sử dụng. Ghi phần sửa đổi và nguồn trong code nhóm, references và handoff. Số liệu notebook chỉ là ví dụ nguồn.
+7. Kiểm tra bằng toy session và smoke run trước benchmark; lưu command, output/log thật, cấu hình và phiên bản. Báo rõ phần chưa chạy.
+
+## Prompt có thể dùng ở lần làm tiếp
+
+> Đọc AGENTS.md, docs/model_protocol.md và docs/NVIDIA_REFERENCE_GUIDE.md. Đối chiếu manifest cùng notebook/mã nguồn trong references/nvidia-transformers4rec/upstream/ trước khi dựng pipeline và GRU/XLNet. Theo cách NVIDIA xử lý masking, seen item và ground truth đã chốt; áp dụng sampling, split và train-only catalog của đồ án. Ghi commit nguồn, phần tái sử dụng, license và các thay đổi. Kiểm tra toy session trước smoke run, không báo kết quả khi chưa có output thật.

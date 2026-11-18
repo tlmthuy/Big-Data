@@ -32,3 +32,6 @@ Thumbs.db
 
 # Keep directory placeholders
 !.gitkeep
+
+# Personal TV2 notes (local only)
+/docs/notes-ca-nhan-thuy.md

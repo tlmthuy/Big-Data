@@ -67,6 +67,8 @@ Nhóm được chỉnh đường dẫn, sampling, split, config, output và các
 
 ## 5\. Môi trường chạy
 
+Khi dựng hoặc sửa preprocessing, GRU, XLNet hay evaluation, đọc `docs/NVIDIA_REFERENCE_GUIDE.md`, kiểm tra manifest nguồn trong `references/nvidia-transformers4rec/` nếu đã tải, rồi đối chiếu notebook và mã nguồn liên quan trước khi triển khai. Ghi đường dẫn nguồn và thay đổi so với NVIDIA trong phần bàn giao. Các quy định dataset, sampling, split và catalog của đồ án trong file này có ưu tiên cao hơn tutorial.
+
 Môi trường chính đã chốt:
 
 ```
