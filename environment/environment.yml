@@ -1,0 +1,10 @@
+name: big-data-recsys
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - -r ../requirements.txt
+# Pin CUDA/cuDF/NVTabular/Transformers4Rec only after a successful GPU smoke test.

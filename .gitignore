@@ -1,0 +1,33 @@
+# Generated data and large artifacts
+/data/raw/
+/data/clean/
+/data/subset/
+data/**/*.csv
+data/**/*.parquet
+/models/checkpoints/
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+/metrics/raw/
+/logs/
+*.log
+
+# Secrets and local environments
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Keep directory placeholders
+!.gitkeep
