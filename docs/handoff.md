@@ -37,3 +37,12 @@ Không ghi secret hoặc credential vào file này. Cập nhật sau mỗi bàn 
 - Theo quyết định người dùng: đồng bộ next_item_problem, model_protocol, AGENTS, references và team_tasks sang khoảng 80/10/10 session trong từng ngày; daily fine-tuning train ngày t, validation ngày t+1.
 - Kiểm tra: `git diff --check`; tìm quy tắc split cũ trong các tài liệu hiện hành đã sửa; đối chiếu notebook 02/03 trong snapshot. Không sửa upstream.
 - Chưa chạy model/benchmark. Session vượt cutoff, lịch test cuối và mapping qua ngày còn cần TV1/TV2 xác nhận. Người nhận chưa xác nhận; chưa đánh dấu Done.
+
+## TV1 task 2 — Đọc preprocessing NVIDIA — 19/11/2026
+
+- Branch: `feature/tv1-data`; commit tài liệu: `6c70594`.
+- Output: `docs/preprocessing_review.md`; README đã có link tra cứu.
+- Nội dung: sơ đồ raw CSV → Parquet, danh sách bước đúng thứ tự, cell tham chiếu, schema 10 cột đầu ra, ví dụ xử lý lặp và các phần nhóm bổ sung theo protocol hiện hành.
+- Kiểm tra: đọc trực tiếp code cell notebook 01; SHA-256 khớp manifest nguồn f0ca2b5343dd1e40b5d2422b942f014b224f5c20; `git diff --check` đạt. Lệnh tái kiểm tra có trong tài liệu.
+- Đây là đầu ra thật của task đọc hiểu, không phải log thực thi preprocessing. Tạo Parquet thuộc task sau; không dùng số liệu tutorial như kết quả nhóm.
+- Người nhận: TV1/TV2/TV3; chờ xác nhận đã kiểm tra tài liệu, chưa đánh dấu Done chính thức theo AGENTS.md.
