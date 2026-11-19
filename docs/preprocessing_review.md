@@ -61,15 +61,61 @@ user_session, event_type, product_id, category_id, category_code,
 brand, price, user_id, event_time_ts, prod_first_event_time_ts
 ```
 
-## Áp dụng cho đồ án
+## Năm điểm đã chốt theo tutorial NVIDIA — 19/11/2026
 
-Ưu tiên tận dụng các phép biến đổi nguồn. Nhóm bổ sung raw audit, stable-hash sampling, counts, manifest và log. Sampling phải dựa trên session ID gốc hoặc mapping truy vết được.
+Theo quyết định mới nhất của Thúy, cả năm điểm áp dụng cách làm trong snapshot NVIDIA `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`. Bảng này thay thế các đề xuất trước đó về khóa phụ theo dòng CSV, mapping/catalog train-only và first-seen chỉ từ train. Đây là quyết định phương pháp; chưa phải kết quả chạy preprocessing.
 
-Đồ án quy định cửa sổ UTC [2019-10-01, 2019-10-08), event view/cart/purchase và bốn mức session 10/25/50/100%. Đây là yêu cầu nhóm, không phải các bước sampling có sẵn trong notebook 01.
+| Điểm | Cách làm đã chốt | Căn cứ trong snapshot |
+| --- | --- | --- |
+| 1. Timestamp trùng | Sort theo `user_session`, `event_time_ts`; khi gom session, sort theo `event_time_ts`. Không thêm khóa phụ theo thứ tự CSV. Nguồn không chỉ định thứ tự giữa các event có timestamp bằng nhau, nên dùng hành vi runtime nguồn và không cam kết giữ thứ tự CSV. | Notebook 01 cell 25; notebook 02 cell 37. |
+| 2. Sequence dài hơn 20 | Giữ 20 item cuối bằng `ListSlice(-20, pad=True)`, cắt đồng bộ các feature dạng list. Session phải có ít nhất 2 interaction sau loại lặp. Độ dài 20 tính cả target đánh giá. | Notebook 02 cell 40, 42, 48. |
+| 3. Session qua ngày/cutoff | Giữ nguyên session trong cửa sổ tuần, gom theo session trước khi gán `day_index`; không kiểm tra/loại theo event cuối vượt cutoff train. Event từ 08/10 bị lọc trước khi gom sequence, nên phần session ngoài tuần không được giữ. Dùng công thức nhóm ngày của nguồn, không tự đổi thành ngày lịch UTC. | Notebook 01 cell 34; notebook 02 cell 37, 44. |
+| 4. Mapping/OOV | Fit toàn bộ workflow trên dữ liệu tuần của từng subset trước split, gồm mapping, chuẩn hóa và thống kê feature. Dùng mapping/schema cố định qua các partition của subset. Theo mô tả notebook: padding 0, null 1, OOV 2, mã đã biết từ 3. Item validation/test có trong dữ liệu fit vẫn có mã; chưa thấy trong train không tự có nghĩa là OOV. | Notebook 02 cell 18, 20, 51, 63. |
+| 5. First-seen/recency | Trên dữ liệu tháng sau xử lý sơ bộ/loại lặp, lấy `min(event_time_ts)` theo product rồi merge trước khi lọc tuần và split. Notebook 02 tính recency theo ngày, áp dụng log và chuẩn hóa trong workflow fit trước split. | Notebook 01 cell 25, 28–29, 34; notebook 02 cell 28–29, 51. |
 
-Gom sequence, độ dài 2–20, split và mapping sản phẩm là công việc tiếp theo. Theo protocol cập nhật, chia khoảng 80/10/10 session trong từng ngày bắt đầu UTC và daily fine-tuning trên train ngày t, validation ngày t+1. Product mapping, catalog và popularity chỉ dùng train đã khả dụng ở thời điểm dự đoán, không nhìn trước ngày tương lai. Feature học từ dữ liệu như item first-seen cần kiểm tra phạm vi thống kê, không sao chép tính trên toàn tháng một cách máy móc.
+Ví dụ truncation: chuỗi 25 item giữ item thứ 6–25; item thứ 25 là target, item thứ 6–24 là prefix. Hai event cùng timestamp không có cam kết A đứng trước B chỉ vì A có dòng CSV nhỏ hơn.
 
-TV1/TV2 còn cần xác nhận chính sách session vượt ranh giới split, timestamp trùng, OOV và truncation. Đề xuất giữ 20 item cuối theo notebook 02 chưa phải quyết định được xác nhận trong tài liệu này.
+### Chia partition và daily fine-tuning
+
+Giữ đúng công thức notebook 02 cell 44:
+
+```python
+day_index = (event_time_dt_first - col.min()).dt.days + 1
+```
+
+`event_time_dt-first` là thời gian event đầu trong session trước truncation; biểu thức trên viết lại tên biến cho dễ đọc. `col.min()` được tính trong phép biến đổi nguồn; phải lưu runtime, partition và giá trị mốc thực tế khi chạy. Công thức không có bước chuẩn hóa về 00:00 UTC, nên không mô tả mặc định là ngày lịch UTC.
+
+Notebook 02 cell 63 gọi `save_time_based_splits` với `partition_col='day_index'`, `timestamp_col='user_session'`. Nhánh GPU sort theo cột này, đặt seed `1`, sinh số ngẫu nhiên rồi chia khoảng 80/10/10 trong mỗi partition. Đây không phải lấy 80% session sớm nhất làm train. Lưu membership và counts thực tế.
+
+Theo notebook 03, tiếp tục cùng model trên train partition t rồi đánh giá validation partition t+1. Test giữ riêng khỏi cập nhật trọng số và chọn cấu hình. Preprocessing fit trước split có sử dụng dữ liệu tuần gồm validation/test; không mô tả toàn bộ pipeline là train-only.
+
+### Phần nhóm tích hợp cho đồ án
+
+Những phần dưới đây là quy tắc tích hợp của nhóm, không khẳng định tutorial đã cung cấp sẵn:
+
+- Giữ cửa sổ UTC `[2019-10-01, 2019-10-08)`, event view/cart/purchase; sampling stable hash trên session ID gốc hoặc mapping truy vết được ở 10/25/50/100%. Không sample từng dòng. Ghi counts trước/sau lọc và loại lặp.
+- Tạo artifact first-seen tháng theo notebook 01 dùng chung; với mỗi subset, fit workflow riêng trên dữ liệu tuần được chọn trước split. Ghi riêng chi phí tạo artifact tháng và chi phí từng subset cho E2/E5; giữ manifest/checksum nguồn. Không fit một mapping chung của subset 100% rồi gọi đó là fit riêng subset 10%.
+- Candidate catalog chung cho Popularity/GRU/XLNet là product ID thực trong vocabulary tuần của subset đã fit, không giới hạn về train từng ngày. Prediction head nguồn có chiều output theo embedding vocabulary, không có bộ lọc train-only. Nhóm loại padding/null/OOV/mask khỏi Top-20 và lưu mapping ngược; không gọi token kỹ thuật là sản phẩm.
+- Popularity là baseline nhóm triển khai riêng, chỉ đếm tương tác train đã dùng tới partition hiện tại; item có trong catalog nhưng chưa được đếm có điểm 0, cùng điểm thì encoded ID tăng dần. Không dùng validation/test để tăng điểm popularity.
+- Model baseline vẫn chỉ dùng product ID. Tạo first-seen/recency và các feature của workflow không đồng nghĩa thêm side features vào model hoặc mở rộng phạm vi ablation.
+- Giữ K=20, seen-item rule, ground truth item cuối và công thức metric trong [model_protocol.md](modeling/model_protocol.md). Chỉ số thời gian t/t+1 hiểu theo partition nguồn. E3 cố định mapping/catalog; E4 so CSV/Parquet cùng nội dung và cùng phạm vi đo.
+
+### Bàn giao và kiểm tra
+
+Năm điểm đã chốt, không còn là câu hỏi mở để TV1/TV2 quyết định lại. TV1 triển khai và bàn giao data path, mapping/schema, vocabulary/catalog, nguồn first-seen tháng, split membership, counts, seed và runtime. TV2 kiểm tra target/masking/metric, catalog dùng chung và lịch test cuối cùng; TV3 ghi thời gian/bộ nhớ/phạm vi đo. Lịch test cuối chưa được quyết định trong mục này.
+
+Trước benchmark cần chạy toy/smoke test kiểm tra source sort, loại lặp, giữ 20 item cuối, session qua ngày, mã kỹ thuật và target. Chưa có code preprocessing/Parquet/log thực thi được xác nhận bởi lần cập nhật tài liệu này.
+
+### Nguồn đối chiếu
+
+Chỉ số cell tính từ 0, gồm cả Markdown cell. Các file đều thuộc snapshot đã pin:
+
+- [Notebook 01](vendor/nvidia-transformers4rec/upstream/examples/tutorial/01-preprocess.ipynb): cell 25, 28–29, 34.
+- [Notebook 02](vendor/nvidia-transformers4rec/upstream/examples/tutorial/02-ETL-with-NVTabular.ipynb): cell 18/20, 28–29, 37, 40/42/44/48/51/63.
+- [Notebook 03](vendor/nvidia-transformers4rec/upstream/examples/tutorial/03-Session-based-recsys.ipynb): vòng train partition t/validation partition t+1, GRU/XLNet chỉ dùng product ID.
+- [data_utils.py](vendor/nvidia-transformers4rec/upstream/transformers4rec/utils/data_utils.py): `_save_time_based_splits_gpu`.
+- [prediction_task.py](vendor/nvidia-transformers4rec/upstream/transformers4rec/torch/model/prediction_task.py): `NextItemPredictionTask.build` lấy chiều output từ embedding vocabulary; `forward` chọn nhãn khác padding.
+- [manifest](vendor/nvidia-transformers4rec/manifest.json), [LICENSE](vendor/nvidia-transformers4rec/upstream/LICENSE), [protocol nhóm](modeling/model_protocol.md).
 
 ## Kiểm tra và trạng thái
 

@@ -11,6 +11,8 @@ Repo khung chính thức cho đồ án Big Data in Cloud Computing của nhóm.
 - Thực nghiệm: E1 model comparison, E2 dataset-size benchmark, E3 resource benchmark, E4 CSV/Parquet comparison, E5 scalability analysis.
 - Môi trường dự kiến: public-cloud GPU VM, Ubuntu, Docker, NVIDIA Merlin/Transformers4Rec.
 
+Preprocessing đã chốt theo tutorial NVIDIA ngày 19/11/2026: source sort không thêm khóa phụ CSV, giữ 20 item cuối, session qua ngày giữ nguyên rồi tính day_index theo nguồn, fit workflow trên tuần trước split, first-seen trên tháng trước lọc tuần. Catalog chung lấy từ vocabulary tuần của từng subset; Popularity và trọng số model chỉ học train. Chi tiết và code cell: [preprocessing_review.md](docs/preprocessing_review.md).
+
 ## Bắt đầu
 
 1. Đọc [AGENTS.md](AGENTS.md) trước khi sửa code hoặc chốt thiết kế.
@@ -55,7 +57,7 @@ Không commit raw CSV, Parquet lớn, checkpoint, GPU log, secret hoặc credent
 | E1–E5 | [experiment_matrix.md](docs/experiment_matrix.md) |
 | Nguồn, license và hướng dẫn đối chiếu NVIDIA | [references.md](docs/references.md) |
 | Mô tả 9 cột dữ liệu | [data_dictionary.md](docs/data_dictionary.md) |
-| Review CSV → Parquet của notebook 01 | [preprocessing_review.md](docs/preprocessing_review.md) |
+| Năm quyết định preprocessing đã chốt và đối chiếu notebook 01–02 | [preprocessing_review.md](docs/preprocessing_review.md) |
 | Bàn giao | [handoff.md](docs/handoff.md) |
 
 Tám bản bối cảnh/đề xuất cũ được giữ nguyên trong [context-history.zip](docs/archive/context-history.zip), chỉ mở khi cần tra lịch sử. Phạm vi và lịch hiện hành lấy từ AGENTS.md.

@@ -46,3 +46,12 @@ Không ghi secret hoặc credential vào file này. Cập nhật sau mỗi bàn 
 - Kiểm tra: đọc trực tiếp code cell notebook 01; SHA-256 khớp manifest nguồn f0ca2b5343dd1e40b5d2422b942f014b224f5c20; `git diff --check` đạt. Lệnh tái kiểm tra có trong tài liệu.
 - Đây là đầu ra thật của task đọc hiểu, không phải log thực thi preprocessing. Tạo Parquet thuộc task sau; không dùng số liệu tutorial như kết quả nhóm.
 - Người nhận: TV1/TV2/TV3; chờ xác nhận đã kiểm tra tài liệu, chưa đánh dấu Done chính thức theo AGENTS.md.
+
+## Chốt năm điểm preprocessing theo tutorial — 19/11/2026
+
+- Theo quyết định mới nhất của Thúy: dùng đúng source sort không thêm khóa phụ CSV, giữ 20 item cuối, giữ session qua ngày và day_index theo công thức nguồn, fit workflow/mapping trên tuần của từng subset trước split, tính first-seen trên tháng trước lọc tuần.
+- Mục này thay thế các trạng thái chờ chốt session/mapping và quy định train-only trong các bàn giao trước; các mục cũ giữ để tra lịch sử. Lịch test cuối cùng vẫn chờ TV2 xác nhận.
+- Đã đồng bộ AGENTS, README, preprocessing_review, model_protocol, next_item_problem, model_comparison, references, team_tasks, experiment_matrix và data/README. Catalog chung dùng product ID thực từ vocabulary tuần; token kỹ thuật không được gợi ý. Popularity là baseline nhóm, chỉ đếm train; model baseline vẫn chỉ dùng product ID.
+- Nguồn: snapshot NVIDIA f0ca2b5343dd1e40b5d2422b942f014b224f5c20, notebook 01/02/03, data_utils.py và prediction_task.py; chi tiết code cell trong preprocessing_review.md. Upstream được giữ nguyên.
+- Kiểm tra: đối chiếu code cell và checksum manifest; kiểm tra link Markdown local, quy định cũ trong tài liệu hiện hành và git diff --check. Chưa chạy preprocessing, GPU model hoặc benchmark. Chưa có xác nhận nghiệm thu của người nhận.
+- Trạng thái Git: cập nhật tài liệu trong working tree, chưa commit/push ở lần bàn giao này; chưa đánh dấu Done chính thức.

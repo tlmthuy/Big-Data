@@ -18,21 +18,21 @@ Target:        309        = sản phẩm tiếp theo thật, còn gọi ground t
 Output:        [412, 309, 587, ...] = các ID được gợi ý, xếp theo điểm giảm dần
 ```
 
-Danh sách output có tối đa 20 sản phẩm (K=20); không chỉ trả về một đáp án. Các ID trong output ví dụ được giả định thuộc catalog train. Trong ví dụ, target 309 đứng hạng 2, nên dự đoán có hit và NDCG@20 = 1/log2(3), khoảng 0,631. Đây là minh họa, không phải kết quả model thật.
+Danh sách output có tối đa 20 sản phẩm (K=20); không chỉ trả về một đáp án. Các ID trong output ví dụ được giả định thuộc catalog của subset. Trong ví dụ, target 309 đứng hạng 2, nên dự đoán có hit và NDCG@20 = 1/log2(3), khoảng 0,631. Đây là minh họa, không phải kết quả model thật.
 
 Model không được nhìn thấy ID 309 tại vị trí target khi tạo dự đoán này. Với thư viện tự tạo nhãn, chuỗi đầy đủ có thể được đưa vào pipeline, nhưng causal shift hoặc masking phải bảo đảm điều đó.
 
 ## 3. Điểm dự đoán và catalog
 
-Candidate catalog là tập sản phẩm xuất hiện trong train của subset đang chạy. Mỗi model chấm điểm các sản phẩm trong tập này rồi lấy tối đa 20 item có điểm cao nhất; loại các ID kỹ thuật như padding/unknown/mask. Điểm để xếp hạng không nhất thiết là xác suất đã chuẩn hóa.
+Candidate catalog là các product ID thực trong vocabulary đã fit trên dữ liệu tuần của subset trước split, gồm cả item chưa xuất hiện trong train. Mỗi model chấm điểm các sản phẩm trong tập này rồi lấy tối đa 20 item có điểm cao nhất; loại các ID kỹ thuật như padding/unknown/mask. Điểm để xếp hạng không nhất thiết là xác suất đã chuẩn hóa.
 
 Cho phép gợi ý lại sản phẩm từng xuất hiện trong prefix. Ví dụ [101, 205, 309] có target 101 thì 101 vẫn được phép nằm trong output.
 
 ## 4. Dữ liệu để học và dữ liệu để kiểm tra
 
-Dataset là 2019-Oct.csv, giới hạn ngày 01–07/10/2019 UTC. Session được nhóm theo ngày event đầu tiên; trong mỗi ngày chia khoảng 80% train, 10% validation, 10% test. Đây là quyết định cập nhật ngày 19/11/2026.
+Dataset là 2019-Oct.csv, giới hạn ngày 01–07/10/2019 UTC. Theo notebook 02, gom nguyên session rồi tính `day_index = (event_time_dt-first - col.min()).dt.days + 1`; trong mỗi partition chia ngẫu nhiên khoảng 80% train, 10% validation, 10% test, GPU seed 1. Không mặc định day_index là ngày lịch UTC. Đây là quyết định cập nhật ngày 19/11/2026.
 
-Model được daily fine-tuning trên train ngày t rồi đánh giá validation ngày t+1, tiếp tục từ trạng thái model đã học. Test được giữ riêng; TV2 cần xác nhận lịch đánh giá test cuối cùng trước benchmark. Mapping/catalog/popularity chỉ dùng train đã khả dụng, không nhìn trước các ngày tương lai.
+Model được daily fine-tuning trên train partition t rồi đánh giá validation partition t+1, tiếp tục từ trạng thái model đã học. Test không dùng chọn cấu hình hoặc cập nhật trọng số; TV2 cần xác nhận lịch test cuối cùng. Workflow/mapping fit trên tuần trước split; first-seen tính trên tháng trước lọc tuần. Popularity chỉ đếm train đã dùng, dù catalog chung lấy từ vocabulary tuần.
 
 Validation/test mặc định dùng item cuối không phải padding làm target, các item đứng trước làm prefix. Cách tạo nhãn khi train khác nhau: GRU học các bước next item; XLNet MLM học dự đoán item bị che.
 
@@ -42,52 +42,16 @@ TV1 chuẩn bị bốn subset theo stable hash của session: 10%, 25%, 50%, 100
 
 Recall@20 kiểm tra target có nằm trong Top-20 không. NDCG@20 thưởng cao hơn nếu target đứng gần đầu. Ba model phải dùng cùng tập ví dụ, catalog và quy tắc tổng hợp; xem [protocol chính thức](model_protocol.md).
 
-## 6. Các điểm TV1 cần xác nhận
+## 6. Năm quyết định preprocessing đã chốt
 
-**1. Session dài hơn 20 item**
+Theo yêu cầu mới nhất của Thúy ngày 19/11/2026, áp dụng đúng cách làm tutorial NVIDIA đã pin:
 
-Giữ **20 item cuối**, giống Notebook 02:
+1. **Timestamp trùng:** chỉ sort session/timestamp như notebook 01 và Groupby theo timestamp như notebook 02; không thêm khóa phụ theo dòng CSV, không bảo đảm thứ tự CSV khi timestamp bằng nhau.
+2. **Sequence dài hơn 20:** giữ 20 item cuối, tính cả target. Ví dụ có 30 item thì giữ item 11–30; target là item 30, prefix là item 11–29.
+3. **Session qua ngày:** giữ nguyên trong cửa sổ tuần rồi gán day_index theo công thức nguồn; không kiểm tra/loại session theo event cuối vượt cutoff train. Phần event ngoài tuần vẫn bị lọc trước khi gom sequence.
+4. **Mapping/OOV:** fit toàn bộ workflow trên tuần của từng subset trước split, giữ mapping/schema cố định qua các partition. Notebook mô tả padding 0, null 1, OOV 2, mã đã biết từ 3; cần xác minh runtime. Item chỉ xuất hiện ở validation/test nhưng có trong dữ liệu fit vẫn có mã, không tự coi là OOV.
+5. **First-seen:** tính timestamp nhỏ nhất theo product trên dữ liệu tháng sau xử lý sơ bộ/loại lặp, trước lọc tuần và split; tạo recency/log/normalization như nguồn. Baseline model vẫn chỉ dùng product ID.
 
-```python
-SESSIONS_MAX_LENGTH = 20
-nvt.ops.ListSlice(-SESSIONS_MAX_LENGTH, pad=True)
-```
+Đây là đánh giá offline với preprocessing fit trước split; không mô tả toàn bộ pipeline là train-only. Năm điểm trên thay thế các đề xuất cũ, không còn chờ xác nhận lựa chọn; triển khai và smoke test vẫn chưa chạy. Chi tiết code cell, catalog và bàn giao xem [preprocessing_review.md](../preprocessing_review.md) và [model_protocol.md](model_protocol.md).
 
-Ví dụ có 30 item thì giữ item 11–30; khi đánh giá, item 30 là target, item 11–29 là prefix. **TV1 xác nhận áp dụng cách này.**
-
-**2. Chia 80/10/10 theo ngày và daily fine-tuning — đã thống nhất**
-
-Gom session theo ngày event đầu tiên UTC, chia khoảng 80% train, 10% validation, 10% test trong từng ngày theo notebook 02. Lưu seed, danh sách session và counts. Notebook 03 cập nhật cùng model qua các ngày:
-
-```python
-time_index_train = time_index
-time_index_eval = time_index + 1
-```
-
-Train ngày t rồi đánh giá validation ngày t+1; không dùng validation/test để cập nhật model. Quyết định này thay thế split cố định trước đây. AGENTS.md và model_protocol.md đã được đồng bộ.
-
-Còn cần TV1/TV2 xác nhận cách xử lý session kéo sang ngày sau để train không chứa event vượt cutoff, cùng lịch dùng test cho kết quả cuối. Dùng pipeline gốc không tự bảo đảm hai điểm này; chưa có benchmark thật.
-
-**3. Hai event có cùng timestamp**
-
-Repo gốc chỉ sort như sau, chưa ghi cách phân thứ tự khi trùng giờ:
-
-```python
-df.sort_values(['user_session', 'event_time_ts'])
-```
-
-Đề xuất: nếu trùng timestamp thì dùng thứ tự dòng trong CSV gốc. Đây là phần nhóm bổ sung. **TV1 xác nhận cách làm.**
-
-**4. Target là sản phẩm chưa xuất hiện trong train**
-
-Repo gốc tạo mapping trước khi chia dữ liệu:
-
-```python
-workflow.fit_transform(dataset)
-```
-
-Nhóm mình yêu cầu mapping chỉ học từ train, nên cần chỉnh chỗ này. **TV1 xác nhận cách mã hóa sản phẩm mới và giữ ID target gốc; TV2 chốt cách tính/báo cáo metric cho các trường hợp đó. Chưa chốt.**
-
-TV1 ghi ngắn cách xử lý đã chọn dưới từng mục để TV2 dùng đúng khi đánh giá.
-
-Nguồn: [Notebook 01 — sort và xử lý lặp](../vendor/nvidia-transformers4rec/upstream/examples/tutorial/01-preprocess.ipynb), [Notebook 02 — Groupby, ListSlice và mapping](../vendor/nvidia-transformers4rec/upstream/examples/tutorial/02-ETL-with-NVTabular.ipynb), [Notebook 03 — model và evaluation](../vendor/nvidia-transformers4rec/upstream/examples/tutorial/03-Session-based-recsys.ipynb), [mã split](../vendor/nvidia-transformers4rec/upstream/transformers4rec/utils/data_utils.py), [hướng dẫn nguồn](../references.md), [AGENTS.md](../../AGENTS.md). Các quy tắc sampling và split là yêu cầu đồ án.
+Nguồn: [Notebook 01](../vendor/nvidia-transformers4rec/upstream/examples/tutorial/01-preprocess.ipynb), [Notebook 02](../vendor/nvidia-transformers4rec/upstream/examples/tutorial/02-ETL-with-NVTabular.ipynb), [Notebook 03](../vendor/nvidia-transformers4rec/upstream/examples/tutorial/03-Session-based-recsys.ipynb), [mã split](../vendor/nvidia-transformers4rec/upstream/transformers4rec/utils/data_utils.py), [AGENTS.md](../../AGENTS.md).

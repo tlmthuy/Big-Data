@@ -40,9 +40,9 @@ Nhóm báo metric chính ở K=20. Batch size và các tham số cần kiểm tr
 
 ## 3. Luật chung của ba model trong đồ án
 
-Áp dụng [model_protocol.md](model_protocol.md): cùng split, ground truth, candidate catalog từ train, cho phép seen items, K=20 và cách tổng hợp metric. Validation/test dùng item cuối làm target; không nhầm với các vị trí được dùng để học khi train.
+Áp dụng [model_protocol.md](model_protocol.md): cùng split, ground truth, candidate catalog product ID thực từ vocabulary tuần của subset đã fit trước split, cho phép seen items, K=20 và cách tổng hợp metric. Validation/test dùng item cuối làm target; không nhầm với các vị trí được dùng để học khi train.
 
-Các chi tiết dữ liệu còn mở được liệt kê trong protocol. Snapshot nguồn là tài liệu tham khảo; chưa chứng minh tương thích với môi trường GPU dự kiến.
+Năm điểm preprocessing đã chốt theo tutorial; chỉ còn lịch test cuối và xác minh runtime/smoke run trong protocol. Snapshot nguồn là tài liệu tham khảo; chưa chứng minh tương thích với môi trường GPU dự kiến.
 
 ## 4. Đọc Notebook 03 theo thứ tự nào?
 

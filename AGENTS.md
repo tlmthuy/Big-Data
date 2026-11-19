@@ -47,11 +47,19 @@ Mỗi subset phải báo cáo số event, session, user, item, category, brand, 
 
 ### Chia dữ liệu
 
-Quyết định cập nhật ngày 19/11/2026: gom session theo ngày event đầu tiên UTC; trong mỗi ngày chia khoảng 80% session train, 10% validation, 10% test theo cách tutorial NVIDIA. Lưu seed, membership và counts thực tế để tái lập.
+Quyết định cập nhật ngày 19/11/2026: theo notebook 02 NVIDIA, gom session trước rồi tính `day_index = (event_time_dt-first - col.min()).dt.days + 1`; timestamp ở UTC. Trong mỗi partition `day_index`, chia ngẫu nhiên khoảng 80% session train, 10% validation, 10% test bằng hàm nguồn; GPU seed `1`, sort theo `user_session` trước khi sinh số ngẫu nhiên. Lưu seed, membership, phiên bản runtime và counts thực tế. `day_index` là chỉ số theo công thức nguồn, không mặc định là ngày lịch bắt đầu lúc 00:00 UTC.
 
-Daily fine-tuning: tiếp tục cập nhật cùng model trên train ngày t, đánh giá validation ngày t+1. Test không dùng chọn cấu hình hoặc cập nhật model; lịch test cuối cùng cần TV2 xác nhận trước benchmark.
+Daily fine-tuning: tiếp tục cập nhật cùng model trên train partition t, đánh giá validation partition t+1 theo notebook 03. Test không dùng chọn cấu hình hoặc cập nhật trọng số model; preprocessing được fit trước split như bên dưới. Lịch test cuối cùng cần TV2 xác nhận trước benchmark.
 
-Mapping, catalog và popularity chỉ dùng train đã khả dụng tại thời điểm dự đoán, không fit trước trên train của những ngày tương lai. TV1/TV2 cần chốt xử lý session kéo qua ngày và kiểm tra cutoff thực tế; chia theo ngày bắt đầu không tự bảo đảm không leakage.
+Năm điểm preprocessing đã chốt theo snapshot NVIDIA `f0ca2b5343dd1e40b5d2422b942f014b224f5c20` ngày 19/11/2026; quyết định này thay thế các đề xuất train-only và khóa phụ CSV trước đó:
+
+1. Sort theo `user_session`, `event_time_ts`; khi timestamp trùng, dùng hành vi sort/Groupby của runtime nguồn, không thêm khóa phụ theo dòng CSV và không cam kết giữ thứ tự CSV.
+2. Giữ 20 item cuối bằng `ListSlice(-20, pad=True)`; lọc session có ít nhất 2 interaction sau loại lặp.
+3. Giữ session nguyên khối trong cửa sổ tuần, gom theo session trước khi gán `day_index`; không kiểm tra/loại theo event cuối vượt cutoff train. Event ngoài cửa sổ tuần vẫn bị lọc trước khi gom sequence.
+4. Fit toàn bộ workflow notebook 02, gồm mapping và thống kê feature, trên dữ liệu tuần của từng subset trước split; cố định mapping/schema qua các partition của subset đó. Theo mô tả nguồn: padding `0`, null `1`, OOV `2`, mã đã biết từ `3`; kiểm tra lại giá trị với runtime đã pin. Candidate catalog dùng các product ID thực có trong vocabulary đã fit của subset, không giới hạn item xuất hiện trong train; ba model dùng chung catalog, loại token kỹ thuật khi xuất Top-20. Popularity vẫn chỉ đếm tương tác train đã dùng để cập nhật model.
+5. Tính first-seen theo product trên dữ liệu tháng sau xử lý sơ bộ/loại lặp như notebook 01, trước lọc tuần và trước split; notebook 02 tạo recency, log và chuẩn hóa như nguồn. First-seen tháng có thể dùng chung cho bốn subset; ghi chi phí tạo artifact chung riêng với chi phí từng subset. Baseline model vẫn chỉ dùng product ID; tạo feature không tự mở rộng input model.
+
+Chi tiết code cell, nguồn và phần nhóm điều chỉnh cho sampling/E1–E5: `docs/preprocessing_review.md`. Đây là đánh giá offline có preprocessing fit trước split, không mô tả toàn bộ pipeline là train-only. Số thứ tự dòng CSV có thể lưu để truy vết nhưng không dùng làm khóa phụ sort theo quyết định mới.
 
 ## 4\. Repo và tài liệu nguồn được phép tận dụng
 
@@ -88,16 +96,16 @@ Raw CSV, Parquet lớn, checkpoint và GPU cache không commit trực tiếp và
 2019-Oct.csv
 → kiểm tra schema và missing value
 → bỏ session null
+→ tạo timestamp số và mã hóa session, giữ liên kết với session ID gốc để sampling
+→ trên dữ liệu tháng: sort, loại lặp liên tiếp và tạo bảng first-seen theo notebook 01
 → giới hạn 7 ngày đầu tháng 10
 → chọn session bằng stable hash
 → giữ toàn bộ event của session
-→ sort theo session và event_time
-→ xử lý consecutive repeated item
-→ tạo timestamp số và feature cần thiết
-→ gom thành sequence
+→ ghép first-seen tháng, fit workflow/mapping/feature của từng subset trước split
+→ sort lại theo timestamp khi gom session thành sequence
 → bỏ session dưới 2 interaction
 → giới hạn sequence length 20
-→ chia train/validation/test
+→ tạo day_index theo công thức NVIDIA và chia train/validation/test trong mỗi partition
 → lưu Parquet, schema, mapping và manifest
 ```
 
@@ -121,7 +129,7 @@ Ba model phải dùng cùng:
 
 - Train/validation/test split.  
 - Ground truth next item.  
-- Candidate catalog lấy từ train.  
+- Candidate catalog gồm product ID thực trong vocabulary tuần của subset đã fit trước split; dùng chung cho ba model, loại token kỹ thuật khỏi Top-20.
 - Seen-item rule.  
 - `K = 20`.  
 - Cách tổng hợp metric.
