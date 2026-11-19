@@ -1,0 +1,82 @@
+[
+  {
+    "time": "2026-11-19T18:50:16.871987191Z",
+    "component": "kmsg",
+    "message": "EXT4-fs warning (device sdf): ext4_end_bio:368: I/O error 10 writing to inode 61328 starting block 7661209)"
+  },
+  {
+    "time": "2026-11-19T18:50:16.872241935Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on dev sdf, logical block 3, lost async page write"
+  },
+  {
+    "time": "2026-11-19T18:50:16.872500601Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on dev sdf, logical block 1218, lost async page write"
+  },
+  {
+    "time": "2026-11-19T18:50:16.872561634Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on device sdf, logical block 7661209"
+  },
+  {
+    "time": "2026-11-19T18:50:16.883133535Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on dev sdf, logical block 1229, lost async page write"
+  },
+  {
+    "time": "2026-11-19T18:50:16.883199118Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on device sdf, logical block 7661210"
+  },
+  {
+    "time": "2026-11-19T18:50:16.891494900Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on dev sdf, logical block 1231, lost async page write"
+  },
+  {
+    "time": "2026-11-19T18:50:16.891687384Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on device sdf, logical block 7661211"
+  },
+  {
+    "time": "2026-11-19T18:50:16.891722656Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on device sdf, logical block 7661212"
+  },
+  {
+    "time": "2026-11-19T18:50:16.891787020Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on device sdf, logical block 7661213"
+  },
+  {
+    "time": "2026-11-19T18:50:16.891814895Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on device sdf, logical block 7661214"
+  },
+  {
+    "time": "2026-11-19T18:50:16.891872369Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on device sdf, logical block 7661215"
+  },
+  {
+    "time": "2026-11-19T18:50:16.891923160Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on device sdf, logical block 7661216"
+  },
+  {
+    "time": "2026-11-19T18:50:16.892034005Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on device sdf, logical block 7661217"
+  },
+  {
+    "time": "2026-11-19T18:50:16.892115999Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on device sdf, logical block 7661218"
+  },
+  {
+    "time": "2026-11-19T18:50:16.896157893Z",
+    "component": "kmsg",
+    "message": "Buffer I/O error on dev sdf, logical block 1233, lost async page write"
+  }
+]

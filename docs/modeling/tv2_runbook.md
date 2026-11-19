@@ -1,6 +1,6 @@
 # TV2 — Chạy metric và Popularity
 
-TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); chỉ metric/Popularity được kiểm tra toy, chưa có gói E1–E4 sẵn chạy.
+TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); metric/Popularity đã kiểm tra toy, [script GRU/XLNet](neural_runbook.md) đã đạt toy GPU smoke. Gói experiment E1–E5 còn trên nhánh TV2, chưa tích hợp vào main.
 
 ## File bàn giao theo task ngày 20/11
 
@@ -11,6 +11,8 @@ TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Man
 | Recall@20 | [ranking.py](../../evaluation/ranking.py) | [test_tv2.py](../../evaluation/tests/test_tv2.py), [test log](../../metrics/tv2-final-test-tests.txt) |
 | NDCG@20 | [ranking.py](../../evaluation/ranking.py) | Cùng toy test: hạng 1/20/ngoài Top-20 và tổng hợp theo session |
 | Popularity | [popularity.py](../../models/popularity.py), [CLI](../../evaluation/run_popularity.py) | [Toy output](../../metrics/tv2-toy-day1/metrics.json), test cumulative/train-only/tie-break |
+
+Hai task ngày 21/11: [model builder](../../models/session_models.py), [CLI GRU/XLNet](../../evaluation/run_neural.py), [test neural](../../evaluation/tests/test_neural.py), [GPU smoke](../../metrics/tv2-model-smoke/README.md). Lệnh chạy và yêu cầu bộ nhớ tại [neural_runbook.md](neural_runbook.md).
 
 ## Kiểm tra nhanh trên dữ liệu toy
 

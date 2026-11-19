@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "docker",
+    "build",
+    "--progress=plain",
+    "-f",
+    "environment/smoke-models.Dockerfile",
+    "-t",
+    "big-data-tv2-model-smoke:torch201",
+    "metrics/local/smoke-models-build"
+  ],
+  "exit_code": 1,
+  "elapsed_seconds": 244.10359040000185,
+  "stopped_for_disk_space": true,
+  "c_drive_free_bytes": 743223296
+}

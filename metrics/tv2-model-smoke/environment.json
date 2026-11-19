@@ -1,0 +1,12 @@
+{
+  "python": "3.10.12",
+  "torch": "1.13.1+cu117",
+  "cuda": "11.7",
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "driver": "610.78",
+  "environment_bytes": 4040455500,
+  "source_commit": "f0ca2b5343dd1e40b5d2422b942f014b224f5c20",
+  "storage_budget_bytes": 7000000000,
+  "scope": "WSL model-only GPU smoke; no ETL or official E1-E5 benchmark",
+  "source_archive_sha256": "6f9db694b9a5490f43d6bba086bcbd36f13422ab1cdb286c695dfe8254ef974e"
+}

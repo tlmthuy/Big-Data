@@ -1,6 +1,6 @@
 # Experiment matrix
 
-**Trạng thái: khung thiết kế, chưa có run config/command E1–E4 được bàn giao.** TV3 xem [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn nhận script](../environment/README.md). Chỉ metric/Popularity toy hiện sẵn chạy; không coi các dòng dưới là run registry đã phê duyệt.
+**Trạng thái main: khung thiết kế, chưa tích hợp run config/command E1–E4 từ nhánh TV2.** TV3 xem [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn nhận script](../environment/README.md). Metric/Popularity toy và CLI GRU/XLNet đã sẵn chạy, hai neural model đạt toy GPU smoke; không coi các dòng dưới là run registry đã phê duyệt.
 
 | ID | Câu hỏi | Biến thay đổi | Kết quả bắt buộc |
 |---|---|---|---|

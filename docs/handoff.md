@@ -2,6 +2,14 @@
 
 ## Trạng thái hiện hành
 
+### TV2 — Tích hợp riêng GRU/XLNet vào main — 20/11/2026
+
+- Theo yêu cầu của Thúy, chỉ đưa hai task script GRU/XLNet cùng dependency, test, hướng dẫn và bằng chứng GPU lên main. Matrix/config/runner experiment E1–E5 tiếp tục ở nhánh `feature/tv2-model-evaluation`; giữ nguyên dữ liệu/tài liệu TV1 và demo TV4 trên main.
+- Nguồn code: `ea717d91b28f252e845aeb1bf97c3cda6baa7ec0`; bằng chứng GPU/verifier: `b2cbb39` trên nhánh TV2. Các file model/runner giữ nguyên byte so với source đã chạy GPU; test neural được tách khỏi test experiment để main chạy độc lập. Loader hỗ trợ lọc partition; fingerprint chung kiểm tra artifact thiếu/rỗng và băm toàn bộ file trong thư mục.
+- Output: `models/session_models.py`, `evaluation/run_neural.py`, `evaluation/tests/test_neural.py`, `scripts/runs/verify_neural_smoke.py`, schema toy, requirements local smoke. [Hướng dẫn](modeling/neural_runbook.md), [manifest TV2](../configs/tv2_handoff.json), [metrics/predictions/verification GPU](../metrics/tv2-model-smoke/README.md).
+- GPU smoke WSL RTX 3050: GRU/XLNet train/eval và last-item label, target hiding, batch independence đều PASS; môi trường khoảng 4,04 GB trong ngân sách 7 GB. Đây là dữ liệu toy; chưa có benchmark E1–E5, nghiệm thu artifact sequence/split thật hoặc runtime chính thức TV3. Kiểm tra sau tích hợp: `python -m unittest discover -s evaluation/tests -v` → **19/19 PASS**, checksum manifest và link tài liệu đạt; code model/runner khớp byte với source đã smoke GPU.
+- User đã yêu cầu tích hợp sau khi xem trạng thái/bằng chứng smoke. TV3 vẫn cần chạy kiểm tra trên runtime của mình trước benchmark. Commit tích hợp hai task: `835a09eb023bfa9451d906b95f5b35f1454e20cf`.
+
 ### TV1 — Timestamp, cleanup và first-seen tháng — review 20/11/2026
 
 - Commit sửa tài liệu sau review: `c4391e3`; đã đồng bộ `origin/main` vào

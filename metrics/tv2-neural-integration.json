@@ -1,0 +1,26 @@
+{
+  "scope": "Integrate GRU and XLNet tasks only; E1-E5 implementation remains on TV2 branch",
+  "date": "2026-11-20",
+  "main_base": "b40cd761d539acb8eebed9c7cafedcecc30f7401",
+  "command": [
+    "python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "evaluation/tests",
+    "-v"
+  ],
+  "exit_code": 0,
+  "tests": 19,
+  "failures": 0,
+  "skipped": 0,
+  "python": "3.13.12",
+  "checks": {
+    "handoff_hashes": "passed",
+    "model_runner_bytes_match_GPU_smoke": "passed",
+    "neural_document_links": "passed",
+    "experiment_implementation_absent": "passed"
+  },
+  "gpu_evidence": "metrics/tv2-model-smoke/README.md"
+}

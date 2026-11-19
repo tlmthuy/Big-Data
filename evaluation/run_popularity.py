@@ -25,9 +25,14 @@ def fingerprint(path):
     path = Path(path)
     if path.is_file():
         return {"path": str(path), "sha256": sha256(path)}
+    if not path.is_dir():
+        raise ValueError(f"Artifact path does not exist: {path}")
+    files = sorted(p for p in path.rglob("*") if p.is_file())
+    if not files:
+        raise ValueError(f"Artifact directory is empty: {path}")
     return {"path": str(path), "files": [
         {"path": str(p.relative_to(path)), "sha256": sha256(p)}
-        for p in sorted(path.glob("*/*.parquet"))]}
+        for p in files]}
 
 
 def run(args):
