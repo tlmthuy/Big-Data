@@ -80,4 +80,4 @@ Raw CSV và danh sách session lớn vẫn ở máy TV1. Phương án bàn giao 
 
 Chưa có xác nhận chạy preprocessing NVIDIA, sequence/split, GPU model hoặc E1–E5. Mọi kết quả thực nghiệm phải được ghi bằng `run_id`, commit, seed, cấu hình, phần cứng, phiên bản thư viện và đường dẫn output.
 
-Bốn task TV2 tiếp theo đã có code/config trên nhánh TV2: GRU/XLNet, matrix 11 run, collector E1–E4 và E5 tổng hợp log. Xem [runbook](docs/modeling/neural_runbook.md); model NVIDIA chưa chạy đầy đủ vì local thiếu Merlin/Transformers4Rec và không có GPU. E2 cần telemetry, E4 full cần command preprocessing chung từ TV1. Chưa có kết quả experiment thật.
+Bốn task TV2 tiếp theo đã có code/config trên nhánh TV2: GRU/XLNet, matrix 11 run, collector E1–E4 và E5 tổng hợp log. Xem [runbook](docs/modeling/neural_runbook.md); model NVIDIA chưa chạy đầy đủ vì local thiếu Merlin/Transformers4Rec; có RTX 3050 4GB nhưng chưa có runtime GPU tương thích. E2 cần telemetry, E4 full cần command preprocessing chung từ TV1. Chưa có kết quả experiment thật.
