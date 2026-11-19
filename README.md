@@ -56,6 +56,7 @@ Không commit raw CSV, Parquet lớn, checkpoint, GPU log, secret hoặc credent
 | Luật đánh giá | [model_protocol.md](docs/modeling/model_protocol.md) |
 | E1–E5 | [experiment_matrix.md](docs/experiment_matrix.md) |
 | Nguồn, license và hướng dẫn đối chiếu NVIDIA | [references.md](docs/references.md) |
+| Raw subset theo session | [raw_subsets.md](docs/raw_subsets.md) |
 | Chọn session bằng stable hash | [session_sampling.md](docs/session_sampling.md) |
 | Thống kê raw trước sampling | [raw_audit.md](docs/raw_audit.md) |
 | Mô tả 9 cột dữ liệu | [data_dictionary.md](docs/data_dictionary.md) |

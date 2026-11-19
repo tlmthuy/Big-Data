@@ -41,3 +41,6 @@ Thumbs.db
 /tmp/raw_audit_spill/
 
 /tmp/session_sampling_spill/
+
+/tmp/raw_subset_export/
+!/data/manifests/raw_subset_counts.csv
