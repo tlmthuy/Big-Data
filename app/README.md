@@ -1,64 +1,50 @@
 
 # Session-Based Recommendation Demo
 
-## 1. Objective
+React + Vite demo for session-based next-item recommendation.
 
-Build a demo for the Big Data project to demonstrate
-session-based next-item recommendation.
+## Run locally
 
-The demo will allow users to select a session and
-view the Top-20 product recommendations generated
-by the models.
+```bash
+cd app
+npm install
+npm run dev
+```
 
-## 2. Project Scope
+Open the URL printed by Vite. Use `npm run build` to create a production build.
 
-- Dataset: eCommerce Behavior Data (October 2019)
-- Models: Popularity, GRU, XLNet
-- Input: Sequence of product IDs in a user session
-- Output: Top-20 ranked product recommendations
-- Ground truth: Actual next item
-- Metrics: Recall@20 and NDCG@20
+## Display protocol
 
-## 3. Planned Demo Workflow
+- The history is the session **prefix** after the target is removed.
+- The actual next item is always shown as a separate ground-truth card, even when it is outside Top-20.
+- Changing model keeps the selected session, subset, split and candidate catalog unchanged.
+- Product IDs are shown as original IDs. The demo does not remove items that already appear in the history.
+- The bundled JSON is TV2 toy output, not an E1 benchmark or real-data result.
 
-1. Select a session from the evaluation dataset.
-2. Display the session's input product sequence.
-3. Select a model (Popularity, GRU, or XLNet).
-4. Load the model's prediction output.
-5. Display the Top-20 ranked recommendations.
-6. Highlight the actual next item if it appears
-   in the recommendations.
+## Prediction data
 
-## 4. Model Integration
+The demo reads `public/demo-data.json`. Its `Popularity` entries come from the checked-in TV2 toy predictions:
 
-The demo will use prediction outputs or inference
-artifacts provided by TV2.
+- `metrics/tv2-toy-day1/predictions.jsonl`
+- `metrics/tv2-toy-day1/metrics.json`
 
-The input/output JSON format will be confirmed
-with TV2 before implementation.
+GRU and XLNet are shown as unavailable until TV2 provides prediction JSONL, run metadata and an approved catalog for the same subset/split. No synthetic GRU/XLNet rankings are generated.
 
-The demo will not train or fine-tune models.
+Live Python inference can be added with FastAPI later. Its response should use the same shape:
 
-## 5. User Interface
-
-UI framework: Not decided yet.
-
-Possible options:
-- Streamlit
-- Gradio
-- Web interface
-
-## 6. Dependencies
-
-- TV1: Processed session data and product mapping
-- TV2: Prediction schema and inference output
-- TV3: Runtime/environment support if required
-
-## 7. Current Status
-
-- [x] Demo structure created
-- [x] README outline created
-- [ ] Prediction schema confirmed
-- [ ] Sample prediction file created
-- [ ] UI implemented
-- [ ] Model integration tested
+```json
+{
+  "model": "Popularity",
+  "subset": "toy",
+  "split": "validation",
+  "catalog": ["3", "4", "5"],
+  "sessions": [
+    {
+      "user_session": "rank1",
+      "prefix": ["4"],
+      "target": "3",
+      "top20": ["3", "4", "5"]
+    }
+  ]
+}
+```
