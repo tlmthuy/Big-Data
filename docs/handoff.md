@@ -13,7 +13,7 @@ Các mục dưới giữ nguyên trạng thái tại thời điểm bàn giao. N
 - Thêm `configs/tv2_handoff.json`: command argv, input/output/expected metrics toy, checksum code/fixture chuẩn hóa LF, trạng thái pending cho data thật, GPU, GRU/XLNet và E1–E5. TV3 bắt đầu từ `environment/README.md`; Dockerfile yêu cầu image Merlin ứng viên cụ thể, chưa khẳng định đã có runtime GPU được pin.
 - Giữ Python 3.10 cho môi trường CPU/toy; thay `hashlib.file_digest` bằng hash đọc chunk để bỏ phụ thuộc API Python 3.11. Runtime GPU không bị tự nâng Python. Đồng bộ runbook, README, preprocessing review, experiment matrix và team tasks; tách nhận dữ liệu thật ngày 21/11 khỏi chốt protocol. Giữ nhật ký cũ có nhãn lịch sử.
 - Lệnh toy mới ghi vào `metrics/local/` (Git ignore), không trùng output lịch sử. Bỏ `.gitkeep` ở sáu thư mục đã có file; giữ snapshot/LICENSE, manifest và bằng chứng cũ.
-- Kiểm tra: 13/13 unittest PASS, manifest checksum/command/expected metrics, cú pháp Python 3.10 và liên kết Markdown local đạt; log `metrics/tv2-environment-sync-tests.txt`. Thực thi local Python 3.13.12; chưa tạo Conda Python 3.10 hoặc build/chạy GPU Docker. Chi tiết commit ghi trong mục bàn giao tiếp theo.
+- Kiểm tra: 13/13 unittest PASS, manifest checksum/command/expected metrics, cú pháp Python 3.10 và liên kết Markdown local đạt; log `metrics/tv2-environment-sync-tests.txt`. Thực thi local Python 3.13.12; chưa tạo Conda Python 3.10 hoặc build/chạy GPU Docker. Commit code/docs/manifest: `f5df636` trên main; người nhận TV3 chưa nghiệm thu môi trường GPU.
 
 ## Tích hợp năm task TV2 vào main — 19/11/2026
 
