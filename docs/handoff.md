@@ -1,5 +1,12 @@
 # Handoff
 
+## Tích hợp năm task TV2 vào main — 19/11/2026
+
+- Đã review và merge `feature/tv2-model-evaluation` tại `8b6a392` vào `main`, không conflict. Merge commit: `af280b91765a6e586dfdd20e69b9bab50e8d4e8c`.
+- Phạm vi đạt review: chốt split/lịch test, catalog/K=20, Recall@20, NDCG@20 và baseline Popularity. File bàn giao theo từng task tại `docs/modeling/tv2_runbook.md`. Giữ các module nhỏ, không thêm model/dependency; test và output toy được giữ để tái kiểm tra.
+- Kiểm tra: 13/13 unittest PASS (gồm Parquet, cumulative train-only, metric tính tay, lịch test cuối và test rỗng), `git diff --check` sạch. Log tại `metrics/tv2-final-test-tests.txt`. Nhánh TV2 đã push; commit này ghi bàn giao trên main.
+- Kiểm chứng membership/counts/catalog thật sau TV1 bàn giao là task riêng ngày 21/11 trước E1; chưa có benchmark dataset/GPU hoặc xác nhận người nhận cho dữ liệu thật.
+
 ## TV2 — Chốt lịch test cuối sau review — 19/11/2026
 
 - Thúy đã thống nhất: giữ daily train t/validation t+1 theo NVIDIA; sau khi cố định cấu hình bằng validation, test partition D bằng checkpoint sau train 1…D−1. D là day_index cuối thực tế của từng subset, xác minh từ membership đầy đủ; không train D hoặc chọn cấu hình/checkpoint bằng test. Quyết định này thay trạng thái chờ lịch test trong các bàn giao cũ bên dưới.

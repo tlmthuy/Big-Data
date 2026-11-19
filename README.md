@@ -70,6 +70,8 @@ Tám bản bối cảnh/đề xuất cũ được giữ nguyên trong [context-h
 
 ## Trạng thái hiện tại — 19/11/2026
 
+Đã tích hợp năm task TV2: protocol split/lịch test cuối, catalog/K=20, Recall@20, NDCG@20 và Popularity. Review code và 13 toy test đạt; file bàn giao từng task tại [TV2 runbook](docs/modeling/tv2_runbook.md). Kiểm tra tiếp nhận dữ liệu thật từ TV1 là task riêng ngày 21/11 trước E1.
+
 Đã tích hợp ba task TV1 vào `main`: audit raw, chọn session bằng stable hash và xuất raw subset tuần đầu ở mức 10/25/50/100%. Code đã qua review và kiểm tra dữ liệu nhỏ; các counts và manifest của lần chạy TV1 được lưu trong Git. Hai lỗi đơn vị RSS trên Ubuntu và ghi đè bảng counts đã được sửa tại `f7fce3e`.
 
 Raw CSV và danh sách session lớn vẫn ở máy TV1. Phương án bàn giao hiện tại là người nhận tái tạo từ raw cùng SHA-256 theo [hướng dẫn](docs/raw_subsets.md#người-nhận-tái-tạo-và-xác-nhận), đối chiếu rồi ghi xác nhận vào [handoff](docs/handoff.md). Ba task chưa được đánh dấu Done chính thức vì còn chờ kiểm tra độc lập trên dữ liệu thật.
