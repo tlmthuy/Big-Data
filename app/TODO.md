@@ -12,15 +12,8 @@ thuộc danh sách việc còn thiếu của TV4.
 
 ## Cần sửa trước khi nghiệm thu UI
 
-- [ ] Map đồng nhất prefix, target, Top-20 và catalog sang product ID gốc.
-  `public/demo-data.json` hiện dùng chuỗi encoded ID (`"3"`, `"4"`...), trong
-  khi catalog toy TV2 ánh xạ `3 -> p3`, `4 -> p4`. Đối chiếu
-  `../evaluation/tests/fixtures/catalog.json` và trường `product_ids` trong
-  `../metrics/tv2-toy-day1/predictions.jsonl`; chưa coi dữ liệu hiện tại là
-  original product ID như mô tả mục tiêu trong README.
-- [ ] Giữ đầy đủ candidate catalog của run TV2. Catalog toy nguồn có 23
-  item (encoded ID 3–25), JSON demo hiện chỉ có 21 item (3–23). Không suy
-  catalog từ các item xuất hiện trong session hoặc Top-20 mẫu.
+- [x] Map prefix, target và Top-20 sang product ID gốc bằng catalog của run.
+- [x] Xuất đầy đủ 23 item trong catalog toy bằng lệnh trong [README](README.md#prediction-data).
 - [ ] Luôn giữ history và actual next item khi chọn model chưa có output.
   Hiện chọn GRU/XLNet ẩn cả hai phần; chỉ vùng recommendation nên chuyển
   sang thông báo chưa có prediction.

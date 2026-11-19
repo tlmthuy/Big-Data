@@ -23,11 +23,11 @@ Required/optional applies to the specified layer. Pending fields have no approve
 | Field | Meaning | Data type | Input/Output | Required/Optional | Evidence | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | `user_session` | Session join key carried from input to prediction | String in toy and intermediate TV1 manifest. Loader preserves the input value. | Input and output | Required | [audit_sessions](../evaluation/data.py), [TV1 manifest](../data/manifests/tv1_data_handoff.json) | CONFIRMED key. Final original or encoded representation pending TV2 confirmation. |
-| `product_id-list` / `product_ids` | Full offline sequence in Parquet / debug JSONL | List of encoded integers | Offline input | Required for its format | [read_sessions](../evaluation/data.py) | CONFIRMED |
+| `product_id-list` / `product_ids` | Full offline sequence in Parquet / debug JSONL. The debug input key is separate from the output field of the same name. | List of encoded integers | Offline input | Required for its format | [read_sessions](../evaluation/data.py) | CONFIRMED |
 | `prefix` | History before target. `input_prefix` is a descriptive alias. | List of encoded integers in prediction JSONL | Logical model input and offline output | Required in prediction row | [run](../evaluation/run_popularity.py) | CONFIRMED |
 | `model` | Model identity. `model_name` is a descriptive alias. | String | Run metadata | Required per run | [metrics.json](../metrics/tv2-toy-day1/metrics.json) | CONFIRMED |
 | `top20` | Ordered recommendations | List of at most 20 distinct encoded integers | Offline output | Required | [recommend](../models/popularity.py), [predictions.jsonl](../metrics/tv2-toy-day1/predictions.jsonl) | CONFIRMED |
-| `product_ids` / `product_id` | Original IDs for ranked items / original ID in each catalog entry | List of strings / string in the normalized mapping | Output / mapping | Required in current prediction row / catalog | [run](../evaluation/run_popularity.py), [Catalog.load](../evaluation/data.py) | CONFIRMED |
+| `product_ids` (prediction JSONL) / `product_id` (catalog) | Original IDs for ranked items / original ID in each catalog entry | List of strings / string in the normalized mapping | Output / mapping | Required in current prediction row / catalog | [run](../evaluation/run_popularity.py), [Catalog.load](../evaluation/data.py) | CONFIRMED |
 | `encoded_id` | Vocabulary index identifying one product | Nonnegative integer | Mapping | Required in current catalog | [Catalog.load](../evaluation/data.py) | CONFIRMED |
 | `score` | Train count for Popularity. Neural ranking uses model scores internally. | Integer count or neural floating-point value internally | Potential output | Pending | [Popularity](../models/popularity.py), [TV2 neural evaluator](https://github.com/tlmthuy/Big-Data/blob/7277b65a0121f0f193fa046e33c37597f94561e7/evaluation/run_neural.py) | NEED TV2 CONFIRMATION for export, units and availability |
 | `rank` | One-based position in the ordered list | Integer 1–20 | Derived display output | Optional as a separate field | [score_session](../evaluation/ranking.py) | CONFIRMED as position. Explicit field PROPOSED. |
@@ -43,7 +43,7 @@ Use the catalog from the same subset and run. `Catalog.load` validates a one-to-
 
 ## 7. Ranking Rules
 
-Return at most 20 unique real items, ordered by descending score from the full real-item catalog fitted on the subset's weekly data. Items already in the prefix remain eligible. Exclude technical tokens and retain the artifact order in the demo. Popularity ties use ascending encoded ID. Its unseen catalog items have a count of zero. The TV2 feature branch's `rank_catalog` also uses ascending encoded ID for equal neural scores. This is verified in branch code. The exported rows contain no numeric score or explicit rank. A rank derives from position plus one. Treat internal neural scores as ranking values and ask TV2 to specify the semantics of any exported score.
+Return at most 20 unique real items, ordered by descending score from the full real-item catalog fitted on the subset's weekly data. Items already in the prefix remain eligible. Exclude technical tokens and retain the artifact order in the demo. Popularity ties use ascending encoded ID. Its unseen catalog items have a count of zero. The TV2 feature branch's `rank_catalog` also uses ascending encoded ID for equal neural scores. This is verified in branch code. The exported rows contain no numeric score or explicit rank. A recommendation rank derives from position plus one. For an optional target-rank field, use `null` when the target is outside Top-20 (proposed). Treat internal neural scores as ranking values and ask TV2 to specify the semantics of any exported score.
 
 ## 8. Ground Truth and Target Handling
 
@@ -61,7 +61,16 @@ NVIDIA Notebook 03 demonstrates GRU/XLNet and computes library metrics. At the p
 
 ## 10. Confirmed vs Proposed Fields
 
-The current file shape and ordering are confirmed by code and toy output. A demo adapter with named per-item fields and explicit rank is proposed. Public naming, score delivery and production ID representation are pending TV2 confirmation. The bundled UI toy fixture uses stringified encoded IDs and lists 21 candidates. The source toy catalog has 23. Use the full source catalog and its mapping to verify the integration.
+The current file shape and ordering are confirmed by code and toy output. A demo adapter with named per-item fields and explicit rank is proposed. Public naming, score delivery and production ID representation are pending TV2 confirmation. The bundled UI toy fixture is generated from the source run using the full
+23-item catalog. See the [export command](README.md#prediction-data).
+
+This complete offline prediction row comes from the checked-in Popularity toy
+run. The arrays `top20` and `product_ids` share the same order. The demo
+adapter separately maps `prefix` and `target` to original IDs.
+
+```json
+{"user_session": "rank1", "prefix": [4], "target": 3, "top20": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], "product_ids": ["p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20", "p21", "p22"]}
+```
 
 ## 11. Open Questions for TV2
 
@@ -124,7 +133,13 @@ for row in rows:
     rank = top20.index(target) + 1 if target in top20 else "miss"
     print(session, catalog.products[target], rank)
 demo = json.loads(Path("app/public/demo-data.json").read_text())
-assert len(catalog.products) == 23 and len(demo["catalog"]) == 21
+assert demo["catalog"] == list(catalog.products.values())
+assert len(demo["sessions"]) == len(rows)
+for row, session in zip(rows, demo["sessions"]):
+    assert session["user_session"] == row["user_session"]
+    assert session["prefix"] == [catalog.products[item] for item in row["prefix"]]
+    assert session["target"] == catalog.products[row["target"]]
+    assert session["top20"] == row["product_ids"]
 print("Catalog sizes", len(catalog.products), len(demo["catalog"]))
 PY
 ```
