@@ -7,7 +7,7 @@
 
 Pin commit and license in this file when external code is adopted.
 
-TV2 model/experiment adaptation: `models/session_models.py` derives the GRU/XLNet architecture from notebook 03 at the fixed commit below (Apache-2.0, attribution retained). `docs/modeling/neural_runbook.md` lists exact cells/modules/tests and changes: batch-first GRU, PyArrow/JSONL loader and explicit PyTorch train/eval loop, real-catalog ranking and group final-test protocol. GPU/runtime integration remains unverified; local missing-dependency logs are under `metrics/tv2-model-scripts/`.
+TV2 model/experiment adaptation: `models/session_models.py` derives the GRU/XLNet architecture from notebook 03 at the fixed commit below (Apache-2.0, attribution retained). `docs/modeling/neural_runbook.md` lists exact cells/modules/tests and changes: batch-first GRU, PyArrow/JSONL loader and explicit PyTorch train/eval loop, real-catalog ranking and group final-test protocol. Full model toy GPU smoke passed on WSL RTX 3050 on 20/11/2026; evidence is under `metrics/tv2-model-smoke/`. Official Docker/cloud/ETL integration remains unverified; earlier missing-dependency logs remain under `metrics/tv2-model-scripts/`.
 
 ## NVIDIA tutorial và mã nguồn liên quan
 

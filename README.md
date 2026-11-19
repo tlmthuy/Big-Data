@@ -78,6 +78,6 @@ Tám bản bối cảnh/đề xuất cũ được giữ nguyên trong [context-h
 
 Raw CSV và danh sách session lớn vẫn ở máy TV1. Phương án bàn giao hiện tại là người nhận tái tạo từ raw cùng SHA-256 theo [hướng dẫn](docs/raw_subsets.md#người-nhận-tái-tạo-và-xác-nhận), đối chiếu rồi ghi xác nhận vào [handoff](docs/handoff.md). Ba task chưa được đánh dấu Done chính thức vì còn chờ kiểm tra độc lập trên dữ liệu thật.
 
-Chưa có xác nhận chạy preprocessing NVIDIA, sequence/split, GPU model hoặc E1–E5. Mọi kết quả thực nghiệm phải được ghi bằng `run_id`, commit, seed, cấu hình, phần cứng, phiên bản thư viện và đường dẫn output.
+Chưa có xác nhận chạy preprocessing NVIDIA, sequence/split hoặc E1–E5 trên dữ liệu thật. Mọi kết quả thực nghiệm phải được ghi bằng `run_id`, commit, seed, cấu hình, phần cứng, phiên bản thư viện và đường dẫn output.
 
-Bốn task TV2 tiếp theo đã có code/config trên nhánh TV2: GRU/XLNet, matrix 11 run, collector E1–E4 và E5 tổng hợp log. Xem [runbook](docs/modeling/neural_runbook.md); model NVIDIA chưa chạy đầy đủ vì local thiếu Merlin/Transformers4Rec; có RTX 3050 4GB nhưng chưa có runtime GPU tương thích. E2 cần telemetry, E4 full cần command preprocessing chung từ TV1. Chưa có kết quả experiment thật.
+Bốn task TV2 tiếp theo đã có code/config trên nhánh TV2: GRU/XLNet, matrix 11 run, collector E1–E4 và E5 tổng hợp log. GRU/XLNet đã đạt [toy GPU smoke trên WSL RTX 3050](metrics/tv2-model-smoke/README.md), gồm train/eval, checkpoint và kiểm tra che target/batch. Xem [runbook](docs/modeling/neural_runbook.md). Runtime Docker chính thức còn chờ TV3; E2 cần telemetry, E4 full cần command preprocessing chung từ TV1. Chưa có kết quả experiment thật.

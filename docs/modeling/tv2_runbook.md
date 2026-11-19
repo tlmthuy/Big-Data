@@ -1,6 +1,6 @@
 # TV2 — Chạy metric và Popularity
 
-TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); metric/Popularity đã kiểm tra toy; [GRU/XLNet và E1–E5](neural_runbook.md) có code/config, còn chờ runtime GPU và artifact TV1.
+TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); metric/Popularity đã kiểm tra toy; [GRU/XLNet](neural_runbook.md) đã đạt toy GPU smoke trên WSL laptop. E1–E5 còn chờ runtime chính thức TV3 và artifact TV1.
 
 ## File bàn giao theo task ngày 20/11
 
@@ -14,7 +14,7 @@ TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Man
 
 ## Kiểm tra nhanh trên dữ liệu toy
 
-Từ root repo, code dùng Python >= 3.10; kiểm tra local thực tế trên Python 3.13.12. Chưa xác minh runtime GPU. Hash file đọc theo chunk, không cần API Python 3.11.
+Từ root repo, code dùng Python >= 3.10; offline tests trên Python 3.13.12, GPU smoke model trên WSL Python 3.10.12. Runtime Docker chính thức chưa xác minh. Hash file đọc theo chunk, không cần API Python 3.11.
 
 ```powershell
 python -m unittest discover -s evaluation/tests -v
@@ -72,4 +72,4 @@ python -m evaluation.run_popularity --sessions data/clean/10/sessions_by_day --c
 
 `train_with_input_scan_seconds` gồm scan dữ liệu; `ranking_once_seconds` chỉ đo tạo danh sách chung một lần. Đây chưa phải phép đo inference throughput/memory E1–E5. Audit giữ session membership và distinct-item sets trong RAM; checksum quét thêm file. Cần benchmark collector/runtime của TV3 và chuẩn đo TV2 trước chạy experiment chính thức. CLI không chứng minh preprocessing/RNG đúng nguồn chỉ bằng đọc output; vẫn cần manifest GPU của TV1.
 
-Protocol: [model_protocol.md](model_protocol.md). Chưa chạy dataset thật hoặc GPU; kiểm tra tiếp nhận dữ liệu TV1 là task riêng ngày 21/11. Không coi toy là kết quả E1 hoặc xác nhận split thật.
+Protocol: [model_protocol.md](model_protocol.md). Chưa chạy dataset thật; kiểm tra tiếp nhận dữ liệu TV1 là task riêng ngày 21/11. Không coi toy GPU smoke là kết quả E1 hoặc xác nhận split thật.

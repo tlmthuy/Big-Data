@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_on": "2026-11-19",
+  "updated_on": "2026-11-20",
   "owner": "TV2",
   "recipient": "TV3",
   "checkout_ref": "feature/tv2-model-evaluation",
@@ -15,7 +15,7 @@
   "runbook": "docs/modeling/tv2_runbook.md",
   "environment_guide": "environment/README.md",
   "python_minimum": "3.10",
-  "runtime_status": "Metric/Popularity and orchestration tested offline; full GRU/XLNet failed locally due missing transformers4rec; GPU unverified",
+  "runtime_status": "GRU/XLNet full toy GPU smoke and checkpoint verification passed on WSL RTX 3050; official TV3 Docker/cloud/ETL runtime and real-data experiments pending",
   "files_sha256": {
     "evaluation/__init__.py": "47fe5c3c117acdeaee61a18885ff4e09d80d8c53d8f76cafcdb044d2775a6680",
     "evaluation/data.py": "dd8540317fdd5b86b5451bbb1cbaee345392f889434ecfa2d7a81d0473492edf",
@@ -36,7 +36,9 @@
     "scripts/runs/run_experiments.py": "31f6fa6112dce31535f0082863dfffd32502eb3ad8c10fd20343d4562fb5bbca",
     "configs/experiments.json": "41f0d244bd7cdd72480b9256285e062f073da4c05f9f5ae298362df1ac299c0c",
     "configs/site.example.json": "6435c127382391833fd964d2f66216a2eab49394b8530fb6ea9a61552948a2f3",
-    "configs/pipeline_metrics.example.json": "c7b006bb7dd916d93c1f976dedcf68fafa90632fe6125f8841e3b3f6b7cd082e"
+    "configs/pipeline_metrics.example.json": "c7b006bb7dd916d93c1f976dedcf68fafa90632fe6125f8841e3b3f6b7cd082e",
+    "environment/smoke-models.requirements.txt": "481cdaaa4a2ff742e19add953916609ce8acb6b4c78d9bf32aef6e27151918ed",
+    "scripts/runs/verify_neural_smoke.py": "2c41616112578e12c79a053245fbba96b40806ce1d58da7e76ec25d381e5c511"
   },
   "commands": [
     {
@@ -90,7 +92,7 @@
     },
     {
       "id": "gru",
-      "status": "implemented_runtime_unverified",
+      "status": "toy_gpu_verified_on_WSL_laptop",
       "argv": [
         "python",
         "-m",
@@ -130,7 +132,7 @@
     },
     {
       "id": "xlnet",
-      "status": "implemented_runtime_unverified",
+      "status": "toy_gpu_verified_on_WSL_laptop",
       "argv": [
         "python",
         "-m",
@@ -239,11 +241,11 @@
     {
       "id": "gpu-runtime",
       "owner": "TV3",
-      "status": "unverified",
+      "status": "official_TV3_runtime_unverified_local_model_smoke_passed",
       "needs": [
         "Merlin image/digest and environment snapshot",
-        "full GRU/XLNet smoke using the toy schema",
-        "actual model and preprocessing smoke logs"
+        "repeat model smoke on official TV3 image",
+        "actual preprocessing smoke logs"
       ]
     },
     {
@@ -281,7 +283,13 @@
       "metrics/tv2-model-scripts/gru-runtime/failure.json",
       "metrics/tv2-model-scripts/xlnet-runtime/failure.json"
     ],
-    "local_environment": "metrics/tv2-model-scripts/environment.json"
+    "local_environment": "metrics/tv2-model-scripts/environment.json",
+    "local_gpu_smoke": "metrics/tv2-model-smoke/README.md",
+    "local_gpu_environment": "metrics/tv2-model-smoke/environment.json",
+    "gpu_verification": [
+      "metrics/tv2-model-smoke/gru-attempt2/verification.json",
+      "metrics/tv2-model-smoke/xlnet-attempt2/verification.json"
+    ]
   },
   "limitations": [
     "Manifest is a script handoff, not a verified GPU lockfile or benchmark result.",

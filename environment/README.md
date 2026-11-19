@@ -63,6 +63,8 @@ Dockerfile chỉ bọc image ứng viên, không tự cài dependencies hoặc �
 
 ## Bản ghi runtime chính thức
 
+TV2 đã chạy GRU/XLNet trên GPU laptop trong môi trường WSL riêng (~4,04 GB, ngân sách 7 GB); [bằng chứng và command](../metrics/tv2-model-smoke/README.md), [requirements](smoke-models.requirements.txt). Đây là kiểm tra model với dữ liệu toy; bảng dưới vẫn dành cho runtime Docker/cloud/ETL chính thức của TV3.
+
 | Thông tin | Giá trị xác minh |
 | --- | --- |
 | GPU, VRAM / CPU / RAM / Ubuntu | Chưa xác minh |

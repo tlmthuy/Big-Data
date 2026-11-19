@@ -1,5 +1,13 @@
 # Handoff
 
+## TV2 — GRU/XLNet GPU smoke đạt — 20/11/2026
+
+- Thay trạng thái blocker local bên dưới: dựng môi trường model riêng trong WSL, chiếm **4.040.455.500 byte** trong ngân sách **7 GB để dựng môi trường**. Không phải mức ổ C cần chừa trống. RTX 3050, Python 3.10.12, PyTorch 1.13.1/CUDA 11.7, Merlin 23.8, source NVIDIA giữ nguyên pin.
+- Cả hai CLI train partition 1 và validation partition 2 thành công, mỗi model có prediction/metrics/checkpoint thật. Verifier đọc checkpoint, kiểm tra last-item label, che target và batch independence: **GRU PASS, XLNet PASS**. Lệnh/output/runtime tại [GPU smoke](../metrics/tv2-model-smoke/README.md). Offline tests vẫn **25/25 PASS**.
+- Pin npy-append-array 0.9.16 để tương thích NumPy 1.24.4; giữ log lỗi import attempt 1. Không đổi architecture, masking, metric hoặc experiment protocol. Checkpoint lớn không commit.
+- Hai task script GRU/XLNet đã đủ code, command và output GPU để TV3 nghiệm thu; chờ xác nhận người nhận theo quy định Done. E1–E5 vẫn cần dữ liệu/artifact TV1 và runtime chính thức TV3. Local toy smoke không thay benchmark hoặc xác nhận split thật.
+- Nhánh bàn giao: `feature/tv2-model-evaluation`. Commit thực thi model `06ba66e899f400720b44cb1b9b2feacac0590795`; commit chứng cứ/verifier được ghi bổ sung sau khi commit.
+
 ## TV2 — Kiểm tra môi trường smoke GRU/XLNet — 20/11/2026
 
 - User yêu cầu chạy smoke hai model bằng toy, không cần chờ TV1. Kiểm tra thật: laptop có RTX 3050 4096 MiB, driver 610.78; GPU nhìn thấy trong WSL Ubuntu 22.04, Python 3.10.12.
@@ -9,7 +17,7 @@
 
 ## Trạng thái hiện hành
 
-Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã chốt trong [model_protocol.md](modeling/model_protocol.md). Kiểm chứng dữ liệu thật từ TV1 là task riêng ngày 21/11, trước E1. TV3 nhận script và trạng thái sẵn sàng qua [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn môi trường](../environment/README.md). Đã có code/config GRU/XLNet/E1–E4 và E5 trên nhánh TV2; GPU runtime/full model còn chưa xác minh. Xem docs/modeling/neural_runbook.md.
+Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã chốt trong [model_protocol.md](modeling/model_protocol.md). Kiểm chứng dữ liệu thật từ TV1 là task riêng ngày 21/11, trước E1. TV3 nhận script và trạng thái sẵn sàng qua [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn môi trường](../environment/README.md). GRU/XLNet đã đạt toy GPU smoke trên laptop; code/config E1–E4 và E5 có trên nhánh TV2, runtime chính thức TV3 chưa xác minh. Xem docs/modeling/neural_runbook.md.
 
 ## TV2 — Script model và gói experiment tiếp theo — 19/11/2026
 

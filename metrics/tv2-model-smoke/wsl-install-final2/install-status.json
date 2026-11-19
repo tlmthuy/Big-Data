@@ -1,0 +1,160 @@
+[
+  {
+    "stage": "bootstrap",
+    "argv": [
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/get-pip.py",
+      "--no-cache-dir",
+      "pip==23.2.1",
+      "setuptools==68.2.2",
+      "wheel==0.41.3"
+    ],
+    "exit_code": 0,
+    "seconds": 6.842299778999973,
+    "stopped": null,
+    "environment_bytes": 4034419566
+  },
+  {
+    "stage": "cuda-wheel-0",
+    "argv": [
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "--no-cache-dir",
+      "--no-deps",
+      "nvidia-cublas-cu11==11.10.3.66"
+    ],
+    "exit_code": 0,
+    "seconds": 3.1324970150000127,
+    "stopped": null,
+    "environment_bytes": 4034419566
+  },
+  {
+    "stage": "cuda-wheel-1",
+    "argv": [
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "--no-cache-dir",
+      "--no-deps",
+      "nvidia-cudnn-cu11==8.5.0.96"
+    ],
+    "exit_code": 0,
+    "seconds": 2.4001641099999915,
+    "stopped": null,
+    "environment_bytes": 4034419566
+  },
+  {
+    "stage": "cuda-wheel-2",
+    "argv": [
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "--no-cache-dir",
+      "--no-deps",
+      "nvidia-cuda-runtime-cu11==11.7.99"
+    ],
+    "exit_code": 0,
+    "seconds": 2.4953044279999403,
+    "stopped": null,
+    "environment_bytes": 4034419566
+  },
+  {
+    "stage": "cuda-wheel-3",
+    "argv": [
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "--no-cache-dir",
+      "--no-deps",
+      "nvidia-cuda-nvrtc-cu11==11.7.99"
+    ],
+    "exit_code": 0,
+    "seconds": 2.486180754000088,
+    "stopped": null,
+    "environment_bytes": 4034419566
+  },
+  {
+    "stage": "cuda-wheel-4",
+    "argv": [
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "--no-cache-dir",
+      "--no-deps",
+      "typing-extensions==4.15.0"
+    ],
+    "exit_code": 0,
+    "seconds": 1.7192298590000519,
+    "stopped": null,
+    "environment_bytes": 4034419566
+  },
+  {
+    "stage": "cuda-wheel-5",
+    "argv": [
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "--no-cache-dir",
+      "--no-deps",
+      "torch==1.13.1"
+    ],
+    "exit_code": 0,
+    "seconds": 2.2806995500000085,
+    "stopped": null,
+    "environment_bytes": 4034419566
+  },
+  {
+    "stage": "merlin",
+    "argv": [
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "--no-cache-dir",
+      "--no-build-isolation",
+      "-r",
+      "/mnt/c/\u1ed4 D/Big Data Project/environment/smoke-models.requirements.txt"
+    ],
+    "exit_code": 0,
+    "seconds": 3.922251635000066,
+    "stopped": null,
+    "environment_bytes": 4034419566
+  },
+  {
+    "stage": "t4rec",
+    "argv": [
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "--no-cache-dir",
+      "--no-build-isolation",
+      "--no-deps",
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/nvidia-source"
+    ],
+    "exit_code": 0,
+    "seconds": 2.855223697000042,
+    "stopped": null,
+    "environment_bytes": 4040469059
+  },
+  {
+    "stage": "pip-check",
+    "argv": [
+      "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+      "-m",
+      "pip",
+      "check"
+    ],
+    "exit_code": 0,
+    "seconds": 2.352379909999968,
+    "stopped": null,
+    "environment_bytes": 4040469059
+  }
+]

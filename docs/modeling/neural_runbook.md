@@ -39,7 +39,9 @@ Mặc định D lấy từ membership đầy đủ, train 1…D−1; `--train-th
 - `--checkpoint PATH` chỉ đánh giá lại checkpoint tin cậy của nhóm; kiểm tra model, membership/catalog/schema, originating train config và checksum code rồi bỏ train. Giữ cùng input path/checksum, train config và `--train-through` khi chạy lại; metrics tách config train gốc khỏi các args evaluation.
 - `failure.json` giữ traceback/config nếu model runtime lỗi. Không đổi model để che lỗi XLNet/OOM.
 
-## GPU smoke sau khi TV3 dựng runtime
+## GPU smoke
+
+Ngày 20/11/2026, cả hai CLI đã train/eval thành công trên RTX 3050 qua WSL Ubuntu 22.04, Python 3.10.12, PyTorch 1.13.1/CUDA 11.7 và source NVIDIA đã pin. Môi trường model riêng chiếm 4.040.455.500 byte, trong ngân sách 7 GB. Xem [output và cách kiểm tra](../../metrics/tv2-model-smoke/README.md). Đây là toy GPU integration; runtime Docker/ETL và benchmark chính thức vẫn do TV3 xác minh.
 
 Chạy cả hai model với cùng lệnh sau, lần lượt đổi `--model` và run_id/output:
 
@@ -48,6 +50,8 @@ python -m evaluation.run_neural --model gru --data evaluation/tests/fixtures/ses
 ```
 
 Schema/IDs trên hoàn toàn tổng hợp. GPU smoke phải tạo prediction, metric và checkpoint; đổi target toy nhưng giữ prefix để kiểm tra prediction không phụ thuộc target trước khi dùng dataset thật. Test tự động offline có kiểm tra masking nguồn và GRU batch independence, không thay GPU integration test.
+
+Sau mỗi run, kiểm tra checkpoint thật bằng `python -m scripts.runs.verify_neural_smoke --model gru --run-path metrics/local/gru-gpu-smoke` (đổi model/path tương ứng cho XLNet). Hai model đã đạt kiểm tra label item cuối, target bị che và độc lập giữa các session trong batch.
 
 XLNet cần bộ nhớ cho activation theo batch × sequence² × layer/head và logits theo số vị trí train × vocabulary; GRU cũng có full-vocabulary logits. Không có số VRAM bảo đảm trước khi chạy. Runner ghi parameter bytes và peak CUDA allocated/reserved; collector ghi sampled process-tree RSS. Nếu batch chuẩn OOM, giữ log, trao đổi TV2 về config mới; không tự thay batch giữa E2 subsets.
 
