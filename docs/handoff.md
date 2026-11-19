@@ -249,3 +249,8 @@ Phương án bàn giao là tái tạo từ CSV nguồn cùng SHA-256. Xem [lện
 - Tài liệu [output contract](../app/output_contract.md), commit `dd22733`, nhánh `feature/tv4-demo-documentation`. Đối chiếu main `b40cd76`, code TV2 `7277b65` và cây nguồn NVIDIA đã pin.
 - Kiểm tra từ root: chạy khối `Read-only toy verification` trong tài liệu, `python3 -m unittest discover -s evaluation/tests -v` và `git diff --check`. Xác minh 31 link Markdown local trong tài liệu. Toy có 3 dòng với target hạng 1, hạng 20 và miss. Mapping khớp catalog 23 item, còn fixture UI lưu 21 item dưới dạng chuỗi encoded ID. Unittest đạt 12, skip 1 vì thiếu pyarrow.
 - Trạng thái: chờ TV2 duyệt format bàn giao, score/rank, mapping/session key và run package dùng cho demo. Hai log runtime trên nhánh TV2 báo thiếu Transformers4Rec. Chưa nghiệm thu với artifact thật và chưa đánh dấu Done.
+
+### TV4 — Tái tạo fixture demo bằng prediction toy
+
+- Commit `1ff916b` trên `feature/tv4-demo-documentation`. [README demo](../app/README.md#prediction-data) ghi lệnh chạy Popularity và export sang JSON React. [Contract](../app/output_contract.md) có ví dụ một dòng prediction toy và đề xuất target rank `null` khi miss.
+- Chạy lại CLI Popularity và exporter cho file khớp từng byte với fixture đã commit. Verify trả về 3 session, target hạng 1, hạng 20 và miss, catalog nguồn/demo đều có 23 ID gốc. Build Vite đạt, unittest đạt 12 và skip 1 do thiếu pyarrow. TV2 vẫn cần duyệt contract production.
