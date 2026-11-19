@@ -12,9 +12,20 @@ Chạy trên CSV toàn tháng để đếm được dòng thiếu session. Raw s
 
 Dùng thư mục đích mới khi chạy lại. Parquet và log đầy đủ nằm tại thư mục đích. Báo cáo nhỏ bàn giao tại `data/manifests/timestamp_session_cleanup.json`.
 
-Lần chạy trên macOS arm64 dùng DuckDB CPU để kiểm tra hai bước. Giữ ID session gốc để truy vết. Thứ tự khi timestamp trùng và số dòng sau loại lặp cần xác minh thêm trên cuDF trước khi dùng làm kết quả runtime NVIDIA. Parquet là bảng event theo tháng ở bước trung gian. Categorify, first-seen, lọc tuần và gom sequence thuộc các bước tiếp theo.
+Lần chạy trên macOS arm64 dùng DuckDB CPU. Quyết định ngày 20/11/2026
+chấp nhận DuckDB cho timestamp, cleanup và first-seen tháng, xem
+[AGENTS.md](../AGENTS.md). Giữ ID session gốc để truy vết; timestamp trùng
+theo hành vi DuckDB, không thêm khóa phụ CSV. Không cam kết output tương
+đương cuDF. Train/inference model vẫn dùng NVIDIA runtime trên GPU.
+Parquet này là bảng event tháng trung gian, chưa phải dữ liệu sequence/split
+cuối cùng. First-seen được tạo từ bảng này ở task riêng; Categorify, lọc tuần
+và gom sequence thuộc các bước tiếp theo.
 
-## Xác nhận trên runtime NVIDIA
+## Đối chiếu bổ sung trên runtime NVIDIA (tùy chọn)
+
+Đối chiếu cuDF phục vụ xác minh nguyên nhân chênh lệch, không phải điều kiện
+bắt buộc để dùng bản DuckDB đã chốt. Nếu chưa đối chiếu, giữ nguyên giới hạn
+chưa xác nhận nguyên nhân và không gọi số local là kết quả chạy cuDF.
 
 Trên VM có cuDF/NVTabular đã qua smoke test theo
 [environment/README.md](../environment/README.md), đặt `INPUT_DATA_DIR` trỏ

@@ -3,7 +3,9 @@
 Theo Notebook 01 cell 28–29, lấy `MIN(event_time_ts)` theo `product_id`
 trên 30.733.288 event tháng 10 sau bỏ session null và loại lặp, trước lọc
 tuần, sampling và split. Bảng có 166.794 product ID duy nhất, không có
-giá trị thiếu. Đã đọc lại Parquet và đối chiếu minimum cho từng sản phẩm.
+giá trị thiếu. SQL tính `MIN(event_time_ts)` theo từng `product_id`.
+Đã đọc lại Parquet để kiểm tra số dòng, khóa sản phẩm duy nhất, giá trị
+thiếu và khoảng timestamp; chưa có log đối chiếu minimum độc lập từng sản phẩm.
 
 Dùng chung `data/clean/monthly_first_seen/product_first_seen.parquet` cho
 cả bốn subset 10%, 25%, 50%, 100%. Ghép theo `product_id` và giữ
@@ -21,6 +23,8 @@ Chạy lại từ gốc repo với DuckDB trong `pipeline/requirements-audit.txt
 ```
 
 Dùng thư mục output mới khi chạy lại. [Manifest](../data/manifests/monthly_first_seen.json)
-ghi đường dẫn, checksum và số liệu lần chạy. Nguồn hiện tại là lần làm sạch
-DuckDB local. Khi có Parquet làm sạch trên cuDF, dùng report tương ứng để
-tạo lại và so sánh lookup trước khi dùng cho benchmark NVIDIA.
+ghi đường dẫn, checksum và số liệu lần chạy. Nguồn là artifact làm sạch
+DuckDB đã chốt cho ba bước notebook 01 theo [quyết định công cụ](../AGENTS.md).
+Khi bàn giao, người nhận xác nhận checksum artifact đầu vào/đầu ra khớp
+manifest. Nếu thay artifact cleanup, tạo lookup và manifest tương ứng với
+nguồn mới; chưa có bằng chứng chênh lệch 13 dòng làm thay đổi lookup hiện tại.
