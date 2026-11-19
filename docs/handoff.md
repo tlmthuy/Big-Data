@@ -1,5 +1,14 @@
 # Handoff
 
+## Toàn bộ repo NVIDIA trên nhánh reference — 19/11/2026
+
+- Theo yêu cầu của Thúy: nhánh `reference/nvidia-transformers4rec` chứa nguyên cây repo NVIDIA để đọc khi dựng code đồ án. Commit nhập nguồn: `e2859fd819c88875b7d7030478512b776d34f43e`; đã push origin, giữ parent lịch sử cũ `cf4b6043fbc881ab6f25a0fc6aa6e630c8bc97fd` bằng fast-forward, không force-push.
+- Nguồn: https://github.com/NVIDIA-Merlin/Transformers4Rec.git tại `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`. Toàn bộ 240 file Git quản lý và LICENSE Apache-2.0 giữ nguyên; tree `0cd72aa1d3abd17cd65d46b9c1314b4ea26db9a6`. Đây là bản đầy đủ file tại commit đã pin, không phải bản sao toàn bộ lịch sử Git upstream, dữ liệu ngoài Git hoặc runtime đã cài.
+- Commit hướng dẫn trên `main`: `ed993c0`. `AGENTS.md`, `README.md`, `docs/references.md` hướng dẫn đọc nhánh bằng `git show` hoặc worktree rồi viết code ở nhánh thành viên. Snapshot rút gọn và manifest cũ trên main được giữ để truy vết các đánh giá trước.
+- Worktree reference đã được tạo bằng công cụ Codex `create_worktree`, tên `nvidia-reference`, detached tại commit nhập nguồn. Vị trí tùy máy; tìm bằng `git worktree list`. Khi sandbox chỉ cho đọc checkout đồ án, dùng `git show` theo references.
+- Kiểm tra thật: `git diff --quiet reference/nvidia-transformers4rec f0ca2b5343dd1e40b5d2422b942f014b224f5c20` trả 0; cả hai tree hash bằng nhau; đếm 240 file; 16/16 SHA-256 của manifest rút gọn khớp file trong worktree đầy đủ; `git status --short` worktree rỗng; `git diff --check` đạt.
+- Chưa chạy preprocessing, model hoặc GPU benchmark trong task này. Người nhận chưa xác nhận kiểm tra; chưa đánh dấu Done chính thức theo AGENTS.md.
+
 Không ghi secret hoặc credential vào file này. Cập nhật sau mỗi bàn giao có output thật.
 
 ## Nguồn NVIDIA và protocol — 19/11/2026
