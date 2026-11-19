@@ -35,3 +35,7 @@ Thumbs.db
 
 # Personal TV2 notes (local only)
 /docs/notes-ca-nhan-thuy.md
+
+# Small raw audit summary is versioned; raw datasets remain ignored.
+!/data/raw_audit.csv
+/tmp/raw_audit_spill/

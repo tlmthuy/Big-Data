@@ -56,6 +56,7 @@ Không commit raw CSV, Parquet lớn, checkpoint, GPU log, secret hoặc credent
 | Luật đánh giá | [model_protocol.md](docs/modeling/model_protocol.md) |
 | E1–E5 | [experiment_matrix.md](docs/experiment_matrix.md) |
 | Nguồn, license và hướng dẫn đối chiếu NVIDIA | [references.md](docs/references.md) |
+| Thống kê raw trước sampling | [raw_audit.md](docs/raw_audit.md) |
 | Mô tả 9 cột dữ liệu | [data_dictionary.md](docs/data_dictionary.md) |
 | Năm quyết định preprocessing đã chốt và đối chiếu notebook 01–02 | [preprocessing_review.md](docs/preprocessing_review.md) |
 | Bàn giao | [handoff.md](docs/handoff.md) |
