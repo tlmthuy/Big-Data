@@ -1,6 +1,6 @@
-# Runbook chi tiết cho 4 thành viên
+# Runbook chi tiết cho 5 thành viên
 
-Lịch và phạm vi chính thức: [AGENTS.md](../AGENTS.md). File này giữ hướng dẫn thực thi; các cột deadline cũ đã bỏ để tránh lệch lịch.
+Lịch và phạm vi chính thức: [AGENTS.md](../AGENTS.md). File này giữ hướng dẫn thực thi và lịch chi tiết TV4/TV5 theo ảnh phân công cập nhật ngày 20/11/2026.
 
 File này bổ sung hướng dẫn thực thi cho bảng giao việc. Mỗi task phải có đúng ba thứ khi bàn giao: **lệnh chạy**, **output thật** và **cách kiểm tra output**.
 
@@ -43,7 +43,7 @@ Chưa Done chính thức: người nhận cần tái tạo/nhận artifact thậ
 | Giao script E1 | TV3 chạy ba model | Giao command cụ thể cho Popularity, GRU, XLNet. Ghi rõ cái nào chạy sequential, cái nào cần dọn VRAM/restart kernel. |
 | Giao script E2–E4 | TV3 chạy đúng matrix | Đóng gói run scripts hoặc config files. Không yêu cầu TV3 sửa Python để đổi subset/resource. Mọi thay đổi phải quay lại TV2. |
 | Phân tích E1–E5 | Có bảng/kết luận/limitations | Từ raw logs, tính mean/std nếu có lặp, so model, tính runtime trên một triệu event, vẽ scaling curve và nêu bottleneck. Không lấy số tutorial làm số nhóm. |
-| Chốt metrics cho TV4 | Có metrics package chính thức | Gửi CSV/JSON có run_id, config, metric, source log và ghi chú run bị loại. TV4 chỉ dùng package này để làm report. |
+| Chốt metrics cho TV4/TV5 | Có metrics package chính thức | Gửi cả hai CSV/JSON có run_id, config, metric, đơn vị, source log và ghi chú run bị loại. TV4 dùng package để tạo figures; TV5 dùng để tạo bảng và viết report/slides. Số liệu bổ sung phải được TV2 xác nhận. |
 | Reproduce/Q&A | Một command chạy lại được | Nhờ thành viên khác chạy evaluation từ checkpoint hoặc output đã lưu. Chuẩn bị trả lời về ground truth, leakage, K, candidate catalog, GRU và XLNet. |
 
 ## TV3 — Môi trường và vận hành run
@@ -64,17 +64,40 @@ Chưa Done chính thức: người nhận cần tái tạo/nhận artifact thậ
 | Bàn giao logs | TV2 xác nhận đủ | Gửi thư mục logs, raw CSV/JSON, config, environment snapshot và ghi chú cache/warm-up. TV2 phải reply xác nhận thiếu gì trước khi TV3 đóng task. |
 | Reproduce/cleanup | Một run chạy lại, cloud dừng | Chạy lại đúng một run chính theo README. Sau khi nhóm xác nhận, stop/terminate resource và lưu cleanup record. |
 
-## TV4 — Demo, tích hợp, report và slide
+## TV4 — Demo & hỗ trợ report
 
-| Task | Yêu cầu đầu ra (done gate) | Ghi chú thực thi cụ thể |
+TV4 làm trên `feature/tv4-demo-documentation`. Trong ảnh, `demo/` và `figures/` tương ứng với `app/` và `reports/figures/` của repo. README demo đặt tại `app/README.md`; references và AI statement dùng các file hiện có trong `docs/`.
+
+| Deadline | Task | Yêu cầu đầu ra và cách kiểm tra |
 | --- | --- | --- |
-| Tạo cấu trúc demo/report | Có README khung và outline | Tạo thư mục app, reports, figures, references. Tích hợp nghĩa là nối input session → inference command/file → top-20 output → UI, không sửa model. |
-| Chốt prediction contract | Có sample input/output | Nhận từ TV2 tên field session, product ID, score, rank, target thật và model name. Lưu một JSON mẫu được TV2 xác nhận. |
-| Tạo template bảng/hình | Có cột, đơn vị, run_id | Tạo template E1–E5 nhưng để trống số liệu. Mỗi hình phải có title, axis unit, legend và source run_id. |
-| Theo dõi logs | Có draft caption/figure | Nhận raw logs từ TV3 nhưng không tự kết luận. Chỉ ghi chú nguồn, cấu hình, warm-up và câu hỏi cần TV2 xác nhận. |
-| Nhận metrics chính thức | Có metrics package | Chỉ dùng số liệu TV2 đã chốt. Nếu report cần số khác, hỏi TV2 thay vì tự tính một cách khác. |
-| Tích hợp inference demo | Session → top-20 → target thật | Dùng checkpoint/output đã bàn giao. Xử lý loading, lỗi, session lạ và mapping product ID. Không retrain trong request. |
-| Viết results/limitations | Report draft có phân tích | Mỗi kết luận phải nối được với experiment, bảng/hình, số đo và limitation. Đối chiếu [yêu cầu môn học](course_requirements.txt). |
-| Hoàn thiện report | Report tiếng Anh hoàn chỉnh | Bao gồm dataset/5V, sampling, preprocessing, environment, model, E1–E5, demo, limitations, references, license và AI statement. |
-| Hoàn thiện slide/script | Đủ 15 phút + Q&A 5 phút | Mỗi thành viên có phần nói, số liệu trên slide khớp report và metrics package. |
-| Rehearsal/fallback | Demo fallback và rehearsal đạt thời lượng | Chuẩn bị video/screenshot hoặc prediction output tĩnh nếu live demo lỗi. |
+| 19/11 | Tạo khung demo, README demo và figures | Khung `app/`, `app/README.md`, `reports/figures/`; mô tả session → inference command/file → top-20 → UI. |
+| 20/11 | Đọc output contract | Liệt kê input, prediction, score, rank, target thật, session/product ID và model name; đối chiếu với TV2. |
+| 21/11 | Tạo prediction JSON/CSV mẫu | Sample input/output được TV2 xác nhận format; kiểm tra mapping về product ID gốc. |
+| 22/11 | Chuẩn bị script/khung code tạo figures | Script đọc metrics package; mỗi hình có title, axis unit, legend và source run_id; chưa điền số liệu giả. |
+| 25/11 | Chuẩn bị figure templates và caption kỹ thuật | Template/caption nêu rõ metric, đơn vị, cấu hình và nguồn; gửi TV5 để thống nhất với report. |
+| 26/11 | Hỗ trợ kiểm tra run_id và đầu vào figures | Đối chiếu run_id, config, nguồn số liệu với TV2/TV5; liệt kê điểm chưa được TV2 xác nhận. |
+| 27/11 | Tích hợp inference, xây dựng UI, kiểm thử | Demo hiển thị history, top-20 và target thật; kiểm tra loading, lỗi, session lạ và mapping; dùng checkpoint/output bàn giao, không retrain trong request. |
+| 28/11 | Tạo figures chính thức; chuẩn bị demo fallback | Chỉ dùng metrics TV2 đã chốt; bàn giao figures/caption/source run_id cho TV5; có video/screenshot hoặc prediction output tĩnh dự phòng. |
+| 28/11 | Chuẩn hóa references, dataset/repo/license, AI statement; thiết kế hình cho slides | Đối chiếu nguồn và license; gửi references/AI statement cùng hình minh họa cho TV5 tích hợp vào report/slides. |
+| 28/11 | Tập live demo, fallback và Q&A kỹ thuật | Chạy thử demo/fallback, chuẩn bị trả lời về input/output, inference và cách chạy lại. |
+
+## TV5 — Report & Results
+
+TV5 làm trên `feature/tv5-report-results`. Trong ảnh, `report/` và `slides/` tương ứng với `reports/` và `reports/slides/`; bảng ở `reports/tables/`. Đây là đường dẫn đầu ra được phân công, không có nghĩa các artifact đã hoàn thành.
+
+| Deadline | Task | Yêu cầu đầu ra và cách kiểm tra |
+| --- | --- | --- |
+| 19/11 | Tạo khung report/slides và outline | Khung `reports/`, `reports/slides/`, report outline và slide outline; đối chiếu [yêu cầu môn học](course_requirements.txt). |
+| 20/11 | Xem yêu cầu E1–E5, xác định cấu trúc metric và bảng | Liệt kê experiment, metric, đơn vị, run_id và nguồn log cần cho report theo [experiment matrix](experiment_matrix.md). |
+| 21/11 | Kiểm tra format đầu ra | Đối chiếu output contract/metrics với thông tin cần viết report; gửi TV2 danh sách field thiếu để xác nhận. |
+| 22/11 | Tạo template bảng E1–E5 | Có metric, đơn vị, run_id và caption; để trống số liệu tới khi có run thật được xác nhận. |
+| 25/11 | Đọc raw logs, chuẩn bị table captions và nguồn log | Ghi source log, config, warm-up/cache và câu hỏi cần TV2 xác nhận; chưa dùng raw logs chưa duyệt làm kết luận chính thức. |
+| 26/11 | Đối chiếu logs với TV2 | Liệt kê số liệu cần xác nhận, run lỗi/bị loại; phối hợp TV4 kiểm tra run_id và đầu vào figures. |
+| 27/11 | Nhận metrics package chính thức, kiểm tra E1–E5 | Kiểm tra đủ experiment, metric, đơn vị, config và source run_id; chỉ dùng số liệu TV2 chốt, yêu cầu TV2 xác nhận số bổ sung. |
+| 28/11 | Viết results, limitations và reproducibility | Mỗi kết luận truy được về experiment, bảng/hình, số đo và limitation; cách chạy lại khớp code/config và log thực tế. |
+| 28/11 | Hoàn thiện report tiếng Anh và nội dung slides | Bao gồm dataset/5V, sampling, preprocessing, environment, model, E1–E5, demo và limitations; tích hợp figures/references/license/AI statement từ TV4; số liệu report/slides khớp metrics package. |
+| 28/11 | Tập thuyết trình results, limitations và Q&A học thuật | Phối hợp cả 5 thành viên chia phần nói; tổng thuyết trình 15 phút + Q&A 5 phút, gồm phần live demo của TV4. |
+
+### Luồng bàn giao TV2 → TV4/TV5
+
+TV2 chốt protocol, phân tích và metrics package; TV3 cung cấp raw logs và environment snapshot để TV2 xác nhận. TV4 và TV5 cùng dùng một package chính thức: TV4 tạo figures/demo, TV5 tạo bảng và viết report/slides. TV4 chuyển figures/caption/references/license/AI statement cho TV5; TV5 đối chiếu report/slides với package và gửi các điểm cần xác nhận về TV2. Ghi output, command/cách kiểm tra, commit và xác nhận của người nhận vào [handoff.md](handoff.md); lịch trên là kế hoạch, không phải trạng thái Done.
