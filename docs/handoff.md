@@ -6,6 +6,13 @@ Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã ch
 
 ## Bàn giao demo React/Vite — 20/11/2026
 
+**Cập nhật sau review:** Người dùng duyệt tích hợp phần đã làm, giữ UI ở
+trạng thái bản nháp. Các mô tả behavior bên dưới là mục tiêu; lỗi ID gốc,
+catalog thiếu item, ẩn context khi chọn model chưa có output và xử lý data
+rỗng được theo dõi tại [app/TODO.md](../app/TODO.md), không chặn lần tích hợp
+này. Chưa nghiệm thu UI hoàn chỉnh hoặc inference thật. Report/slide outline
+thuộc TV5 theo phân công cập nhật trên main.
+
 - Commit implementation: `e90b0eb`.
 - Files created/updated:
   - `app/package.json`, `app/package-lock.json`, `app/index.html`

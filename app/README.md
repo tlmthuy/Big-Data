@@ -3,6 +3,11 @@
 
 React + Vite demo for session-based next-item recommendation.
 
+Status: draft UI with toy data, accepted for integration on 20/11/2026.
+The display protocol below describes the intended behavior; known ID/catalog
+and unavailable-model display issues remain. See [TODO.md](TODO.md) for the
+review findings, TV2 dependencies and checks required before UI acceptance.
+
 ## Run locally
 
 ```bash
