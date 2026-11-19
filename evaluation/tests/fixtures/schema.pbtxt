@@ -1,0 +1,8 @@
+# Synthetic schema for runtime smoke only, not an eCommerce fitted artifact.
+feature {
+  name: "product_id-list"
+  type: INT
+  int_domain { min: 0 max: 99 is_categorical: true }
+  value_count { min: 2 max: 20 }
+  annotation { tag: "item_id" tag: "item" tag: "list" tag: "categorical" }
+}

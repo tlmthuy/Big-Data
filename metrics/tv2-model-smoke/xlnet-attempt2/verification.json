@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "model": "xlnet",
+  "scope": "synthetic GPU smoke only",
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "last_item_labels": "passed",
+  "target_hidden": "passed",
+  "batch_independence": "passed",
+  "counterfactual_max_score_diff": 0.0,
+  "batch_max_score_diff": 7.450580596923828e-08,
+  "original_run_id": "xlnet-gpu-smoke",
+  "evaluated_sessions": 3
+}

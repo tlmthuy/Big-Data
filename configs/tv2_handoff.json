@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "updated_on": "2026-11-19",
+  "updated_on": "2026-11-20",
   "owner": "TV2",
   "recipient": "TV3",
   "tv1_intermediate_data_handoff": "data/manifests/tv1_data_handoff.json",
   "checkout_ref": "main",
-  "reviewed_base_commit": "f0df09d82a2d11ce1b1baa6e202bc9eaf66cf872",
+  "reviewed_base_commit": "b40cd761d539acb8eebed9c7cafedcecc30f7401",
   "resolve_run_commit_argv": [
     "git",
     "rev-parse",
@@ -16,17 +16,23 @@
   "runbook": "docs/modeling/tv2_runbook.md",
   "environment_guide": "environment/README.md",
   "python_minimum": "3.10",
-  "runtime_status": "CPU/toy verified on local Python; GPU image and package versions unverified",
+  "runtime_status": "GRU/XLNet full toy GPU smoke and checkpoint verification passed on WSL RTX 3050; official TV3 Docker/cloud/ETL runtime and real-data experiments pending",
   "files_sha256": {
     "evaluation/__init__.py": "47fe5c3c117acdeaee61a18885ff4e09d80d8c53d8f76cafcdb044d2775a6680",
-    "evaluation/data.py": "e6221332f03fe37f09760c092c4aa58704c2226dbc1ecbfecd3b155686d5897f",
+    "evaluation/data.py": "dd8540317fdd5b86b5451bbb1cbaee345392f889434ecfa2d7a81d0473492edf",
     "evaluation/ranking.py": "8c744e95d50cc8d6425aad412e4bc3d80389e465d70dd1e4fde39b26fc0e151d",
-    "evaluation/run_popularity.py": "2a8b1106641bec53176b5f9da81d635caac7b382bda67c30e641da2597921889",
+    "evaluation/run_popularity.py": "95e6ad517ceecb19b51747590b1fec46486616b158d6b57ea4e3e0ba54cc81a3",
     "evaluation/tests/test_tv2.py": "faac36de68c8a93508081e96cc9cd9269f2a3dfa4d518881c19fb3042397941f",
     "evaluation/tests/fixtures/catalog.json": "a1ae9388c355a4f5dcdacd52f87b521351caac4c69119b2e17b87d7dc467c184",
     "evaluation/tests/fixtures/sessions.jsonl": "8274e3a6edd2c836f83d238bc4725b8fbb91ee19eca9f1b85ad06417817122de",
     "models/__init__.py": "b6942e7ed99420bbf98752e33183b998d3ebc02de646b33588380d20f91e99e9",
-    "models/popularity.py": "f69973f644522e1d2cb427053ea844ca707950d4fa1ad63830996449a27bfc9c"
+    "models/popularity.py": "f69973f644522e1d2cb427053ea844ca707950d4fa1ad63830996449a27bfc9c",
+    "models/session_models.py": "5e6c6ab87cc7f1959b86d01452ee391fab14f0ba6649f4a112e43b94b96e4c6c",
+    "evaluation/run_neural.py": "8d3c16ac12e0b6b9cac0291d39281f1713d87d47a798e9f309f7c9eb2d916195",
+    "evaluation/tests/test_neural.py": "bcade4b890e9c30b6a2a325ed88cd42771079b7a9575211bb5f81d9b8590f831",
+    "evaluation/tests/fixtures/schema.pbtxt": "c2405d7751b184ec9a4a975a4163818acbfd1926fa89e43e95e041ade77ea067",
+    "environment/smoke-models.requirements.txt": "481cdaaa4a2ff742e19add953916609ce8acb6b4c78d9bf32aef6e27151918ed",
+    "scripts/runs/verify_neural_smoke.py": "2c41616112578e12c79a053245fbba96b40806ce1d58da7e76ec25d381e5c511"
   },
   "commands": [
     {
@@ -77,6 +83,86 @@
         "predictions.jsonl",
         "popularity.json"
       ]
+    },
+    {
+      "id": "gru",
+      "status": "toy_gpu_verified_on_WSL_laptop",
+      "argv": [
+        "python",
+        "-m",
+        "evaluation.run_neural",
+        "--model",
+        "gru",
+        "--data",
+        "{sessions}",
+        "--schema",
+        "{schema}",
+        "--catalog",
+        "{catalog}",
+        "--batch-size",
+        "256",
+        "--eval-batch-size",
+        "32",
+        "--epochs",
+        "3",
+        "--seed",
+        "1",
+        "--split",
+        "validation",
+        "--subset",
+        "{subset}",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output_dir}"
+      ],
+      "outputs": [
+        "checkpoint.pt",
+        "predictions.jsonl",
+        "metrics.json",
+        "validation-dayN.jsonl"
+      ],
+      "requires": "actual fitted TV1 schema/catalog/membership plus compatible TV3 model runtime"
+    },
+    {
+      "id": "xlnet",
+      "status": "toy_gpu_verified_on_WSL_laptop",
+      "argv": [
+        "python",
+        "-m",
+        "evaluation.run_neural",
+        "--model",
+        "xlnet",
+        "--data",
+        "{sessions}",
+        "--schema",
+        "{schema}",
+        "--catalog",
+        "{catalog}",
+        "--batch-size",
+        "256",
+        "--eval-batch-size",
+        "32",
+        "--epochs",
+        "3",
+        "--seed",
+        "1",
+        "--split",
+        "validation",
+        "--subset",
+        "{subset}",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output_dir}"
+      ],
+      "outputs": [
+        "checkpoint.pt",
+        "predictions.jsonl",
+        "metrics.json",
+        "validation-dayN.jsonl"
+      ],
+      "requires": "actual fitted TV1 schema/catalog/membership plus compatible TV3 model runtime"
     }
   ],
   "pending": [
@@ -95,18 +181,12 @@
     {
       "id": "gpu-runtime",
       "owner": "TV3",
-      "status": "unverified",
+      "status": "official_TV3_runtime_unverified_local_model_smoke_passed",
       "needs": [
         "Merlin image tag/digest",
         "hardware and package snapshot",
         "GPU preprocessing/model smoke logs"
       ]
-    },
-    {
-      "id": "gru-xlnet",
-      "owner": "TV2",
-      "status": "not_implemented",
-      "command": null
     },
     {
       "id": "E1-E4",
@@ -130,12 +210,21 @@
   "evidence": {
     "test_log": "metrics/tv2-environment-sync-tests.txt",
     "historical_toy_metrics": "metrics/tv2-toy-day1/metrics.json",
-    "historical_toy_commit": "04cb5135079707ce4dbdcc09146e7f274b9c3bc7"
+    "historical_toy_commit": "04cb5135079707ce4dbdcc09146e7f274b9c3bc7",
+    "local_gpu_smoke": "metrics/tv2-model-smoke/README.md",
+    "local_gpu_environment": "metrics/tv2-model-smoke/environment.json",
+    "gpu_verification": [
+      "metrics/tv2-model-smoke/gru-attempt2/verification.json",
+      "metrics/tv2-model-smoke/xlnet-attempt2/verification.json"
+    ]
   },
   "limitations": [
     "Manifest is a script handoff, not a GPU environment lockfile or experiment run registry.",
     "Historical toy metrics retain original commit and hashes.",
     "TV3 runs handed-off commands; protocol/config changes belong to TV2."
   ],
-  "checksum_normalization": "Replace CRLF bytes with LF before SHA-256 (UTF-8 text files); independent of checkout line endings."
+  "checksum_normalization": "Replace CRLF bytes with LF before SHA-256 (UTF-8 text files); independent of checkout line endings.",
+  "neural_runbook": "docs/modeling/neural_runbook.md",
+  "neural_implementation_commit": "ea717d91b28f252e845aeb1bf97c3cda6baa7ec0",
+  "neural_gpu_evidence_commit": "b2cbb39bcc9deb3d865139a6635ff676f04e197f"
 }

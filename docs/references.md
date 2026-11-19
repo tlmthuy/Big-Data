@@ -7,6 +7,8 @@
 
 Pin commit and license in this file when external code is adopted.
 
+GRU/XLNet: `models/session_models.py` adapts notebook 03 at the pinned commit below (Apache-2.0). [Neural runbook](modeling/neural_runbook.md) records exact cells/modules/tests and changes: batch-first GRU, product-only PyArrow/JSONL input, explicit PyTorch loop, daily weight/optimizer continuation and LR reset, fixed catalog ranking. [Full toy GPU smoke](../metrics/tv2-model-smoke/README.md) passed on WSL RTX 3050; official Docker/cloud/ETL runtime and real-data benchmarks remain pending.
+
 ## NVIDIA tutorial và mã nguồn liên quan
 
 - Notebook 03: https://nvidia-merlin.github.io/Transformers4Rec/stable/examples/tutorial/03-Session-based-recsys.html

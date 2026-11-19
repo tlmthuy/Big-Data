@@ -1,0 +1,177 @@
+{
+  "run_id": "xlnet-gpu-smoke",
+  "model": "xlnet",
+  "subset": "toy",
+  "K": 20,
+  "train_days": [
+    1
+  ],
+  "eval_day": 2,
+  "eval_split": "validation",
+  "final": {
+    "day_index": 2,
+    "split": "validation",
+    "n_sessions": 3,
+    "Recall@20": 1.0,
+    "NDCG@20": 0.2738076338651814,
+    "recall_sum": 3.0,
+    "ndcg_sum": 0.8214229015955443,
+    "inference_seconds": 0.01932054899987179,
+    "evaluation_with_io_seconds": 0.051518022999971436
+  },
+  "history": [
+    {
+      "train": {
+        "day_index": 1,
+        "n_sessions": 1,
+        "updates": 1,
+        "mean_step_loss": 4.436546325683594,
+        "train_with_input_scan_seconds": 1.6018620199999987
+      },
+      "validation": {
+        "day_index": 2,
+        "split": "validation",
+        "n_sessions": 3,
+        "Recall@20": 1.0,
+        "NDCG@20": 0.2738076338651814,
+        "recall_sum": 3.0,
+        "ndcg_sum": 0.8214229015955443,
+        "inference_seconds": 0.06626674999984061,
+        "evaluation_with_io_seconds": 0.09022466499993698
+      }
+    }
+  ],
+  "n_sessions": 3,
+  "Recall@20": 1.0,
+  "NDCG@20": 0.2738076338651814,
+  "recall_sum": 3.0,
+  "ndcg_sum": 0.8214229015955443,
+  "train_with_input_scan_seconds": 1.6018620199999987,
+  "inference_seconds": 0.01932054899987179,
+  "inference_scope": "testing forward (mask/labels/loss) plus real-catalog ranking and IDs transfer; excludes input packing and file IO",
+  "peak_cuda_allocated_bytes": 17912320,
+  "peak_cuda_reserved_bytes": 18874368,
+  "parameter_bytes": 4130816,
+  "config": {
+    "model": "xlnet",
+    "data": "evaluation/tests/fixtures/sessions.jsonl",
+    "schema": "evaluation/tests/fixtures/schema.pbtxt",
+    "catalog": "evaluation/tests/fixtures/catalog.json",
+    "split": "validation",
+    "train_through": 1,
+    "batch_size": 2,
+    "eval_batch_size": 2,
+    "epochs": 1,
+    "seed": 1,
+    "learning_rate": 0.000666,
+    "device": "cuda",
+    "subset": "toy",
+    "run_id": "xlnet-gpu-smoke",
+    "output": "metrics/tv2-model-smoke/xlnet-attempt2",
+    "config_frozen": false,
+    "check_inputs": false,
+    "checkpoint": null
+  },
+  "artifacts": {
+    "sessions": {
+      "path": "evaluation/tests/fixtures/sessions.jsonl",
+      "sha256": "b4937c7ae3a45cfd0c4c6b3bfd8679c40865cbcccc02c76cacae68b6436a1d4e"
+    },
+    "catalog": {
+      "path": "evaluation/tests/fixtures/catalog.json",
+      "sha256": "cabb3075529b72fc3a075e73e1edd07f9e846858063b0972f730ecf17de894fe"
+    },
+    "schema": {
+      "path": "evaluation/tests/fixtures/schema.pbtxt",
+      "sha256": "85b1038cdf140d591da7a60398449f32dd101d63a6ee9190551d011337274b6b"
+    }
+  },
+  "split_counts": [
+    {
+      "day_index": 1,
+      "split": "train",
+      "n_sessions": 1,
+      "n_items": 3
+    },
+    {
+      "day_index": 1,
+      "split": "validation",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 1,
+      "split": "test",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 2,
+      "split": "train",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 2,
+      "split": "validation",
+      "n_sessions": 3,
+      "n_items": 4
+    },
+    {
+      "day_index": 2,
+      "split": "test",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 3,
+      "split": "train",
+      "n_sessions": 0,
+      "n_items": 0
+    },
+    {
+      "day_index": 3,
+      "split": "validation",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 3,
+      "split": "test",
+      "n_sessions": 0,
+      "n_items": 0
+    }
+  ],
+  "training_config": {
+    "model": "xlnet",
+    "batch_size": 2,
+    "epochs": 1,
+    "seed": 1,
+    "learning_rate": 0.000666
+  },
+  "training_source_sha256": {
+    "models/session_models.py": "fd3d5a533714fd29dc556160657fa5597cf83da3b80e1f51365d1fb5d1acf4c1",
+    "evaluation/run_neural.py": "9655bc8d7985fa6adfb0e5da0b7798fc92ffd400449df6c97235463e4aeba3fe",
+    "evaluation/data.py": "9d436b177c09b8da5f7df0ef864e2b7c4a2df08923a80f37a9470d1de8910e36"
+  },
+  "source_commit": "f0ca2b5343dd1e40b5d2422b942f014b224f5c20",
+  "loader": "fixed-order streaming PyArrow/JSONL; no shuffle",
+  "git_commit": "06ba66e899f400720b44cb1b9b2feacac0590795",
+  "source_sha256": {
+    "models/session_models.py": "fd3d5a533714fd29dc556160657fa5597cf83da3b80e1f51365d1fb5d1acf4c1",
+    "evaluation/run_neural.py": "9655bc8d7985fa6adfb0e5da0b7798fc92ffd400449df6c97235463e4aeba3fe",
+    "evaluation/data.py": "9d436b177c09b8da5f7df0ef864e2b7c4a2df08923a80f37a9470d1de8910e36",
+    "evaluation/ranking.py": "a8c34ada6c8408934f2fa3ee594254807456589051d4ed8941150b4094c1e7b2"
+  },
+  "python": "3.10.12",
+  "packages": {
+    "torch": "1.13.1",
+    "transformers": "4.30.2",
+    "transformers4rec": "0+unknown",
+    "merlin-core": "23.8.0",
+    "pyarrow": "11.0.0"
+  },
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "cuda": "11.7"
+}

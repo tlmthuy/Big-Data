@@ -69,7 +69,7 @@ Không commit raw CSV, Parquet lớn, checkpoint, GPU log, secret hoặc credent
 
 Tám bản bối cảnh/đề xuất cũ được giữ nguyên trong [context-history.zip](docs/archive/context-history.zip), chỉ mở khi cần tra lịch sử. Phạm vi và lịch hiện hành lấy từ AGENTS.md.
 
-## Trạng thái hiện tại — 19/11/2026
+## Trạng thái hiện tại — 20/11/2026
 
 Đã tích hợp năm task TV2: protocol split/lịch test cuối, catalog/K=20, Recall@20, NDCG@20 và Popularity. Review code và 13 toy test đạt; file bàn giao từng task tại [TV2 runbook](docs/modeling/tv2_runbook.md). Kiểm tra tiếp nhận dữ liệu thật từ TV1 là task riêng ngày 21/11 trước E1.
 
@@ -77,7 +77,9 @@ Tám bản bối cảnh/đề xuất cũ được giữ nguyên trong [context-h
 
 Raw CSV và danh sách session lớn vẫn ở máy TV1. Phương án bàn giao hiện tại là người nhận tái tạo từ raw cùng SHA-256 theo [hướng dẫn](docs/raw_subsets.md#người-nhận-tái-tạo-và-xác-nhận), đối chiếu rồi ghi xác nhận vào [handoff](docs/handoff.md). Ba task chưa được đánh dấu Done chính thức vì còn chờ kiểm tra độc lập trên dữ liệu thật.
 
-Chưa có xác nhận chạy preprocessing NVIDIA, sequence/split, GPU model hoặc E1–E5. Mọi kết quả thực nghiệm phải được ghi bằng `run_id`, commit, seed, cấu hình, phần cứng, phiên bản thư viện và đường dẫn output.
+Hai task script **GRU và XLNet** đã tích hợp vào main: [CLI](evaluation/run_neural.py), [model](models/session_models.py), [hướng dẫn](docs/modeling/neural_runbook.md), [GPU smoke đạt](metrics/tv2-model-smoke/README.md). Matrix/config/runner E1–E5 vẫn ở nhánh TV2.
+
+Chưa có xác nhận sequence/split cuối hoặc benchmark E1–E5 trên dữ liệu thật. Mọi kết quả thực nghiệm phải được ghi bằng `run_id`, commit, seed, cấu hình, phần cứng, phiên bản thư viện và đường dẫn output.
 
 ## Demo
 

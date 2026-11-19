@@ -1,0 +1,25 @@
+{
+  "run_id": "xlnet-gpu-smoke",
+  "model": "xlnet",
+  "traceback": "Traceback (most recent call last):\n  File \"/mnt/c/Ổ D/Big Data Project/evaluation/run_neural.py\", line 179, in run\n    return execute(args, catalog, counts, artifacts)\n  File \"/mnt/c/Ổ D/Big Data Project/evaluation/run_neural.py\", line 201, in execute\n    model = build_model(args.model, args.schema, catalog).to(device)\n  File \"/mnt/c/Ổ D/Big Data Project/models/session_models.py\", line 18, in build_model\n    import transformers4rec.torch as tr\n  File \"/root/.local/share/big-data-recsys/model-smoke-20261120/lib/python3.10/site-packages/transformers4rec/torch/__init__.py\", line 34, in <module>\n    from .block.base import Block, BlockBase, SequentialBlock, build_blocks, right_shift_block\n  File \"/root/.local/share/big-data-recsys/model-smoke-20261120/lib/python3.10/site-packages/transformers4rec/torch/block/base.py\", line 24, in <module>\n    from merlin.models.utils.misc_utils import filter_kwargs\n  File \"/root/.local/share/big-data-recsys/model-smoke-20261120/lib/python3.10/site-packages/merlin/models/utils/misc_utils.py\", line 25, in <module>\n    from merlin.io.dataset import Dataset\n  File \"/root/.local/share/big-data-recsys/model-smoke-20261120/lib/python3.10/site-packages/merlin/io/__init__.py\", line 18, in <module>\n    from merlin.io import dataframe_iter, dataset, shuffle\n  File \"/root/.local/share/big-data-recsys/model-smoke-20261120/lib/python3.10/site-packages/merlin/io/dataset.py\", line 33, in <module>\n    from npy_append_array import NpyAppendArray\n  File \"/root/.local/share/big-data-recsys/model-smoke-20261120/lib/python3.10/site-packages/npy_append_array/__init__.py\", line 1, in <module>\n    from .npy_append_array import NpyAppendArray, recover, ensure_appendable, is_appendable\n  File \"/root/.local/share/big-data-recsys/model-smoke-20261120/lib/python3.10/site-packages/npy_append_array/npy_append_array.py\", line 3, in <module>\n    from .format import _read_array_header, _write_array_header, write_array\n  File \"/root/.local/share/big-data-recsys/model-smoke-20261120/lib/python3.10/site-packages/npy_append_array/format.py\", line 5, in <module>\n    from numpy.lib.format import header_data_from_array_1_0, isfileobj\nImportError: cannot import name 'isfileobj' from 'numpy.lib.format' (/root/.local/share/big-data-recsys/model-smoke-20261120/lib/python3.10/site-packages/numpy/lib/format.py)\n",
+  "config": {
+    "model": "xlnet",
+    "data": "evaluation/tests/fixtures/sessions.jsonl",
+    "schema": "evaluation/tests/fixtures/schema.pbtxt",
+    "catalog": "evaluation/tests/fixtures/catalog.json",
+    "split": "validation",
+    "train_through": 1,
+    "batch_size": 2,
+    "eval_batch_size": 2,
+    "epochs": 1,
+    "seed": 1,
+    "learning_rate": 0.000666,
+    "device": "cuda",
+    "subset": "toy",
+    "run_id": "xlnet-gpu-smoke",
+    "output": "metrics/tv2-model-smoke/xlnet-attempt1",
+    "config_frozen": false,
+    "check_inputs": false,
+    "checkpoint": null
+  }
+}
