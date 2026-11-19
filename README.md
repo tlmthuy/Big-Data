@@ -13,6 +13,8 @@ Repo khung chính thức cho đồ án Big Data in Cloud Computing của nhóm.
 
 Preprocessing đã chốt theo tutorial NVIDIA ngày 19/11/2026: source sort không thêm khóa phụ CSV, giữ 20 item cuối, session qua ngày giữ nguyên rồi tính day_index theo nguồn, fit workflow trên tuần trước split, first-seen trên tháng trước lọc tuần. Catalog chung lấy từ vocabulary tuần của từng subset; Popularity và trọng số model chỉ học train. Chi tiết và code cell: [preprocessing_review.md](docs/preprocessing_review.md).
 
+Toàn bộ mã nguồn NVIDIA được giữ nguyên trên nhánh `reference/nvidia-transformers4rec` tại commit nguồn đã pin. Khi dựng code đồ án, đọc nguồn bằng `git show` hoặc worktree riêng theo [hướng dẫn tra cứu NVIDIA](docs/references.md#đọc-nguồn-khi-đang-làm-code-đồ-án).
+
 ## Bắt đầu
 
 1. Đọc [AGENTS.md](AGENTS.md) trước khi sửa code hoặc chốt thiết kế.
@@ -30,7 +32,7 @@ configs/              Config model, subset, resource, experiment
 data/                 Manifest/schema; raw và Parquet không commit
 docs/                 Protocol, experiment matrix, handoff, references
   modeling/           Bài toán, so sánh model và protocol
-  vendor/             Snapshot NVIDIA có license và manifest
+  vendor/             Snapshot NVIDIA rút gọn có license và manifest
   archive/            Tài liệu lịch sử đã đóng gói
 environment/          Dockerfile, environment.yml, hướng dẫn cài đặt
 evaluation/           Recall@20, NDCG@20 và lệnh đánh giá

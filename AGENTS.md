@@ -73,7 +73,7 @@ Nhóm được chỉnh đường dẫn, sampling, split, config, output và các
 
 ## 5\. Môi trường chạy
 
-Khi dựng hoặc sửa preprocessing, GRU, XLNet hay evaluation, đọc `docs/references.md`, kiểm tra manifest nguồn trong `docs/vendor/nvidia-transformers4rec/` nếu đã tải, rồi đối chiếu notebook và mã nguồn liên quan trước khi triển khai. Ghi đường dẫn nguồn và thay đổi so với NVIDIA trong phần bàn giao. Các quy định dataset, sampling, split và catalog của đồ án trong file này có ưu tiên cao hơn tutorial.
+Khi dựng hoặc sửa preprocessing, GRU, XLNet hay evaluation, đọc `docs/references.md` và đối chiếu notebook, mã thư viện, test liên quan trong toàn bộ repo NVIDIA trên nhánh `reference/nvidia-transformers4rec` tại commit nguồn đã pin. Dùng `git show` hoặc worktree reference theo hướng dẫn trong tài liệu; code đồ án viết trên nhánh phụ trách ở `pipeline/`, `models/`, `evaluation/`, `configs/`. Ghi commit nguồn, đường dẫn, license và thay đổi so với NVIDIA trong phần bàn giao. Các quy định dataset, sampling, split và catalog của đồ án trong file này có ưu tiên cao hơn tutorial.
 
 Môi trường chính đã chốt:
 
