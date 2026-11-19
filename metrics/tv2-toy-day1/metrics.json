@@ -1,0 +1,103 @@
+{
+  "run_id": "tv2-toy-day1",
+  "model": "Popularity",
+  "subset": "toy",
+  "K": 20,
+  "train_days": [
+    1
+  ],
+  "eval_day": 2,
+  "eval_split": "validation",
+  "n_sessions": 3,
+  "Recall@20": 0.6666666666666666,
+  "NDCG@20": 0.40922341623231767,
+  "recall_sum": 2.0,
+  "ndcg_sum": 1.227670248696953,
+  "train_with_input_scan_seconds": 0.003986100000474835,
+  "ranking_once_seconds": 2.8500000553322025e-05,
+  "output_path": "C:\\\u1ed4 D\\Big Data Project\\metrics\\tv2-toy-day1",
+  "python": "3.13.12",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "git_commit": "04cb5135079707ce4dbdcc09146e7f274b9c3bc7",
+  "source_sha256": {
+    "evaluation\\data.py": "e6221332f03fe37f09760c092c4aa58704c2226dbc1ecbfecd3b155686d5897f",
+    "evaluation\\ranking.py": "8c744e95d50cc8d6425aad412e4bc3d80389e465d70dd1e4fde39b26fc0e151d",
+    "evaluation\\run_popularity.py": "c4a34b78f5de687861f863323821af4eb4702adfd21514feb1c960f457e3541b",
+    "models\\popularity.py": "f69973f644522e1d2cb427053ea844ca707950d4fa1ad63830996449a27bfc9c"
+  },
+  "config": {
+    "sessions": "evaluation\\tests\\fixtures\\sessions.jsonl",
+    "catalog": "evaluation\\tests\\fixtures\\catalog.json",
+    "train_through": 1,
+    "eval_split": "validation",
+    "subset": "toy",
+    "run_id": "tv2-toy-day1",
+    "output": "metrics\\tv2-toy-day1"
+  },
+  "artifacts": {
+    "sessions": {
+      "path": "evaluation\\tests\\fixtures\\sessions.jsonl",
+      "sha256": "8274e3a6edd2c836f83d238bc4725b8fbb91ee19eca9f1b85ad06417817122de"
+    },
+    "catalog": {
+      "path": "evaluation\\tests\\fixtures\\catalog.json",
+      "sha256": "a1ae9388c355a4f5dcdacd52f87b521351caac4c69119b2e17b87d7dc467c184"
+    }
+  },
+  "split_counts": [
+    {
+      "day_index": 1,
+      "split": "train",
+      "n_sessions": 1,
+      "n_items": 3
+    },
+    {
+      "day_index": 1,
+      "split": "validation",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 1,
+      "split": "test",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 2,
+      "split": "train",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 2,
+      "split": "validation",
+      "n_sessions": 3,
+      "n_items": 4
+    },
+    {
+      "day_index": 2,
+      "split": "test",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 3,
+      "split": "train",
+      "n_sessions": 0,
+      "n_items": 0
+    },
+    {
+      "day_index": 3,
+      "split": "validation",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 3,
+      "split": "test",
+      "n_sessions": 0,
+      "n_items": 0
+    }
+  ]
+}

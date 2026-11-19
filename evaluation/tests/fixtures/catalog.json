@@ -1,0 +1,29 @@
+{
+  "subset": "toy",
+  "technical_ids": {"padding": 0, "null": 1, "oov": 2, "mask": 99},
+  "items": [
+    {"encoded_id": 3, "product_id": "p3"},
+    {"encoded_id": 4, "product_id": "p4"},
+    {"encoded_id": 5, "product_id": "p5"},
+    {"encoded_id": 6, "product_id": "p6"},
+    {"encoded_id": 7, "product_id": "p7"},
+    {"encoded_id": 8, "product_id": "p8"},
+    {"encoded_id": 9, "product_id": "p9"},
+    {"encoded_id": 10, "product_id": "p10"},
+    {"encoded_id": 11, "product_id": "p11"},
+    {"encoded_id": 12, "product_id": "p12"},
+    {"encoded_id": 13, "product_id": "p13"},
+    {"encoded_id": 14, "product_id": "p14"},
+    {"encoded_id": 15, "product_id": "p15"},
+    {"encoded_id": 16, "product_id": "p16"},
+    {"encoded_id": 17, "product_id": "p17"},
+    {"encoded_id": 18, "product_id": "p18"},
+    {"encoded_id": 19, "product_id": "p19"},
+    {"encoded_id": 20, "product_id": "p20"},
+    {"encoded_id": 21, "product_id": "p21"},
+    {"encoded_id": 22, "product_id": "p22"},
+    {"encoded_id": 23, "product_id": "p23"},
+    {"encoded_id": 24, "product_id": "p24"},
+    {"encoded_id": 25, "product_id": "p25"}
+  ]
+}
