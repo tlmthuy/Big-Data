@@ -4,6 +4,14 @@
 
 Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã chốt trong [model_protocol.md](modeling/model_protocol.md). Kiểm chứng dữ liệu thật từ TV1 là task riêng ngày 21/11, trước E1. TV3 nhận script và trạng thái sẵn sàng qua [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn môi trường](../environment/README.md). Chưa có GPU runtime hoặc gói GRU/XLNet/E1–E4 được xác minh.
 
+## Cập nhật phân công 5 thành viên — 20/11/2026
+
+- Theo ảnh phân công người dùng cung cấp: TV4 phụ trách Demo & hỗ trợ report; TV5 phụ trách Report & Results. Vai trò TV1–TV3 và protocol giữ nguyên.
+- Đã đồng bộ `AGENTS.md`, `README.md`, `docs/team_tasks.md`, `docs/experiment_matrix.md` và mục bàn giao này. Lịch TV4/TV5 gồm đủ các mốc trong ảnh; đường dẫn quy về cấu trúc repo: `app/`, `reports/`, `reports/figures/`, `reports/tables/`, `reports/slides/`.
+- TV2 gửi metrics package chính thức cho TV4/TV5; TV4 giao figures/caption/references/license/AI statement cho TV5; TV5 đối chiếu logs với TV2 và hoàn thiện nội dung report/slides. Nhánh TV4 giữ `feature/tv4-demo-documentation`; nhánh phụ trách TV5 là `feature/tv5-report-results`.
+- Kiểm tra: `git diff --check`; rà tham chiếu TV4/TV5 và số thành viên; đối chiếu đủ 10 dòng deadline trong ảnh cho mỗi vai trò; kiểm tra liên kết Markdown local của các file đã sửa. Đây là cập nhật kế hoạch, chưa tạo demo/report/slides hoặc kết quả experiment.
+- Branch tích hợp: `main`. Commit cập nhật phân công: tra bằng `git log -1 --format=%H --grep="docs: split TV4 demo and TV5 report responsibilities"`; hash của commit chính được ghi trong mục xác nhận Git sau khi commit. Người nhận TV4/TV5 chờ xác nhận; chưa đánh dấu Done theo quy tắc dự án.
+
 ## Nhật ký bàn giao lịch sử
 
 Các mục dưới giữ nguyên trạng thái tại thời điểm bàn giao. Những câu “chưa chốt lịch test” hoặc “CLI từ chối test” đã được quyết định mới phía trên thay thế; không dùng chúng làm hướng dẫn chạy hiện tại.

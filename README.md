@@ -39,7 +39,7 @@ evaluation/           Recall@20, NDCG@20 và lệnh đánh giá
 metrics/              Metrics nhỏ, run registry, metadata
 models/               Popularity, GRU, XLNet
 pipeline/             Sampling, preprocessing, split, mapping
-reports/              Figures và tables cho báo cáo
+reports/              Report (TV5), figures (TV4), tables và slides (TV5)
 scripts/              Run scripts và tiện ích
 ```
 
@@ -52,7 +52,7 @@ Không commit raw CSV, Parquet lớn, checkpoint, GPU log, secret hoặc credent
 | Cần tìm | File |
 |---|---|
 | Phạm vi, lịch, quy tắc chung | [AGENTS.md](AGENTS.md) |
-| Nhiệm vụ và cách thực hiện của 4 thành viên | [team_tasks.md](docs/team_tasks.md) |
+| Nhiệm vụ và cách thực hiện của 5 thành viên, lịch TV4/TV5 | [team_tasks.md](docs/team_tasks.md) |
 | Input, target và Top-20 | [next_item_problem.md](docs/modeling/next_item_problem.md) |
 | Popularity, GRU và XLNet | [model_comparison.md](docs/modeling/model_comparison.md) |
 | Luật đánh giá | [model_protocol.md](docs/modeling/model_protocol.md) |

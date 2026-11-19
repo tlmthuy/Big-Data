@@ -186,11 +186,15 @@ TV3 phụ trách VM, Docker, runtime, benchmark collector, chạy script, thu ru
 
 TV3 không tự đổi model, split, metric hoặc experiment protocol.
 
-### TV4 — Demo và tài liệu
+### TV4 — Demo & hỗ trợ report
 
-TV4 phụ trách demo, README, bảng/hình, report, slide, references, license, AI-use statement và rehearsal.
+TV4 phụ trách demo, README demo, prediction contract với TV2, script/template và figures chính thức, caption kỹ thuật, demo fallback và Q&A kỹ thuật. TV4 chuẩn hóa references, dataset/repo/license, AI-use statement và thiết kế hình minh họa cho slides.
 
-TV4 dùng metrics đã TV2 xác nhận, không tự thay số liệu hoặc cách tính.
+### TV5 — Report & Results
+
+TV5 phụ trách report/slide outline, cấu trúc metric và bảng E1–E5, table captions, truy vết nguồn log, đối chiếu logs với TV2, kiểm tra metrics package, viết results/limitations/reproducibility, hoàn thiện report tiếng Anh và nội dung slides, thuyết trình kết quả và Q&A học thuật.
+
+TV2 bàn giao metrics package chính thức cho cả TV4 và TV5. TV4 tạo figures; TV5 tạo bảng và nội dung report/slides từ cùng package đã TV2 xác nhận. Cả hai không tự thay số liệu hoặc cách tính; số liệu bổ sung phải được TV2 xác nhận. TV4 bàn giao figures/caption/references/license/AI statement cho TV5 tích hợp. Lịch chi tiết theo ảnh phân công cập nhật ngày 20/11/2026: `docs/team_tasks.md`.
 
 ## 10\. Cấu trúc repo
 
@@ -208,6 +212,7 @@ big-data-recsys/
 ├── pipeline/
 ├── reports/figures/
 ├── reports/tables/
+├── reports/slides/
 ├── scripts/runs/
 ├── .gitignore
 ├── README.md
@@ -223,7 +228,8 @@ main
 ├── feature/tv1-data
 ├── feature/tv2-model-evaluation
 ├── feature/tv3-environment-benchmark
-└── feature/tv4-demo-documentation
+├── feature/tv4-demo-documentation
+└── feature/tv5-report-results
 ```
 
 Một task chỉ được đánh dấu Done khi:
@@ -246,9 +252,9 @@ Artifact lớn dùng manifest và output path. Không commit raw CSV, Parquet l�
 - 23/11: chạy E2.  
 - 24/11: chạy E3 và tính E5 từ E2.  
 - 25/11: chạy E4, rerun lỗi, bàn giao logs.  
-- 26/11: TV2 phân tích E1–E5, TV4 đối chiếu logs.  
-- 27/11: giao metrics chính thức, tích hợp demo.  
-- 28/11: hoàn thiện report/slide, rehearsal và cleanup.
+- 26/11: TV2 phân tích E1–E5; TV5 đối chiếu logs với TV2, TV4 hỗ trợ kiểm tra run_id và đầu vào figures.
+- 27/11: TV2 giao metrics chính thức cho TV4/TV5; TV4 tích hợp inference/UI và kiểm thử demo, TV5 kiểm tra E1–E5.
+- 28/11: TV4 tạo figures chính thức, chuẩn hóa references/license/AI statement, chuẩn bị và tập demo/fallback; TV5 viết results/limitations/reproducibility, hoàn thiện report tiếng Anh và nội dung slides, tập thuyết trình kết quả/Q&A; cả nhóm rehearsal và cleanup.
 
 ## 13\. Sản phẩm cuối
 

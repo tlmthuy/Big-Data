@@ -12,6 +12,10 @@
 
 Số liệu trống cho tới khi có run thật.
 
+## Bàn giao kết quả cho TV4/TV5
+
+TV2 phân tích và chốt metrics package chính thức từ logs TV3, gửi cả TV4 và TV5; mỗi số liệu cần có run_id, config, metric, đơn vị, nguồn log và ghi chú run bị loại. TV4 tạo figures/caption kỹ thuật từ package; TV5 chuẩn bị bảng/caption, đối chiếu logs với TV2 và viết results/limitations/reproducibility trong report/slides. TV4 bàn giao figures cho TV5 tích hợp. Mọi số liệu bổ sung hoặc thay đổi cách tính cần TV2 xác nhận. Lịch từng ngày: [team_tasks.md](team_tasks.md).
+
 ## Quy ước dữ liệu cho E1–E5 — cập nhật 19/11/2026
 
 Theo [preprocessing_review.md](preprocessing_review.md) và [model_protocol.md](modeling/model_protocol.md), fit workflow trước split trên tuần của từng subset; catalog chung là các product ID thực trong vocabulary đó. Mapping không giới hạn về train từng partition. Popularity chỉ đếm train đã dùng; model baseline chỉ dùng product ID.
