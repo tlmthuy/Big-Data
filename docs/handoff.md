@@ -13,7 +13,7 @@ Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã ch
 - Runtime smoke thật của cả hai CLI: input contract đạt; khi build model trên CPU local thì exit 1 vì `No module named transformers4rec`. Giữ command/traceback tại `metrics/tv2-model-scripts/{gru,xlnet}-runtime.txt` và thư mục `*-runtime/failure.json`; phiên bản tại `environment.json`. Local không có GPU/Merlin; chưa có train/inference model NVIDIA hoặc eCommerce metrics.
 - Matrix 11 run có command, input format, subset/model/resource, train/eval partition, output và version bindings. TV3 điền site local bằng artifact thật, không sửa Python. E2 cần telemetry đọc/preprocessing đo từ TV1 (shared first-seen báo riêng); E4 full cần command TV1 đọc chung CSV/Parquet và ghi artifact. E4 read-only chỉ diagnostic. E5 đọc successful E2 logs, xuất CSV/SVG/summary và báo partial khi thiếu mức; không chạy model mới.
 - Review hai trục đã sửa hai lỗi provenance: checkpoint lưu/kiểm tra originating training config và code SHA; E5 so cấu hình hiệu lực/LR/code, không gộp checkpoint replay hoặc lịch train/eval sai. Có regression test thay config và checksum.
-- Bốn task có code/config và bằng chứng offline/log lỗi; chưa đánh Done chính thức trước GPU smoke, artifact/command TV1 còn thiếu và TV3 nghiệm thu. Commit bàn giao được ghi sau khi hoàn tất kiểm tra.
+- Bốn task có code/config và bằng chứng offline/log lỗi; chưa đánh Done chính thức trước GPU smoke, artifact/command TV1 còn thiếu và TV3 nghiệm thu. Commit code/config/log: `ea717d91b28f252e845aeb1bf97c3cda6baa7ec0`; đã chuẩn bị push nhánh TV2, chưa merge main hoặc có TV3 nghiệm thu.
 
 ## Nhật ký bàn giao lịch sử
 

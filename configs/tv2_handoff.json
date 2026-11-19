@@ -294,5 +294,6 @@
   "checksum_normalization": "Replace CRLF bytes with LF before SHA-256 (UTF-8 text files); independent of checkout line endings.",
   "neural_runbook": "docs/modeling/neural_runbook.md",
   "experiment_matrix": "configs/experiments.json",
-  "site_template": "configs/site.example.json"
+  "site_template": "configs/site.example.json",
+  "implementation_commit": "ea717d91b28f252e845aeb1bf97c3cda6baa7ec0"
 }
