@@ -1,6 +1,6 @@
 # TV2 — Chạy metric và Popularity
 
-TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); metric/Popularity đã kiểm tra toy, [script GRU/XLNet](neural_runbook.md) đã đạt toy GPU smoke. Gói experiment E1–E5 còn trên nhánh TV2, chưa tích hợp vào main.
+TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); metric/Popularity đã kiểm tra toy, [script GRU/XLNet](neural_runbook.md) đã đạt toy GPU smoke. [Config/collector E1–E5](experiment_runbook.md) đã tích hợp và kiểm tra bằng toy; chưa xác minh trên dữ liệu thật.
 
 ## File bàn giao theo task ngày 20/11
 
@@ -78,6 +78,6 @@ python -m evaluation.run_popularity --sessions data/clean/10/sessions_by_day --c
 - `popularity.json`: counts train thực, train_days và top20.
 - `metrics.json`: Recall/NDCG, tổng điểm, số session, session/distinct-item counts theo split, config, subset, run_id, input/catalog checksums, Python/platform, Git commit và output path.
 
-`train_with_input_scan_seconds` gồm scan dữ liệu; `ranking_once_seconds` chỉ đo tạo danh sách chung một lần. Đây chưa phải phép đo inference throughput/memory E1–E5. Audit giữ session membership và distinct-item sets trong RAM; checksum quét thêm file. Cần benchmark collector/runtime của TV3 và chuẩn đo TV2 trước chạy experiment chính thức. CLI không chứng minh preprocessing/RNG đúng nguồn chỉ bằng đọc output; vẫn cần manifest GPU của TV1.
+`train_with_input_scan_seconds` gồm scan dữ liệu; `ranking_once_seconds` chỉ là diagnostic tạo ranking chung một lần. `inference_seconds` hiện đo toàn bộ evaluation theo [protocol chung](inference_timing.md), có ms/session và session/s; collector báo wall/RSS toàn process riêng. Audit giữ membership và distinct-item sets trong RAM; checksum quét thêm file ngoài inference. CLI không chứng minh preprocessing/RNG đúng nguồn chỉ bằng đọc output; vẫn cần manifest/runtime TV1.
 
-Protocol: [model_protocol.md](model_protocol.md). Chưa chạy dataset thật hoặc GPU; kiểm tra tiếp nhận dữ liệu TV1 là task riêng ngày 21/11. Không coi toy là kết quả E1 hoặc xác nhận split thật.
+Protocol: [model_protocol.md](model_protocol.md). Đã chạy toy trên GPU, chưa chạy dữ liệu thật; kiểm tra tiếp nhận dữ liệu TV1 là task riêng ngày 21/11. Toy giúp kiểm tra công cụ benchmark, không xác nhận split thật.

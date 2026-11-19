@@ -1,0 +1,253 @@
+{
+  "schema_version": 1,
+  "protocol": "docs/modeling/model_protocol.md",
+  "decisions": "E1=10%; E2/E5=GRU; E3=GRU 10% batch 32 vs128, confirmed by user 2026-11-19",
+  "scope": "E1/E2 final test D after frozen config; E3 validation D; daily train t/validation t+1; no train D",
+  "runs": [
+    {
+      "run_id": "e1-popularity-010",
+      "experiment": "E1",
+      "kind": "model",
+      "model": "popularity",
+      "subset": "10",
+      "batch_size": null,
+      "split": "test",
+      "input_format": "session Parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": "1..D-1",
+      "eval_partition": "D",
+      "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e1-popularity-010",
+      "command": "python -m scripts.runs.run_experiments --run-id e1-popularity-010 --site configs/site.local.json --execute"
+    },
+    {
+      "run_id": "e1-gru-010",
+      "experiment": "E1",
+      "kind": "model",
+      "model": "gru",
+      "subset": "10",
+      "batch_size": 256,
+      "split": "test",
+      "input_format": "session Parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": "1..D-1",
+      "eval_partition": "D",
+      "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e1-gru-010",
+      "command": "python -m scripts.runs.run_experiments --run-id e1-gru-010 --site configs/site.local.json --execute"
+    },
+    {
+      "run_id": "e1-xlnet-010",
+      "experiment": "E1",
+      "kind": "model",
+      "model": "xlnet",
+      "subset": "10",
+      "batch_size": 256,
+      "split": "test",
+      "input_format": "session Parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": "1..D-1",
+      "eval_partition": "D",
+      "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e1-xlnet-010",
+      "command": "python -m scripts.runs.run_experiments --run-id e1-xlnet-010 --site configs/site.local.json --execute"
+    },
+    {
+      "run_id": "e2-gru-010",
+      "experiment": "E2",
+      "kind": "model",
+      "model": "gru",
+      "subset": "10",
+      "batch_size": 256,
+      "split": "test",
+      "input_format": "session Parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": "1..D-1",
+      "eval_partition": "D",
+      "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e2-gru-010",
+      "command": "python -m scripts.runs.run_experiments --run-id e2-gru-010 --site configs/site.local.json --execute"
+    },
+    {
+      "run_id": "e2-gru-025",
+      "experiment": "E2",
+      "kind": "model",
+      "model": "gru",
+      "subset": "25",
+      "batch_size": 256,
+      "split": "test",
+      "input_format": "session Parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": "1..D-1",
+      "eval_partition": "D",
+      "artifact_versions": "site.subsets.25.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e2-gru-025",
+      "command": "python -m scripts.runs.run_experiments --run-id e2-gru-025 --site configs/site.local.json --execute"
+    },
+    {
+      "run_id": "e2-gru-050",
+      "experiment": "E2",
+      "kind": "model",
+      "model": "gru",
+      "subset": "50",
+      "batch_size": 256,
+      "split": "test",
+      "input_format": "session Parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": "1..D-1",
+      "eval_partition": "D",
+      "artifact_versions": "site.subsets.50.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e2-gru-050",
+      "command": "python -m scripts.runs.run_experiments --run-id e2-gru-050 --site configs/site.local.json --execute"
+    },
+    {
+      "run_id": "e2-gru-100",
+      "experiment": "E2",
+      "kind": "model",
+      "model": "gru",
+      "subset": "100",
+      "batch_size": 256,
+      "split": "test",
+      "input_format": "session Parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": "1..D-1",
+      "eval_partition": "D",
+      "artifact_versions": "site.subsets.100.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e2-gru-100",
+      "command": "python -m scripts.runs.run_experiments --run-id e2-gru-100 --site configs/site.local.json --execute"
+    },
+    {
+      "run_id": "e3-gru-010-b32",
+      "experiment": "E3",
+      "kind": "model",
+      "model": "gru",
+      "subset": "10",
+      "batch_size": 32,
+      "split": "validation",
+      "input_format": "session Parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": "train_batch_size"
+      },
+      "train_partitions": "1..D-1",
+      "eval_partition": "D",
+      "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e3-gru-010-b32",
+      "command": "python -m scripts.runs.run_experiments --run-id e3-gru-010-b32 --site configs/site.local.json --execute"
+    },
+    {
+      "run_id": "e3-gru-010-b128",
+      "experiment": "E3",
+      "kind": "model",
+      "model": "gru",
+      "subset": "10",
+      "batch_size": 128,
+      "split": "validation",
+      "input_format": "session Parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": "train_batch_size"
+      },
+      "train_partitions": "1..D-1",
+      "eval_partition": "D",
+      "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e3-gru-010-b128",
+      "command": "python -m scripts.runs.run_experiments --run-id e3-gru-010-b128 --site configs/site.local.json --execute"
+    },
+    {
+      "run_id": "e4-010-csv",
+      "experiment": "E4",
+      "kind": "io",
+      "model": null,
+      "subset": "10",
+      "batch_size": null,
+      "split": null,
+      "input_format": "csv",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": null,
+      "eval_partition": null,
+      "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e4-010-csv",
+      "command": "python -m scripts.runs.run_experiments --run-id e4-010-csv --site configs/site.local.json --execute"
+    },
+    {
+      "run_id": "e4-010-parquet",
+      "experiment": "E4",
+      "kind": "io",
+      "model": null,
+      "subset": "10",
+      "batch_size": null,
+      "split": null,
+      "input_format": "parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": null,
+      "eval_partition": null,
+      "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e4-010-parquet",
+      "command": "python -m scripts.runs.run_experiments --run-id e4-010-parquet --site configs/site.local.json --execute"
+    }
+  ],
+  "E5_command": "python -m benchmark.scalability --logs metrics/raw --output reports/e5",
+  "inference_timing_protocol": "full_evaluation_wall_v1",
+  "inference_comparison": "Full evaluation wall per valid session; prediction compute diagnostics are not cross-model latency"
+}

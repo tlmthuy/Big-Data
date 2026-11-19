@@ -5,7 +5,7 @@
 - Metric/Popularity đã qua toy test trên Windows, Python 3.13.12; chưa chạy dataset thật hoặc GPU. Code dùng API Python >= 3.10.
 - `environment.yml` là môi trường CPU/toy Python 3.10, không cài Merlin/cuDF/NVTabular/PyTorch. Chưa chạy lại trên Python 3.10.
 - Dockerfile nhận image Merlin qua build argument, chưa có image/digest GPU được nhóm xác minh. Không có môi trường GPU sẵn dùng chỉ bằng build mặc định.
-- GRU/XLNet đã có CLI trên main và đạt [toy GPU smoke WSL RTX 3050](../metrics/tv2-model-smoke/README.md). Local model runtime chiếm 4,04 GB, [requirements](smoke-models.requirements.txt); runtime này không gồm cuDF/NVTabular và không thay image Docker/cloud chính thức. Config E1–E4 và collector còn trên nhánh TV2, chưa tích hợp main. Manifest ghi rõ trạng thái, không phải kết quả benchmark.
+- GRU/XLNet đã có CLI trên main và đạt [toy GPU smoke WSL RTX 3050](../metrics/tv2-model-smoke/README.md). Local model runtime chiếm 4,04 GB, [requirements](smoke-models.requirements.txt); runtime này không gồm cuDF/NVTabular và không thay image Docker/cloud chính thức. Config/collector E1–E4 và công cụ E5 đã tích hợp, có [hướng dẫn và lệnh toy](../docs/modeling/experiment_runbook.md), **chưa xác minh trên dữ liệu thật**.
 
 ## Nhận bàn giao TV2
 
