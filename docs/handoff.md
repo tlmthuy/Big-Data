@@ -4,6 +4,30 @@
 
 Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã chốt trong [model_protocol.md](modeling/model_protocol.md). Kiểm chứng dữ liệu thật từ TV1 là task riêng ngày 21/11, trước E1. TV3 nhận script và trạng thái sẵn sàng qua [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn môi trường](../environment/README.md). Chưa có GPU runtime hoặc gói GRU/XLNet/E1–E4 được xác minh.
 
+## Bàn giao demo React/Vite — 20/11/2026
+
+- Commit implementation: `e90b0eb`.
+- Files created/updated:
+  - `app/package.json`, `app/package-lock.json`, `app/index.html`
+  - `app/src/main.jsx`, `app/src/styles.css`
+  - `app/public/demo-data.json`
+  - `app/README.md`, `README.md`, `.gitignore`
+- Behavior:
+  - History là prefix sau khi tách target; actual next item luôn hiển thị riêng kể cả khi ngoài Top-20.
+  - Đổi model giữ session, subset, split và catalog; không lọc item đã xuất hiện trong history.
+  - Product ID hiển thị dưới dạng ID gốc. GRU/XLNet không tạo ranking giả; UI báo chưa có prediction output.
+  - Data bundled là toy TV2 từ `metrics/tv2-toy-day1/predictions.jsonl`, không phải kết quả dataset thật hoặc E1.
+- Cách kiểm tra:
+
+```bash
+cd app
+npm install
+npm run dev
+npm run build
+```
+
+Kết quả kiểm tra đã có: `npm install` PASS, `npm run build` PASS, Vite production bundle được tạo trong `app/dist/` và thư mục này bị ignore. Các output thật cho GRU/XLNet hoặc FastAPI inference vẫn pending cho TV2/TV3; demo không tự thay thế bằng prediction giả.
+
 ## Nhật ký bàn giao lịch sử
 
 Các mục dưới giữ nguyên trạng thái tại thời điểm bàn giao. Những câu “chưa chốt lịch test” hoặc “CLI từ chối test” đã được quyết định mới phía trên thay thế; không dùng chúng làm hướng dẫn chạy hiện tại.
