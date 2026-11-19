@@ -39,3 +39,5 @@ Thumbs.db
 # Small raw audit summary is versioned; raw datasets remain ignored.
 !/data/raw_audit.csv
 /tmp/raw_audit_spill/
+
+/tmp/session_sampling_spill/
