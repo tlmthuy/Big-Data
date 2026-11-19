@@ -61,6 +61,38 @@ Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã ch
 - Kiểm tra: `git diff --check`; rà tham chiếu TV4/TV5 và số thành viên; đối chiếu đủ 10 dòng deadline trong ảnh cho mỗi vai trò; kiểm tra liên kết Markdown local của các file đã sửa. Đây là cập nhật kế hoạch, chưa tạo demo/report/slides hoặc kết quả experiment.
 - Branch tích hợp: `main`; commit cập nhật phân công: `4bc361c`. Kiểm tra phạm vi bằng `git show 4bc361c --stat`. Người nhận TV4/TV5 chờ xác nhận; chưa đánh dấu Done theo quy tắc dự án.
 
+## Bàn giao demo React/Vite — 20/11/2026
+
+**Cập nhật sau review:** Người dùng duyệt tích hợp phần đã làm, giữ UI ở
+trạng thái bản nháp. Các mô tả behavior bên dưới là mục tiêu; lỗi ID gốc,
+catalog thiếu item, ẩn context khi chọn model chưa có output và xử lý data
+rỗng được theo dõi tại [app/TODO.md](../app/TODO.md), không chặn lần tích hợp
+này. Chưa nghiệm thu UI hoàn chỉnh hoặc inference thật. Report/slide outline
+thuộc TV5 theo phân công cập nhật trên main.
+
+- Commit implementation: `e90b0eb`; commit TODO và phạm vi duyệt bản nháp: `bcc0150` trên `tv4-demo`.
+- Người dùng duyệt tích hợp ngày 20/11/2026; giữ tên nhánh thực tế `tv4-demo` cho lần bàn giao này. Kiểm tra độc lập `npm ci` và `npm run build` PASS; `git diff --check` sạch. Chưa kiểm tra tương tác trên trình duyệt; UI tiếp tục theo checklist, không đánh dấu UI hoàn chỉnh.
+- Files created/updated:
+  - `app/package.json`, `app/package-lock.json`, `app/index.html`
+  - `app/src/main.jsx`, `app/src/styles.css`
+  - `app/public/demo-data.json`
+  - `app/README.md`, `README.md`, `.gitignore`
+- Behavior:
+  - History là prefix sau khi tách target; actual next item luôn hiển thị riêng kể cả khi ngoài Top-20.
+  - Đổi model giữ session, subset, split và catalog; không lọc item đã xuất hiện trong history.
+  - Product ID hiển thị dưới dạng ID gốc. GRU/XLNet không tạo ranking giả; UI báo chưa có prediction output.
+  - Data bundled là toy TV2 từ `metrics/tv2-toy-day1/predictions.jsonl`, không phải kết quả dataset thật hoặc E1.
+- Cách kiểm tra:
+
+```bash
+cd app
+npm install
+npm run dev
+npm run build
+```
+
+Kết quả kiểm tra đã có: `npm install` PASS, `npm run build` PASS, Vite production bundle được tạo trong `app/dist/` và thư mục này bị ignore. Các output thật cho GRU/XLNet hoặc FastAPI inference vẫn pending cho TV2/TV3; demo không tự thay thế bằng prediction giả.
+
 ## Nhật ký bàn giao lịch sử
 
 Các mục dưới giữ nguyên trạng thái tại thời điểm bàn giao. Những câu “chưa chốt lịch test” hoặc “CLI từ chối test” đã được quyết định mới phía trên thay thế; không dùng chúng làm hướng dẫn chạy hiện tại.

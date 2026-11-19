@@ -78,3 +78,24 @@ Tám bản bối cảnh/đề xuất cũ được giữ nguyên trong [context-h
 Raw CSV và danh sách session lớn vẫn ở máy TV1. Phương án bàn giao hiện tại là người nhận tái tạo từ raw cùng SHA-256 theo [hướng dẫn](docs/raw_subsets.md#người-nhận-tái-tạo-và-xác-nhận), đối chiếu rồi ghi xác nhận vào [handoff](docs/handoff.md). Ba task chưa được đánh dấu Done chính thức vì còn chờ kiểm tra độc lập trên dữ liệu thật.
 
 Chưa có xác nhận chạy preprocessing NVIDIA, sequence/split, GPU model hoặc E1–E5. Mọi kết quả thực nghiệm phải được ghi bằng `run_id`, commit, seed, cấu hình, phần cứng, phiên bản thư viện và đường dẫn output.
+
+## Demo
+
+UI hiện là bản nháp được duyệt tích hợp để giữ phần đã làm. Xem [app/TODO.md](app/TODO.md) để biết các lỗi ID/catalog, hiển thị model chưa có output và checklist hoàn thiện; phần mô tả dưới đây là hành vi mục tiêu.
+
+Demo React + Vite nằm tại [`app/`](app/). Lịch sử hiển thị là prefix đã tách target; actual next item luôn được hiển thị riêng, kể cả khi nằm ngoài Top-20. Đổi model không đổi session, subset, split hoặc catalog; demo hiển thị product ID gốc và không lọc item đã có trong lịch sử.
+
+```bash
+cd app
+npm install
+npm run dev
+```
+
+Production build:
+
+```bash
+cd app
+npm run build
+```
+
+Chi tiết và JSON mẫu: [`app/README.md`](app/README.md).

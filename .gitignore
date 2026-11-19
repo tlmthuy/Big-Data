@@ -12,6 +12,8 @@ data/**/*.parquet
 /metrics/raw/
 /metrics/local/
 /logs/
+/app/node_modules/
+/app/dist/
 *.log
 .agents/
 
