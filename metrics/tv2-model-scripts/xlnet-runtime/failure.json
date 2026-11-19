@@ -1,0 +1,25 @@
+{
+  "run_id": "xlnet-runtime-check",
+  "model": "xlnet",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Ổ D\\Big Data Project\\evaluation\\run_neural.py\", line 177, in run\n    return execute(args, catalog, counts, artifacts)\n  File \"C:\\Ổ D\\Big Data Project\\evaluation\\run_neural.py\", line 199, in execute\n    model = build_model(args.model, args.schema, catalog).to(device)\n            ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Ổ D\\Big Data Project\\models\\session_models.py\", line 18, in build_model\n    import transformers4rec.torch as tr\nModuleNotFoundError: No module named 'transformers4rec'\n",
+  "config": {
+    "model": "xlnet",
+    "data": "evaluation\\tests\\fixtures\\sessions.jsonl",
+    "schema": "evaluation\\tests\\fixtures\\schema.pbtxt",
+    "catalog": "evaluation\\tests\\fixtures\\catalog.json",
+    "split": "validation",
+    "train_through": 1,
+    "batch_size": 2,
+    "eval_batch_size": 32,
+    "epochs": 1,
+    "seed": 1,
+    "learning_rate": 0.000666,
+    "device": "cpu",
+    "subset": "toy",
+    "run_id": "xlnet-runtime-check",
+    "output": "metrics\\tv2-model-scripts\\xlnet-runtime",
+    "config_frozen": false,
+    "check_inputs": false,
+    "checkpoint": null
+  }
+}

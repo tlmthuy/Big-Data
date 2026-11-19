@@ -2,7 +2,18 @@
 
 ## Trạng thái hiện hành
 
-Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã chốt trong [model_protocol.md](modeling/model_protocol.md). Kiểm chứng dữ liệu thật từ TV1 là task riêng ngày 21/11, trước E1. TV3 nhận script và trạng thái sẵn sàng qua [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn môi trường](../environment/README.md). Chưa có GPU runtime hoặc gói GRU/XLNet/E1–E4 được xác minh.
+Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã chốt trong [model_protocol.md](modeling/model_protocol.md). Kiểm chứng dữ liệu thật từ TV1 là task riêng ngày 21/11, trước E1. TV3 nhận script và trạng thái sẵn sàng qua [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn môi trường](../environment/README.md). Đã có code/config GRU/XLNet/E1–E4 và E5 trên nhánh TV2; GPU runtime/full model còn chưa xác minh. Xem docs/modeling/neural_runbook.md.
+
+## TV2 — Script model và gói experiment tiếp theo — 19/11/2026
+
+- Nhánh `feature/tv2-model-evaluation` tạo lại từ main `3eda377`. Thúy xác nhận E1=10%, E2/E5=GRU, E3=GRU 10% batch train 32/128. Seed 1, length 20, epoch 3/partition, LR theo notebook 03. Final test D sau train 1…D−1 và cố định cấu hình; E3 dùng validation D.
+- Output: `models/session_models.py`, `evaluation/run_neural.py`, `configs/{experiments,site.example,pipeline_metrics.example}.json`, `scripts/runs/run_experiments.py`, `benchmark/{collect,format_io,scalability}.py`; hướng dẫn tại `docs/modeling/neural_runbook.md`, manifest `configs/tv2_handoff.json` cập nhật checksum/ref/trạng thái.
+- Đối chiếu nguồn NVIDIA tại `f0ca2b5343dd1e40b5d2422b942f014b224f5c20` (tree `0cd72aa1d3abd17cd65d46b9c1314b4ea26db9a6`, Apache-2.0): notebook 03 và thư viện/schema/test được liệt kê trong runbook. Giữ LICENSE, attribution ở model builder. Nhóm điều chỉnh GRU batch_first, PyArrow/JSONL streaming và explicit PyTorch loop thay Trainer; giữ causal/MLM, weight tying, daily continuation/LR reset, kiểm tra last labels và real catalog trước Top-20. Không tuyên bố bitwise tương đương notebook.
+- Command kiểm tra: `python -m unittest discover -s evaluation/tests -v` → **25/25 PASS**; log `metrics/tv2-model-scripts/tests.txt`. Kiểm tra orchestration bằng model nhỏ riêng, masking nguồn trong isolation, checkpoint replay, matrix invariants, collector pass/fail, cặp CSV/Parquet và E5 synthetic logs. Các test này không chứng minh GRU/XLNet đầy đủ chạy được.
+- Runtime smoke thật của cả hai CLI: input contract đạt; khi build model trên CPU local thì exit 1 vì `No module named transformers4rec`. Giữ command/traceback tại `metrics/tv2-model-scripts/{gru,xlnet}-runtime.txt` và thư mục `*-runtime/failure.json`; phiên bản tại `environment.json`. Local không có GPU/Merlin; chưa có train/inference model NVIDIA hoặc eCommerce metrics.
+- Matrix 11 run có command, input format, subset/model/resource, train/eval partition, output và version bindings. TV3 điền site local bằng artifact thật, không sửa Python. E2 cần telemetry đọc/preprocessing đo từ TV1 (shared first-seen báo riêng); E4 full cần command TV1 đọc chung CSV/Parquet và ghi artifact. E4 read-only chỉ diagnostic. E5 đọc successful E2 logs, xuất CSV/SVG/summary và báo partial khi thiếu mức; không chạy model mới.
+- Review hai trục đã sửa hai lỗi provenance: checkpoint lưu/kiểm tra originating training config và code SHA; E5 so cấu hình hiệu lực/LR/code, không gộp checkpoint replay hoặc lịch train/eval sai. Có regression test thay config và checksum.
+- Bốn task có code/config và bằng chứng offline/log lỗi; chưa đánh Done chính thức trước GPU smoke, artifact/command TV1 còn thiếu và TV3 nghiệm thu. Commit bàn giao được ghi sau khi hoàn tất kiểm tra.
 
 ## Nhật ký bàn giao lịch sử
 

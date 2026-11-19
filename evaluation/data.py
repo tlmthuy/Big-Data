@@ -52,7 +52,7 @@ class Catalog:
         return items
 
 
-def read_sessions(path):
+def read_sessions(path, day=None, split=None):
     """Read canonical JSONL or NVIDIA <day>/{train,valid,test}.parquet layout."""
     path = Path(path)
     if path.is_dir():
@@ -62,27 +62,31 @@ def read_sessions(path):
         if not paths:
             raise ValueError("No <day>/*.parquet files in session directory")
         for source in paths:
-            split = {"train": "train", "valid": "validation", "test": "test"}.get(source.stem)
-            if split is None or not source.parent.name.isdigit():
+            source_split = {"train": "train", "valid": "validation", "test": "test"}.get(source.stem)
+            if source_split is None or not source.parent.name.isdigit():
                 raise ValueError(f"Unexpected partition path: {source}")
-            day = int(source.parent.name)
+            source_day = int(source.parent.name)
+            if (day is not None and source_day != day) or (split is not None and source_split != split):
+                continue
             parquet = pq.ParquetFile(source)
             columns = ["user_session", "product_id-list"]
             if "day_index" in parquet.schema_arrow.names:
                 columns.append("day_index")
             for batch in parquet.iter_batches(columns=columns):
                 for row in batch.to_pylist():
-                    if "day_index" in row and row["day_index"] != day:
+                    if "day_index" in row and row["day_index"] != source_day:
                         raise ValueError("Parquet day_index disagrees with partition path")
-                    yield {"user_session": row["user_session"], "day_index": day,
-                           "split": split, "product_ids": row["product_id-list"]}
+                    yield {"user_session": row["user_session"], "day_index": source_day,
+                           "split": source_split, "product_ids": row["product_id-list"]}
         return
     if path.suffix != ".jsonl":
         raise ValueError("Expected JSONL or partition directory; see tv2_runbook.md")
     with path.open(encoding="utf-8") as handle:
         for line in handle:
             if line.strip():
-                yield json.loads(line)
+                row = json.loads(line)
+                if (day is None or row["day_index"] == day) and (split is None or row["split"] == split):
+                    yield row
 
 
 def audit_sessions(path, catalog):

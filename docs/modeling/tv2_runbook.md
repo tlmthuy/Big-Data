@@ -1,6 +1,6 @@
 # TV2 — Chạy metric và Popularity
 
-TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); chỉ metric/Popularity được kiểm tra toy, chưa có gói E1–E4 sẵn chạy.
+TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); metric/Popularity đã kiểm tra toy; [GRU/XLNet và E1–E5](neural_runbook.md) có code/config, còn chờ runtime GPU và artifact TV1.
 
 ## File bàn giao theo task ngày 20/11
 

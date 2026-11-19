@@ -1,0 +1,17 @@
+{
+  "python": "3.13.12",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "torch": "2.11.0",
+    "transformers": "5.4.0",
+    "transformers4rec": null,
+    "merlin-core": null,
+    "nvtabular": null,
+    "pyarrow": "23.0.1",
+    "psutil": "7.0.0"
+  },
+  "gpu_status": "Local torch build is CPU; no GPU run performed",
+  "source_reference_tree": "0cd72aa1d3abd17cd65d46b9c1314b4ea26db9a6",
+  "base_commit": "3eda377edf088878910aaa8d291d828316cb0db6",
+  "evidence_scope": "offline tests and missing-dependency smoke, not model benchmark"
+}

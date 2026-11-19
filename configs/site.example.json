@@ -1,0 +1,60 @@
+{
+  "device": "cuda",
+  "configuration_frozen": false,
+  "environment_snapshot": null,
+  "subsets": {
+    "10": {
+      "sessions": null,
+      "schema": null,
+      "catalog": null,
+      "preprocessing_manifest": null,
+      "workflow_version": null,
+      "mapping_version": null,
+      "catalog_version": null,
+      "accepted_by_tv2": false,
+      "final_day": null,
+      "pipeline_metrics": null
+    },
+    "25": {
+      "sessions": null,
+      "schema": null,
+      "catalog": null,
+      "preprocessing_manifest": null,
+      "workflow_version": null,
+      "mapping_version": null,
+      "catalog_version": null,
+      "accepted_by_tv2": false,
+      "final_day": null,
+      "pipeline_metrics": null
+    },
+    "50": {
+      "sessions": null,
+      "schema": null,
+      "catalog": null,
+      "preprocessing_manifest": null,
+      "workflow_version": null,
+      "mapping_version": null,
+      "catalog_version": null,
+      "accepted_by_tv2": false,
+      "final_day": null,
+      "pipeline_metrics": null
+    },
+    "100": {
+      "sessions": null,
+      "schema": null,
+      "catalog": null,
+      "preprocessing_manifest": null,
+      "workflow_version": null,
+      "mapping_version": null,
+      "catalog_version": null,
+      "accepted_by_tv2": false,
+      "final_day": null,
+      "pipeline_metrics": null
+    }
+  },
+  "e4": {
+    "csv": null,
+    "parquet": null,
+    "preprocessing_argv": null
+  }
+}

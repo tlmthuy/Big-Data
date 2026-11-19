@@ -5,20 +5,21 @@
 - Metric/Popularity đã qua toy test trên Windows, Python 3.13.12; chưa chạy dataset thật hoặc GPU. Code dùng API Python >= 3.10.
 - `environment.yml` là môi trường CPU/toy Python 3.10, không cài Merlin/cuDF/NVTabular/PyTorch. Chưa chạy lại trên Python 3.10.
 - Dockerfile nhận image Merlin qua build argument, chưa có image/digest GPU được nhóm xác minh. Không có môi trường GPU sẵn dùng chỉ bằng build mặc định.
-- GRU/XLNet, config E1–E4 và benchmark collector còn chờ triển khai. Manifest dưới đây ghi rõ trạng thái, không phải kết quả benchmark.
+- Đã có script GRU/XLNet, 11 config E1–E4, collector và E5; GRU/XLNet chưa smoke runtime, E2/E4 còn chờ đầu vào TV1. Xem docs/modeling/neural_runbook.md. Manifest dưới đây ghi trạng thái, không phải kết quả benchmark.
 
 ## Nhận bàn giao TV2
 
 Từ gốc repo:
 
 ```bash
-git switch main
-git pull --ff-only origin main
+git fetch origin
+git switch feature/tv2-model-evaluation
+git pull --ff-only origin feature/tv2-model-evaluation
 git rev-parse HEAD
 python -m json.tool configs/tv2_handoff.json
 ```
 
-Đọc [manifest TV2](../configs/tv2_handoff.json), [lệnh chạy và input/output](../docs/modeling/tv2_runbook.md), [protocol](../docs/modeling/model_protocol.md), rồi [experiment matrix](../docs/experiment_matrix.md). Lưu commit thực tế khi chạy. Command trong manifest là mảng argv chạy từ root; `{run_id}` và `{output_dir}` phải được thay bằng giá trị riêng của run, không chạy nguyên placeholder.
+Nhánh trên chứa gói script mới, chưa tự merge vào main; khi được tích hợp, dùng ref/commit trong manifest bàn giao cập nhật. Đọc [manifest TV2](../configs/tv2_handoff.json), [lệnh chạy và input/output](../docs/modeling/tv2_runbook.md), [GRU/XLNet và E1–E5](../docs/modeling/neural_runbook.md), [protocol](../docs/modeling/model_protocol.md), rồi [experiment matrix](../docs/experiment_matrix.md). Lưu commit thực tế khi chạy. Command trong manifest là mảng argv chạy từ root; `{run_id}` và `{output_dir}` phải được thay bằng giá trị riêng của run, không chạy nguyên placeholder.
 
 Checksum trong manifest dành cho các file code/fixture đã bàn giao, chuẩn hóa CRLF thành LF trước SHA-256 để checkout Windows/Linux không lệch. Kiểm tra từ root:
 

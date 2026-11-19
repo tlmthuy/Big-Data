@@ -3,8 +3,8 @@
   "updated_on": "2026-11-19",
   "owner": "TV2",
   "recipient": "TV3",
-  "checkout_ref": "main",
-  "reviewed_base_commit": "f0df09d82a2d11ce1b1baa6e202bc9eaf66cf872",
+  "checkout_ref": "feature/tv2-model-evaluation",
+  "reviewed_base_commit": "3eda377edf088878910aaa8d291d828316cb0db6",
   "resolve_run_commit_argv": [
     "git",
     "rev-parse",
@@ -15,17 +15,28 @@
   "runbook": "docs/modeling/tv2_runbook.md",
   "environment_guide": "environment/README.md",
   "python_minimum": "3.10",
-  "runtime_status": "CPU/toy verified on local Python; GPU image and package versions unverified",
+  "runtime_status": "Metric/Popularity and orchestration tested offline; full GRU/XLNet failed locally due missing transformers4rec; GPU unverified",
   "files_sha256": {
     "evaluation/__init__.py": "47fe5c3c117acdeaee61a18885ff4e09d80d8c53d8f76cafcdb044d2775a6680",
-    "evaluation/data.py": "e6221332f03fe37f09760c092c4aa58704c2226dbc1ecbfecd3b155686d5897f",
+    "evaluation/data.py": "dd8540317fdd5b86b5451bbb1cbaee345392f889434ecfa2d7a81d0473492edf",
     "evaluation/ranking.py": "8c744e95d50cc8d6425aad412e4bc3d80389e465d70dd1e4fde39b26fc0e151d",
-    "evaluation/run_popularity.py": "2a8b1106641bec53176b5f9da81d635caac7b382bda67c30e641da2597921889",
+    "evaluation/run_popularity.py": "20c578635a61ca9ebfdeb0807e4db577f2782c90d35a9c022d4d14fe09f9a6ee",
     "evaluation/tests/test_tv2.py": "faac36de68c8a93508081e96cc9cd9269f2a3dfa4d518881c19fb3042397941f",
     "evaluation/tests/fixtures/catalog.json": "a1ae9388c355a4f5dcdacd52f87b521351caac4c69119b2e17b87d7dc467c184",
     "evaluation/tests/fixtures/sessions.jsonl": "8274e3a6edd2c836f83d238bc4725b8fbb91ee19eca9f1b85ad06417817122de",
     "models/__init__.py": "b6942e7ed99420bbf98752e33183b998d3ebc02de646b33588380d20f91e99e9",
-    "models/popularity.py": "f69973f644522e1d2cb427053ea844ca707950d4fa1ad63830996449a27bfc9c"
+    "models/popularity.py": "f69973f644522e1d2cb427053ea844ca707950d4fa1ad63830996449a27bfc9c",
+    "models/session_models.py": "5e6c6ab87cc7f1959b86d01452ee391fab14f0ba6649f4a112e43b94b96e4c6c",
+    "evaluation/run_neural.py": "8d3c16ac12e0b6b9cac0291d39281f1713d87d47a798e9f309f7c9eb2d916195",
+    "evaluation/tests/test_experiments.py": "cfc7993993c892e1e880b30b16eb678414f7991062105c29d6f3bf8396e68e34",
+    "evaluation/tests/fixtures/schema.pbtxt": "c2405d7751b184ec9a4a975a4163818acbfd1926fa89e43e95e041ade77ea067",
+    "benchmark/collect.py": "54f93049ed8e8c165725fc7b2f12374c5e685b5fb95dfa8ba008c3cdd27845ae",
+    "benchmark/format_io.py": "a0761729d47666f035d916725027cbeb69ff5c6f7953dab3ed2257f746c6a9b0",
+    "benchmark/scalability.py": "469136b330b514674537967e53fbe0d596cb9912c6cbed2e5374fd1b6959432f",
+    "scripts/runs/run_experiments.py": "31f6fa6112dce31535f0082863dfffd32502eb3ad8c10fd20343d4562fb5bbca",
+    "configs/experiments.json": "41f0d244bd7cdd72480b9256285e062f073da4c05f9f5ae298362df1ac299c0c",
+    "configs/site.example.json": "6435c127382391833fd964d2f66216a2eab49394b8530fb6ea9a61552948a2f3",
+    "configs/pipeline_metrics.example.json": "c7b006bb7dd916d93c1f976dedcf68fafa90632fe6125f8841e3b3f6b7cd082e"
   },
   "commands": [
     {
@@ -40,7 +51,7 @@
         "evaluation/tests",
         "-v"
       ],
-      "optional_dependency": "pyarrow required for Parquet test; otherwise skipped"
+      "optional_dependency": "PyArrow for Parquet; PyTorch and pinned reference for isolated masking/orchestration tests; full neural runtime separate"
     },
     {
       "id": "popularity-toy",
@@ -76,6 +87,141 @@
         "predictions.jsonl",
         "popularity.json"
       ]
+    },
+    {
+      "id": "gru",
+      "status": "implemented_runtime_unverified",
+      "argv": [
+        "python",
+        "-m",
+        "evaluation.run_neural",
+        "--model",
+        "gru",
+        "--data",
+        "{sessions}",
+        "--schema",
+        "{schema}",
+        "--catalog",
+        "{catalog}",
+        "--batch-size",
+        "256",
+        "--eval-batch-size",
+        "32",
+        "--epochs",
+        "3",
+        "--seed",
+        "1",
+        "--split",
+        "validation",
+        "--subset",
+        "{subset}",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output_dir}"
+      ],
+      "outputs": [
+        "checkpoint.pt",
+        "predictions.jsonl",
+        "metrics.json",
+        "validation-dayN.jsonl"
+      ],
+      "requires": "actual fitted TV1 schema/catalog/membership plus compatible TV3 model runtime"
+    },
+    {
+      "id": "xlnet",
+      "status": "implemented_runtime_unverified",
+      "argv": [
+        "python",
+        "-m",
+        "evaluation.run_neural",
+        "--model",
+        "xlnet",
+        "--data",
+        "{sessions}",
+        "--schema",
+        "{schema}",
+        "--catalog",
+        "{catalog}",
+        "--batch-size",
+        "256",
+        "--eval-batch-size",
+        "32",
+        "--epochs",
+        "3",
+        "--seed",
+        "1",
+        "--split",
+        "validation",
+        "--subset",
+        "{subset}",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output_dir}"
+      ],
+      "outputs": [
+        "checkpoint.pt",
+        "predictions.jsonl",
+        "metrics.json",
+        "validation-dayN.jsonl"
+      ],
+      "requires": "actual fitted TV1 schema/catalog/membership plus compatible TV3 model runtime"
+    },
+    {
+      "id": "experiment-plan",
+      "status": "plan_verified",
+      "argv": [
+        "python",
+        "-m",
+        "scripts.runs.run_experiments",
+        "--experiment",
+        "{experiment}"
+      ],
+      "experiment_choices": [
+        "E1",
+        "E2",
+        "E3",
+        "E4"
+      ]
+    },
+    {
+      "id": "experiment-execute",
+      "status": "implemented_awaiting_bound_artifacts_and_runtime",
+      "argv": [
+        "python",
+        "-m",
+        "scripts.runs.run_experiments",
+        "--run-id",
+        "{run_id}",
+        "--site",
+        "{site_json}",
+        "--execute"
+      ],
+      "outputs": [
+        "run.json",
+        "stdout.txt",
+        "stderr.txt",
+        "artifacts/"
+      ]
+    },
+    {
+      "id": "E5",
+      "status": "aggregation_tested_on_synthetic_logs",
+      "argv": [
+        "python",
+        "-m",
+        "benchmark.scalability",
+        "--logs",
+        "{E2_logs_root}",
+        "--output",
+        "{output_dir}"
+      ],
+      "outputs": [
+        "scalability.csv",
+        "scalability.svg",
+        "summary.json"
+      ]
     }
   ],
   "pending": [
@@ -84,11 +230,10 @@
       "owner": "TV1 + TV2",
       "status": "awaiting_handoff",
       "needs": [
-        "sequence Parquet",
-        "split membership and counts",
-        "schema/workflow/mapping/catalog",
-        "seed/runtime/checksums",
-        "TV2 acceptance"
+        "sequence Parquet and fitted schema/catalog",
+        "split membership/counts/runtime manifest",
+        "TV2 acceptance and D",
+        "per-subset workflow/mapping/catalog versions"
       ]
     },
     {
@@ -96,45 +241,58 @@
       "owner": "TV3",
       "status": "unverified",
       "needs": [
-        "Merlin image tag/digest",
-        "hardware and package snapshot",
-        "GPU preprocessing/model smoke logs"
+        "Merlin image/digest and environment snapshot",
+        "full GRU/XLNet smoke using the toy schema",
+        "actual model and preprocessing smoke logs"
       ]
     },
     {
-      "id": "gru-xlnet",
-      "owner": "TV2",
-      "status": "not_implemented",
-      "command": null
+      "id": "E2",
+      "owner": "TV1 + TV2",
+      "status": "awaiting_measured_pipeline_telemetry",
+      "template": "configs/pipeline_metrics.example.json"
     },
     {
-      "id": "E1-E4",
-      "owner": "TV2 + TV3",
-      "status": "not_ready",
-      "command": null,
+      "id": "E4",
+      "owner": "TV1 + TV2",
+      "status": "awaiting_shared_CSV_Parquet_preprocessing_entrypoint",
       "needs": [
-        "TV2 approved per-run config/command",
-        "TV1 data acceptance",
-        "TV3 runtime and collector"
+        "same raw string-schema pair",
+        "one preprocessing argv template with input_path/input_format/output_dir bindings",
+        "shared first-seen artifact"
       ]
     },
     {
-      "id": "E5",
-      "owner": "TV2",
-      "status": "awaiting_E2_logs",
-      "command": null,
-      "note": "Analyze E2 logs; no separate model run"
+      "id": "official-experiments",
+      "owner": "TV2 + TV3",
+      "status": "configured_not_run",
+      "needs": [
+        "bind configs/site.local.json",
+        "validate/freeze configurations before final test",
+        "TV3 acceptance"
+      ]
     }
   ],
   "evidence": {
-    "test_log": "metrics/tv2-environment-sync-tests.txt",
+    "test_log": "metrics/tv2-model-scripts/tests.txt",
     "historical_toy_metrics": "metrics/tv2-toy-day1/metrics.json",
-    "historical_toy_commit": "04cb5135079707ce4dbdcc09146e7f274b9c3bc7"
+    "historical_toy_commit": "04cb5135079707ce4dbdcc09146e7f274b9c3bc7",
+    "runtime_checks": [
+      "metrics/tv2-model-scripts/gru-runtime/failure.json",
+      "metrics/tv2-model-scripts/xlnet-runtime/failure.json"
+    ],
+    "local_environment": "metrics/tv2-model-scripts/environment.json"
   },
   "limitations": [
-    "Manifest is a script handoff, not a GPU environment lockfile or experiment run registry.",
-    "Historical toy metrics retain original commit and hashes.",
-    "TV3 runs handed-off commands; protocol/config changes belong to TV2."
+    "Manifest is a script handoff, not a verified GPU lockfile or benchmark result.",
+    "Tiny trainable model tests exercise orchestration, not GRU/XLNet accuracy.",
+    "Pinned source masking tests execute source classes in isolation, not the full Merlin runtime.",
+    "Historical toy results retain original commits/hashes.",
+    "E2 composes measured TV1 stages with fresh model timings; E4 full awaits TV1 adapter.",
+    "Site path/version values must come from actual handed-off artifacts; no template values are measurements."
   ],
-  "checksum_normalization": "Replace CRLF bytes with LF before SHA-256 (UTF-8 text files); independent of checkout line endings."
+  "checksum_normalization": "Replace CRLF bytes with LF before SHA-256 (UTF-8 text files); independent of checkout line endings.",
+  "neural_runbook": "docs/modeling/neural_runbook.md",
+  "experiment_matrix": "configs/experiments.json",
+  "site_template": "configs/site.example.json"
 }

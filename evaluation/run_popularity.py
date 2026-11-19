@@ -25,9 +25,14 @@ def fingerprint(path):
     path = Path(path)
     if path.is_file():
         return {"path": str(path), "sha256": sha256(path)}
+    if not path.is_dir():
+        raise ValueError(f"Artifact path does not exist: {path}")
+    files = sorted(p for p in path.rglob("*") if p.is_file())
+    if not files:
+        raise ValueError(f"Artifact directory is empty: {path}")
     return {"path": str(path), "files": [
         {"path": str(p.relative_to(path)), "sha256": sha256(p)}
-        for p in sorted(path.glob("*/*.parquet"))]}
+        for p in files]}
 
 
 def run(args):
@@ -51,6 +56,7 @@ def run(args):
                                     if row["split"] == "train" and row["day_index"] == day))
     train_seconds = time.perf_counter() - start
     start = time.perf_counter()
+    evaluation_started = start
     predictions = model.recommend()
     rank_seconds = time.perf_counter() - start
     metrics = RankingMetrics()
@@ -69,6 +75,9 @@ def run(args):
               "eval_split": args.eval_split, **metrics.compute(),
               "train_with_input_scan_seconds": train_seconds,
               "ranking_once_seconds": rank_seconds,
+              "inference_seconds": rank_seconds,
+              "inference_scope": "one shared catalog ranking, reused for all evaluation sessions",
+              "evaluation_with_io_seconds": time.perf_counter() - evaluation_started,
               "output_path": str(args.output.resolve()), "python": platform.python_version(),
               "platform": platform.platform(),
               "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),

@@ -7,6 +7,8 @@
 
 Pin commit and license in this file when external code is adopted.
 
+TV2 model/experiment adaptation: `models/session_models.py` derives the GRU/XLNet architecture from notebook 03 at the fixed commit below (Apache-2.0, attribution retained). `docs/modeling/neural_runbook.md` lists exact cells/modules/tests and changes: batch-first GRU, PyArrow/JSONL loader and explicit PyTorch train/eval loop, real-catalog ranking and group final-test protocol. GPU/runtime integration remains unverified; local missing-dependency logs are under `metrics/tv2-model-scripts/`.
+
 ## NVIDIA tutorial và mã nguồn liên quan
 
 - Notebook 03: https://nvidia-merlin.github.io/Transformers4Rec/stable/examples/tutorial/03-Session-based-recsys.html

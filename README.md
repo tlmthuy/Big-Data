@@ -57,6 +57,7 @@ Không commit raw CSV, Parquet lớn, checkpoint, GPU log, secret hoặc credent
 | Popularity, GRU và XLNet | [model_comparison.md](docs/modeling/model_comparison.md) |
 | Luật đánh giá | [model_protocol.md](docs/modeling/model_protocol.md) |
 | Chạy toy test, Recall/NDCG và baseline Popularity TV2 | [tv2_runbook.md](docs/modeling/tv2_runbook.md) |
+| Script GRU/XLNet, config E1–E4 và công cụ E5 | [neural_runbook.md](docs/modeling/neural_runbook.md), [experiments.json](configs/experiments.json) |
 | TV3 nhận script, kiểm tra môi trường và trạng thái sẵn chạy | [environment/README.md](environment/README.md), [tv2_handoff.json](configs/tv2_handoff.json) |
 | E1–E5 | [experiment_matrix.md](docs/experiment_matrix.md) |
 | Nguồn, license và hướng dẫn đối chiếu NVIDIA | [references.md](docs/references.md) |
@@ -78,3 +79,5 @@ Tám bản bối cảnh/đề xuất cũ được giữ nguyên trong [context-h
 Raw CSV và danh sách session lớn vẫn ở máy TV1. Phương án bàn giao hiện tại là người nhận tái tạo từ raw cùng SHA-256 theo [hướng dẫn](docs/raw_subsets.md#người-nhận-tái-tạo-và-xác-nhận), đối chiếu rồi ghi xác nhận vào [handoff](docs/handoff.md). Ba task chưa được đánh dấu Done chính thức vì còn chờ kiểm tra độc lập trên dữ liệu thật.
 
 Chưa có xác nhận chạy preprocessing NVIDIA, sequence/split, GPU model hoặc E1–E5. Mọi kết quả thực nghiệm phải được ghi bằng `run_id`, commit, seed, cấu hình, phần cứng, phiên bản thư viện và đường dẫn output.
+
+Bốn task TV2 tiếp theo đã có code/config trên nhánh TV2: GRU/XLNet, matrix 11 run, collector E1–E4 và E5 tổng hợp log. Xem [runbook](docs/modeling/neural_runbook.md); model NVIDIA chưa chạy đầy đủ vì local thiếu Merlin/Transformers4Rec và không có GPU. E2 cần telemetry, E4 full cần command preprocessing chung từ TV1. Chưa có kết quả experiment thật.
