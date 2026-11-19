@@ -56,6 +56,7 @@ Không commit raw CSV, Parquet lớn, checkpoint, GPU log, secret hoặc credent
 | Input, target và Top-20 | [next_item_problem.md](docs/modeling/next_item_problem.md) |
 | Popularity, GRU và XLNet | [model_comparison.md](docs/modeling/model_comparison.md) |
 | Luật đánh giá | [model_protocol.md](docs/modeling/model_protocol.md) |
+| Chạy toy test, Recall/NDCG và baseline Popularity TV2 | [tv2_runbook.md](docs/modeling/tv2_runbook.md) |
 | E1–E5 | [experiment_matrix.md](docs/experiment_matrix.md) |
 | Nguồn, license và hướng dẫn đối chiếu NVIDIA | [references.md](docs/references.md) |
 | Raw subset theo session | [raw_subsets.md](docs/raw_subsets.md) |
