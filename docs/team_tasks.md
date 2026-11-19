@@ -14,14 +14,20 @@ Tất cả thành viên dùng cùng phạm vi: `2019-Oct.csv`, 7 ngày đầu t�
 | --- | --- | --- |
 | Đọc schema raw và notebook 01 | Có ghi chú input/output, cột và thao tác lọc | Mở [notebook 01](https://nvidia-merlin.github.io/Transformers4Rec/stable/examples/tutorial/01-preprocess.html). Ghi lại 9 cột raw, cách tạo `event_time_ts`, cách bỏ `user_session` null, cách mã hóa session, cách xử lý event lặp và tên file Parquet đầu ra. Không sửa code trước khi ghi lại pipeline gốc. |
 | Audit dataset | Có `data/raw_audit.csv` | Chạy script đọc raw và xuất số dòng, số null từng cột, min/max thời gian, số event type, số session, user, item, category, brand. Lưu cả command và timestamp chạy. |
-| Sampling theo session | Script tái lập được ở 10%, 25%, 50%, 100% | Tính stable hash trên `user_session`, giữ session nếu hash nằm dưới ngưỡng phần trăm, rồi lọc toàn bộ dòng thuộc session. Kiểm tra mỗi session được giữ đủ event như raw. Không sample từng dòng. |
-| Xuất subset và manifest | Có manifest counts | Manifest phải ghi input path, seed, rule chọn session, số session/event/user/item, thời gian tạo và output path. TV2 chỉ được dùng subset có manifest. |
+| Sampling theo session | Bốn danh sách ID và manifest tái lập được ở 10%, 25%, 50%, 100% | Dùng `pipeline/sample_sessions.py`, SHA-256 trên ID session gốc với seed 42; kiểm tra ngưỡng, uniqueness và các tập lồng nhau. Đây mới là membership, chưa xuất event. Xem [session_sampling.md](session_sampling.md). |
+| Xuất subset và manifest | Raw CSV tuần đầu và counts event/session/user/item | Dùng `pipeline/export_raw_subsets.py` join membership và giữ toàn bộ event hợp lệ trong tuần, gồm event lặp và session một event. Manifest ghi input/output path/checksum, seed, rule hash, thời gian và counts. Khi chạy riêng phải chọn `--output-dir`, `--manifest`, `--counts` mới. Xem [raw_subsets.md](raw_subsets.md). TV2 chỉ dùng subset có manifest. |
 | Chạy preliminary preprocessing | Có Parquet sơ bộ | Theo notebook 01, timestamp conversion, bỏ session null, categorify session, sort theo session/time, loại consecutive repeated item và tính `prod_first_event_time_ts` trên dữ liệu tháng trước lọc tuần. Lưu artifact first-seen chung, mapping truy vết session gốc và counts từng bước; không thêm khóa phụ CSV. |
 | Chạy ETL NVTabular | Có Parquet + schema | Tận dụng [notebook 02](https://nvidia-merlin.github.io/Transformers4Rec/stable/examples/tutorial/02-ETL-with-NVTabular.html). Fit workflow riêng trên dữ liệu tuần của từng subset trước split, gồm `Categorify`, feature statistics/normalization và Groupby theo `user_session`; giữ 20 item cuối bằng `ListSlice(-20, pad=True)`, session tối thiểu 2 interaction. Mở lại Parquet và in schema sau export. Baseline model chỉ dùng product ID. |
 | Tạo split và mapping | Có split files + mapping | Tính day_index bằng `(event_time_dt-first - col.min()).dt.days + 1` như nguồn, không mặc định ngày lịch UTC; chia ngẫu nhiên khoảng 80/10/10 trong mỗi partition, GPU seed 1, sort theo user_session. Giữ session qua ngày, không loại theo event cuối vượt cutoff train. Mapping/schema đã fit trên tuần trước split và giữ cố định qua partition. Lưu membership/counts, vocabulary, catalog product ID thực, mapping encoded ID ↔ original product_id và phiên bản runtime. |
 | Tạo bốn subset | Có 10/25/50/100% manifests | Dùng cùng sampling rule và seed policy. Ghi event/session/user/item thực tế của từng mức. Không gọi 10% user là 10% event nếu chưa đo. |
 | Hỗ trợ sửa data/schema | Mọi run đọc cùng schema | Khi TV2 báo lỗi, tái tạo lỗi bằng command của TV2, sửa tại pipeline, tăng version output và gửi lại schema/counts. Không sửa trực tiếp file Parquet bằng tay. |
 | Reproduce preprocessing | Thành viên khác chạy lại được | Đưa command raw → sample → Parquet vào README. TV1 không tự chạy một mình, phải nhờ người khác chạy trong thư mục sạch và đối chiếu counts. |
+
+### Trạng thái ba task raw — 19/11/2026
+
+Audit, chọn session và xuất raw subset đã được merge vào `main` từ commit TV1 `f7fce3e`; review code và kiểm tra nhỏ đạt. Bảng counts: [raw_subset_counts.csv](../data/manifests/raw_subset_counts.csv). Đây chưa phải dữ liệu sequence đã làm sạch.
+
+Chưa Done chính thức: người nhận cần tái tạo/nhận artifact thật, xác minh raw checksum, membership và nội dung/counts subset, rồi điền xác nhận trong [handoff.md](handoff.md). Không coi kiểm tra dữ liệu giả lập là nghiệm thu dữ liệu thật.
 
 ## TV2 — Model, experiment và evaluation
 

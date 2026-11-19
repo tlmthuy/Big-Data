@@ -65,6 +65,10 @@ Không commit raw CSV, Parquet lớn, checkpoint, GPU log, secret hoặc credent
 
 Tám bản bối cảnh/đề xuất cũ được giữ nguyên trong [context-history.zip](docs/archive/context-history.zip), chỉ mở khi cần tra lịch sử. Phạm vi và lịch hiện hành lấy từ AGENTS.md.
 
-## Trạng thái ban đầu
+## Trạng thái hiện tại — 19/11/2026
 
-Repo này là skeleton sạch; chưa tuyên bố pipeline, model, GPU environment hay AWS artifact đã chạy thành công. Mọi kết quả thực nghiệm phải được ghi bằng `run_id`, commit, seed, cấu hình, phần cứng, phiên bản thư viện và đường dẫn output.
+Đã tích hợp ba task TV1 vào `main`: audit raw, chọn session bằng stable hash và xuất raw subset tuần đầu ở mức 10/25/50/100%. Code đã qua review và kiểm tra dữ liệu nhỏ; các counts và manifest của lần chạy TV1 được lưu trong Git. Hai lỗi đơn vị RSS trên Ubuntu và ghi đè bảng counts đã được sửa tại `f7fce3e`.
+
+Raw CSV và danh sách session lớn vẫn ở máy TV1. Phương án bàn giao hiện tại là người nhận tái tạo từ raw cùng SHA-256 theo [hướng dẫn](docs/raw_subsets.md#người-nhận-tái-tạo-và-xác-nhận), đối chiếu rồi ghi xác nhận vào [handoff](docs/handoff.md). Ba task chưa được đánh dấu Done chính thức vì còn chờ kiểm tra độc lập trên dữ liệu thật.
+
+Chưa có xác nhận chạy preprocessing NVIDIA, sequence/split, GPU model hoặc E1–E5. Mọi kết quả thực nghiệm phải được ghi bằng `run_id`, commit, seed, cấu hình, phần cứng, phiên bản thư viện và đường dẫn output.

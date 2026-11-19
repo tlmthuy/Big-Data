@@ -95,3 +95,13 @@ Phương án bàn giao là tái tạo từ CSV nguồn cùng SHA-256. Xem [lện
 - SHA-256 và counts của bốn CSV:
 - Kết quả đối chiếu membership và số event từng session:
 - Xác nhận Done:
+
+## Tích hợp ba task raw TV1 vào main — 19/11/2026
+
+- Theo yêu cầu của Thúy, merge `origin/feature/tv1-data` tại `f7fce3e51043397f8d93208bc1e036dcc71b2629` vào `main`, không conflict. Merge commit: `d5086ee20c2840d367241a4f682547ccaea6f17e`.
+- Phạm vi: raw audit, danh sách session stable hash và raw subset tuần đầu; giữ nguyên các manifest lịch sử và counts TV1 đã commit. Không có raw CSV lớn được thêm vào Git.
+- Review code: ba task đạt; RSS được chuẩn hóa cho Linux/macOS, export có `--counts` và chống ghi đè/trùng đường dẫn. Đã kiểm tra counts/manifest/checksum nguồn ở các lần review trước.
+- Kiểm tra fix trên dữ liệu nhỏ: 200 session, 501 event hợp lệ; cả bốn subset giữ đúng multiset của chín field, gồm event lặp/session một event. Counts cũ được giữ nguyên khi dùng đường dẫn riêng; đích tồn tại hoặc trùng nhau bị từ chối. Đổi đơn vị RSS kiểm tra bằng giá trị mô phỏng Linux/macOS, không phải đo bộ nhớ thật trên Ubuntu.
+- Cập nhật README, data/README và team_tasks để phân biệt membership, raw event subset và sequence; liên kết hướng dẫn tái tạo và trạng thái nghiệm thu.
+- Chưa chạy lại toàn bộ raw hoặc truy cập bốn CSV thật trên máy TV1. Hướng dẫn tái tạo và kiểm tra nội bộ của TV1 đã có; xác nhận độc lập của người nhận vẫn để trống. Merge/review code không thay thế bước này; ba task chưa Done chính thức.
+- Kiểm tra lại tài liệu: `git diff --check`, cú pháp ba script và các liên kết Markdown local trong tài liệu vừa sửa; trạng thái đồng bộ main kiểm tra qua Git sau khi push.
