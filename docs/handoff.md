@@ -243,3 +243,9 @@ Phương án bàn giao là tái tạo từ CSV nguồn cùng SHA-256. Xem [lện
 - Cập nhật README, data/README và team_tasks để phân biệt membership, raw event subset và sequence; liên kết hướng dẫn tái tạo và trạng thái nghiệm thu.
 - Chưa chạy lại toàn bộ raw hoặc truy cập bốn CSV thật trên máy TV1. Hướng dẫn tái tạo và kiểm tra nội bộ của TV1 đã có; xác nhận độc lập của người nhận vẫn để trống. Merge/review code không thay thế bước này; ba task chưa Done chính thức.
 - Kiểm tra lại tài liệu: `git diff --check`, cú pháp ba script và các liên kết Markdown local trong tài liệu vừa sửa; trạng thái đồng bộ main kiểm tra qua Git sau khi push.
+
+## TV4 — Review model output contract — 20/11/2026
+
+- Tài liệu [output contract](../app/output_contract.md), commit `dd22733`, nhánh `feature/tv4-demo-documentation`. Đối chiếu main `b40cd76`, code TV2 `7277b65` và cây nguồn NVIDIA đã pin.
+- Kiểm tra từ root: chạy khối `Read-only toy verification` trong tài liệu, `python3 -m unittest discover -s evaluation/tests -v` và `git diff --check`. Xác minh 31 link Markdown local trong tài liệu. Toy có 3 dòng với target hạng 1, hạng 20 và miss. Mapping khớp catalog 23 item, còn fixture UI lưu 21 item dưới dạng chuỗi encoded ID. Unittest đạt 12, skip 1 vì thiếu pyarrow.
+- Trạng thái: chờ TV2 duyệt format bàn giao, score/rank, mapping/session key và run package dùng cho demo. Hai log runtime trên nhánh TV2 báo thiếu Transformers4Rec. Chưa nghiệm thu với artifact thật và chưa đánh dấu Done.
