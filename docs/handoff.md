@@ -9,7 +9,7 @@
 - Chốt `full_evaluation_wall_v1`: cả ba model báo wall toàn evaluation làm `inference_seconds`, có ms/session và session/s; sort một lần Popularity và compute neural chỉ là diagnostic. [Phạm vi đo](modeling/inference_timing.md). Regression clock test tái hiện lệch cũ và đạt sau sửa; giữ nguyên log smoke lịch sử. E5 từ chối timing thiếu/khác protocol và không gộp toy logs vào dữ liệu thật.
 - **29/29 test PASS**, gồm collector pass/fail, config invariants, toy/real guard, E4 multiset/command binding, E5 tổng hợp log/kiểm tra provenance. **5 run GPU/runtime toy qua collector PASS**: E1 ba model, E3 hai batch. [Command/summary/raw log bản sao](../metrics/tv2-config-collector-smoke/README.md), [test result + checksum](../metrics/tv2-config-collector-smoke/checks.json). Đây không phải full E2/E4 preprocessing run; chưa chạy model trên dữ liệu TV1.
 - Bắt đầu benchmark thật sau khi có sequence/split/schema/catalog/version/manifest, TV2 kiểm tra đầu vào và TV3 có runtime chính thức. E2 cần telemetry đo preprocessing; E4 full cần shared CSV/Parquet preprocessing command từ TV1. Code/config không còn chờ để bàn giao; số liệu thật vẫn chưa có.
-- Commit tích hợp config/collector và timing được ghi sau khi commit.
+- Commit tích hợp config/collector và timing: `3bfbd31950b69fcff7b214eddc35b6f87397f599`.
 
 ### TV2 — Tích hợp riêng GRU/XLNet vào main — 20/11/2026
 
