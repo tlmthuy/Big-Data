@@ -10,7 +10,7 @@ Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã ch
 - Đã đồng bộ `AGENTS.md`, `README.md`, `docs/team_tasks.md`, `docs/experiment_matrix.md` và mục bàn giao này. Lịch TV4/TV5 gồm đủ các mốc trong ảnh; đường dẫn quy về cấu trúc repo: `app/`, `reports/`, `reports/figures/`, `reports/tables/`, `reports/slides/`.
 - TV2 gửi metrics package chính thức cho TV4/TV5; TV4 giao figures/caption/references/license/AI statement cho TV5; TV5 đối chiếu logs với TV2 và hoàn thiện nội dung report/slides. Nhánh TV4 giữ `feature/tv4-demo-documentation`; nhánh phụ trách TV5 là `feature/tv5-report-results`.
 - Kiểm tra: `git diff --check`; rà tham chiếu TV4/TV5 và số thành viên; đối chiếu đủ 10 dòng deadline trong ảnh cho mỗi vai trò; kiểm tra liên kết Markdown local của các file đã sửa. Đây là cập nhật kế hoạch, chưa tạo demo/report/slides hoặc kết quả experiment.
-- Branch tích hợp: `main`. Commit cập nhật phân công: tra bằng `git log -1 --format=%H --grep="docs: split TV4 demo and TV5 report responsibilities"`; hash của commit chính được ghi trong mục xác nhận Git sau khi commit. Người nhận TV4/TV5 chờ xác nhận; chưa đánh dấu Done theo quy tắc dự án.
+- Branch tích hợp: `main`; commit cập nhật phân công: `4bc361c`. Kiểm tra phạm vi bằng `git show 4bc361c --stat`. Người nhận TV4/TV5 chờ xác nhận; chưa đánh dấu Done theo quy tắc dự án.
 
 ## Nhật ký bàn giao lịch sử
 
