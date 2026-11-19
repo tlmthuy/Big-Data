@@ -1,0 +1,5 @@
+/root/.local/share/big-data-recsys/model-smoke-20261120/lib/python3.10/site-packages/merlin/dtypes/mappings/tf.py:52: UserWarning: Tensorflow dtype mappings did not load successfully due to an error: No module named 'tensorflow'
+  warn(f"Tensorflow dtype mappings did not load successfully due to an error: {exc.msg}")
+/root/.local/share/big-data-recsys/model-smoke-20261120/lib/python3.10/site-packages/merlin/dtypes/mappings/triton.py:53: UserWarning: Triton dtype mappings did not load successfully due to an error: No module named 'tritonclient'
+  warn(f"Triton dtype mappings did not load successfully due to an error: {exc.msg}")
+Projecting inputs of NextItemPredictionTask to'64' As weight tying requires the input dimension '128' to be equal to the item-id embedding dimension '64'

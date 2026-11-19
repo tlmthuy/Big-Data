@@ -19,7 +19,7 @@ Toàn bộ mã nguồn NVIDIA được giữ nguyên trên nhánh `reference/nvi
 
 1. Đọc [AGENTS.md](AGENTS.md) trước khi sửa code hoặc chốt thiết kế.
 2. Đọc [phân công thực thi](docs/team_tasks.md) và [yêu cầu môn học](docs/course_requirements.txt).
-3. TV3 đọc [`environment/README.md`](environment/README.md) và [manifest bàn giao TV2](configs/tv2_handoff.json): có lệnh toy; GPU runtime và experiment configs còn chờ xác minh/bàn giao.
+3. TV3 đọc [`environment/README.md`](environment/README.md), [manifest bàn giao TV2](configs/tv2_handoff.json) và [config/collector E1–E5](docs/modeling/experiment_runbook.md). Đã kiểm tra bằng toy; chưa xác minh trên dữ liệu thật hoặc runtime Docker/cloud chính thức.
 4. Kiểm tra manifest và schema trong [`data/manifests/`](data/manifests/) trước khi chạy pipeline.
 5. Ghi mọi lần chạy vào [`metrics/`](metrics/) và cập nhật [`docs/handoff.md`](docs/handoff.md).
 
@@ -77,7 +77,7 @@ Tám bản bối cảnh/đề xuất cũ được giữ nguyên trong [context-h
 
 Raw CSV và danh sách session lớn vẫn ở máy TV1. Phương án bàn giao hiện tại là người nhận tái tạo từ raw cùng SHA-256 theo [hướng dẫn](docs/raw_subsets.md#người-nhận-tái-tạo-và-xác-nhận), đối chiếu rồi ghi xác nhận vào [handoff](docs/handoff.md). Ba task chưa được đánh dấu Done chính thức vì còn chờ kiểm tra độc lập trên dữ liệu thật.
 
-Hai task script **GRU và XLNet** đã tích hợp vào main: [CLI](evaluation/run_neural.py), [model](models/session_models.py), [hướng dẫn](docs/modeling/neural_runbook.md), [GPU smoke đạt](metrics/tv2-model-smoke/README.md). Matrix/config/runner E1–E5 vẫn ở nhánh TV2.
+Hai task script **GRU và XLNet** đã tích hợp vào main: [CLI](evaluation/run_neural.py), [model](models/session_models.py), [hướng dẫn](docs/modeling/neural_runbook.md), [GPU smoke đạt](metrics/tv2-model-smoke/README.md). Config/collector E1–E4 và công cụ E5 đã tích hợp; [5 run collector toy](metrics/tv2-config-collector-smoke/README.md) đạt. Dùng bộ này để benchmark E1–E5 sau khi bind đầu vào thật; hiện **chưa xác minh trên dữ liệu thật**. [Phép đo inference](docs/modeling/inference_timing.md) đã thống nhất cho ba model.
 
 Chưa có xác nhận sequence/split cuối hoặc benchmark E1–E5 trên dữ liệu thật. Mọi kết quả thực nghiệm phải được ghi bằng `run_id`, commit, seed, cấu hình, phần cứng, phiên bản thư viện và đường dẫn output.
 

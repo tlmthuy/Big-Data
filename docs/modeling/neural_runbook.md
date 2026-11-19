@@ -55,9 +55,9 @@ Sau mỗi run, kiểm tra checkpoint thật bằng `python -m scripts.runs.verif
 
 XLNet cần bộ nhớ cho activation theo batch × sequence² × layer/head và logits theo số vị trí train × vocabulary; GRU cũng có full-vocabulary logits. Không có số VRAM bảo đảm trước khi chạy. Runner ghi parameter bytes và peak CUDA allocated/reserved; collector ghi sampled process-tree RSS. Nếu batch chuẩn OOM, giữ log, trao đổi TV2 về config mới; không tự thay batch giữa E2 subsets.
 
-## Phạm vi tích hợp vào main
+## Config và collector
 
-Main nhận hai task script GRU/XLNet, CLI chung, test, dependency pins cho local smoke và bằng chứng GPU. Matrix/config/runner E1–E5 đang ở nhánh `feature/tv2-model-evaluation`, chưa nằm trong lần tích hợp này. TV3 có thể chạy CLI model trực tiếp theo hướng dẫn trên; benchmark thật cần artifact TV1 được TV2 kiểm tra và runtime chính thức TV3.
+Config/collector/runner E1–E4 và công cụ E5 đã tích hợp cùng [hướng dẫn TV3](experiment_runbook.md). Đã kiểm tra bằng toy data, chưa xác minh trên dữ liệu thật. [Phép đo inference](inference_timing.md) thống nhất thời gian toàn bộ evaluation; `prediction_compute_seconds` là diagnostic riêng mỗi model.
 
 ## Nguồn và phần nhóm điều chỉnh
 

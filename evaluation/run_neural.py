@@ -19,6 +19,7 @@ from pathlib import Path
 from evaluation.data import Catalog, audit_sessions, read_sessions
 from evaluation.ranking import K, RankingMetrics
 from evaluation.run_popularity import fingerprint, sha256
+from evaluation.timing import TIMING_FIELDS, evaluation_timing
 from models.session_models import DEFAULTS, FEATURE, SOURCE_COMMIT, build_model
 
 
@@ -92,9 +93,11 @@ def evaluate(model, args, catalog, day, split, device, output):
                 handle.write(json.dumps({"user_session": session, "prefix": seq[:-1],
                                          "target": seq[-1], "top20": top20,
                                          "product_ids": [catalog.products[i] for i in top20]}) + "\n")
-    return {"day_index": day, "split": split, **metrics.compute(),
-            "inference_seconds": compute_seconds,
-            "evaluation_with_io_seconds": time.perf_counter() - started}
+    summary = metrics.compute()
+    return {"day_index": day, "split": split, **summary,
+            **evaluation_timing(started, summary["n_sessions"], compute_seconds,
+                                "native testing forward (mask/labels/loss), catalog ranking and IDs transfer; "
+                                "excludes input packing and file IO; diagnostic, not cross-model latency")}
 
 
 def train_day(model, optimizer, args, catalog, day, n_sessions, device):
@@ -248,8 +251,7 @@ def execute(args, catalog, counts, artifacts):
               "eval_split": args.split, "final": final, "history": history,
               **{key: final[key] for key in ["n_sessions", "Recall@20", "NDCG@20", "recall_sum", "ndcg_sum"]},
               "train_with_input_scan_seconds": sum(r["train"]["train_with_input_scan_seconds"] for r in history),
-              "inference_seconds": final["inference_seconds"],
-              "inference_scope": "testing forward (mask/labels/loss) plus real-catalog ranking and IDs transfer; excludes input packing and file IO",
+              **{key: final[key] for key in TIMING_FIELDS},
               "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated(device) if device.type == "cuda" else None,
               "peak_cuda_reserved_bytes": torch.cuda.max_memory_reserved(device) if device.type == "cuda" else None,
               "parameter_bytes": sum(p.numel() * p.element_size() for p in model.parameters()),
@@ -258,7 +260,7 @@ def execute(args, catalog, counts, artifacts):
               "training_config": training_config, "training_source_sha256": training_source_sha256,
               "source_commit": SOURCE_COMMIT, "loader": "fixed-order streaming PyArrow/JSONL; no shuffle",
               "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
-              "source_sha256": {p: sha256(p) for p in ["models/session_models.py", "evaluation/run_neural.py", "evaluation/data.py", "evaluation/ranking.py"]},
+              "source_sha256": {p: sha256(p) for p in ["models/session_models.py", "evaluation/run_neural.py", "evaluation/data.py", "evaluation/ranking.py", "evaluation/timing.py"]},
               "python": platform.python_version(), "packages": packages,
               "device": str(device), "gpu": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
               "cuda": torch.version.cuda}

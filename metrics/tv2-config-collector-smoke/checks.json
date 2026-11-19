@@ -1,0 +1,34 @@
+{
+  "command": [
+    "python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "evaluation/tests",
+    "-v"
+  ],
+  "status": "passed",
+  "tests": 29,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "python": "3.13.12",
+  "scope": "toy/synthetic tests; not a real-data benchmark",
+  "real_data_verified": false,
+  "code_sha256": {
+    "evaluation/timing.py": "238d7d1bb7696f28a52763edd331ecde9bef1611ca5aae12a635a686c2cff64e",
+    "evaluation/run_neural.py": "705814761d588fa89918ce29fcddf3e9a2a538c4783981504f23a69971d557f4",
+    "evaluation/run_popularity.py": "82d6672d9762df1101655c7f98022305f20bf6372b316916fe151fdcb235c81e",
+    "evaluation/tests/test_inference_timing.py": "4fb52e457b18f195e92af9a6bb7d4659fac0b17bc73df48aaabda3bf004e2f9f",
+    "evaluation/tests/test_experiments.py": "c8bd7022bcb25f92c2f8884d7267ebb31ffc22e0cb9634a4fd71f3d13d23d124",
+    "benchmark/collect.py": "54f93049ed8e8c165725fc7b2f12374c5e685b5fb95dfa8ba008c3cdd27845ae",
+    "benchmark/format_io.py": "a0761729d47666f035d916725027cbeb69ff5c6f7953dab3ed2257f746c6a9b0",
+    "benchmark/scalability.py": "244c2a262b3ce146581c5f3c060b84224fd741cd9d5fc66c80a29fe93fefe6c7",
+    "configs/experiments.json": "1d919a1e66b74560137cbef80b51ff9ebd88a05651db0a44bbab51e906996862",
+    "configs/site.example.json": "238d97937fe8b60304d70ea86eaba4a9d896a9b6741fcb7a191d6c4fe4055c8f",
+    "configs/pipeline_metrics.example.json": "c7b006bb7dd916d93c1f976dedcf68fafa90632fe6125f8841e3b3f6b7cd082e",
+    "scripts/runs/run_experiments.py": "c652906ce8618fe1a62d05ca11c2ea9d60983eb527a08e518c7b9f0e2410659b",
+    "scripts/runs/prepare_toy_site.py": "6ffc41b998fd791d7bc2a51f7aac2fcfe5e54045e7918ebb5acf51001e2cdd41"
+  }
+}

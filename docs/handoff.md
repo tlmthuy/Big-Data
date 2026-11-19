@@ -2,6 +2,15 @@
 
 ## Trạng thái hiện hành
 
+### TV2 — Config/collector và inference timing cho mốc 21/11 — kiểm tra 20/11/2026
+
+- Theo phạm vi user xác nhận: tích hợp config/collector, kiểm tra bằng toy; **chưa xác minh trên dữ liệu thật**. Bộ công cụ dùng để chạy benchmark E1–E5 và toy logs dùng tham khảo vận hành/format; chưa dùng số toy làm kết luận eCommerce/scalability.
+- Tích hợp `configs/{experiments,site.example,pipeline_metrics.example}.json`, `scripts/runs/run_experiments.py`, `benchmark/{collect,format_io,scalability}.py`, kèm `prepare_toy_site.py`. Matrix 11 run giữ lựa chọn đã chốt: E1=10%, E2/E5=GRU, E3=batch 32/128, E4=CSV/Parquet raw 10%. [Runbook TV3](modeling/experiment_runbook.md), [manifest](../configs/tv2_handoff.json).
+- Chốt `full_evaluation_wall_v1`: cả ba model báo wall toàn evaluation làm `inference_seconds`, có ms/session và session/s; sort một lần Popularity và compute neural chỉ là diagnostic. [Phạm vi đo](modeling/inference_timing.md). Regression clock test tái hiện lệch cũ và đạt sau sửa; giữ nguyên log smoke lịch sử. E5 từ chối timing thiếu/khác protocol và không gộp toy logs vào dữ liệu thật.
+- **29/29 test PASS**, gồm collector pass/fail, config invariants, toy/real guard, E4 multiset/command binding, E5 tổng hợp log/kiểm tra provenance. **5 run GPU/runtime toy qua collector PASS**: E1 ba model, E3 hai batch. [Command/summary/raw log bản sao](../metrics/tv2-config-collector-smoke/README.md), [test result + checksum](../metrics/tv2-config-collector-smoke/checks.json). Đây không phải full E2/E4 preprocessing run; chưa chạy model trên dữ liệu TV1.
+- Bắt đầu benchmark thật sau khi có sequence/split/schema/catalog/version/manifest, TV2 kiểm tra đầu vào và TV3 có runtime chính thức. E2 cần telemetry đo preprocessing; E4 full cần shared CSV/Parquet preprocessing command từ TV1. Code/config không còn chờ để bàn giao; số liệu thật vẫn chưa có.
+- Commit tích hợp config/collector và timing được ghi sau khi commit.
+
 ### TV2 — Tích hợp riêng GRU/XLNet vào main — 20/11/2026
 
 - Theo yêu cầu của Thúy, chỉ đưa hai task script GRU/XLNet cùng dependency, test, hướng dẫn và bằng chứng GPU lên main. Matrix/config/runner experiment E1–E5 tiếp tục ở nhánh `feature/tv2-model-evaluation`; giữ nguyên dữ liệu/tài liệu TV1 và demo TV4 trên main.
