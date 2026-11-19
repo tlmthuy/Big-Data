@@ -1,4 +1,5 @@
-# Placeholder only: pin a CUDA/NVIDIA Merlin base image after GPU smoke test.
-# Do not build this image until CUDA, driver and library versions are recorded.
-FROM ubuntu:22.04
+# Supply the candidate Merlin image tag/digest; no generic Ubuntu fallback.
+# Build and smoke-test it before recording it as the verified project runtime.
+ARG MERLIN_IMAGE
+FROM ${MERLIN_IMAGE}
 WORKDIR /workspace

@@ -19,7 +19,7 @@ Toàn bộ mã nguồn NVIDIA được giữ nguyên trên nhánh `reference/nvi
 
 1. Đọc [AGENTS.md](AGENTS.md) trước khi sửa code hoặc chốt thiết kế.
 2. Đọc [phân công thực thi](docs/team_tasks.md) và [yêu cầu môn học](docs/course_requirements.txt).
-3. Tạo môi trường theo [`environment/README.md`](environment/README.md).
+3. TV3 đọc [`environment/README.md`](environment/README.md) và [manifest bàn giao TV2](configs/tv2_handoff.json): có lệnh toy; GPU runtime và experiment configs còn chờ xác minh/bàn giao.
 4. Kiểm tra manifest và schema trong [`data/manifests/`](data/manifests/) trước khi chạy pipeline.
 5. Ghi mọi lần chạy vào [`metrics/`](metrics/) và cập nhật [`docs/handoff.md`](docs/handoff.md).
 
@@ -57,6 +57,7 @@ Không commit raw CSV, Parquet lớn, checkpoint, GPU log, secret hoặc credent
 | Popularity, GRU và XLNet | [model_comparison.md](docs/modeling/model_comparison.md) |
 | Luật đánh giá | [model_protocol.md](docs/modeling/model_protocol.md) |
 | Chạy toy test, Recall/NDCG và baseline Popularity TV2 | [tv2_runbook.md](docs/modeling/tv2_runbook.md) |
+| TV3 nhận script, kiểm tra môi trường và trạng thái sẵn chạy | [environment/README.md](environment/README.md), [tv2_handoff.json](configs/tv2_handoff.json) |
 | E1–E5 | [experiment_matrix.md](docs/experiment_matrix.md) |
 | Nguồn, license và hướng dẫn đối chiếu NVIDIA | [references.md](docs/references.md) |
 | Raw subset theo session | [raw_subsets.md](docs/raw_subsets.md) |

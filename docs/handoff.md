@@ -1,5 +1,20 @@
 # Handoff
 
+## Trạng thái hiện hành
+
+Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã chốt trong [model_protocol.md](modeling/model_protocol.md). Kiểm chứng dữ liệu thật từ TV1 là task riêng ngày 21/11, trước E1. TV3 nhận script và trạng thái sẵn sàng qua [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn môi trường](../environment/README.md). Chưa có GPU runtime hoặc gói GRU/XLNet/E1–E4 được xác minh.
+
+## Nhật ký bàn giao lịch sử
+
+Các mục dưới giữ nguyên trạng thái tại thời điểm bàn giao. Những câu “chưa chốt lịch test” hoặc “CLI từ chối test” đã được quyết định mới phía trên thay thế; không dùng chúng làm hướng dẫn chạy hiện tại.
+
+## Đồng bộ repo và đầu mối TV3 — 19/11/2026
+
+- Thêm `configs/tv2_handoff.json`: command argv, input/output/expected metrics toy, checksum code/fixture chuẩn hóa LF, trạng thái pending cho data thật, GPU, GRU/XLNet và E1–E5. TV3 bắt đầu từ `environment/README.md`; Dockerfile yêu cầu image Merlin ứng viên cụ thể, chưa khẳng định đã có runtime GPU được pin.
+- Giữ Python 3.10 cho môi trường CPU/toy; thay `hashlib.file_digest` bằng hash đọc chunk để bỏ phụ thuộc API Python 3.11. Runtime GPU không bị tự nâng Python. Đồng bộ runbook, README, preprocessing review, experiment matrix và team tasks; tách nhận dữ liệu thật ngày 21/11 khỏi chốt protocol. Giữ nhật ký cũ có nhãn lịch sử.
+- Lệnh toy mới ghi vào `metrics/local/` (Git ignore), không trùng output lịch sử. Bỏ `.gitkeep` ở sáu thư mục đã có file; giữ snapshot/LICENSE, manifest và bằng chứng cũ.
+- Kiểm tra: 13/13 unittest PASS, manifest checksum/command/expected metrics, cú pháp Python 3.10 và liên kết Markdown local đạt; log `metrics/tv2-environment-sync-tests.txt`. Thực thi local Python 3.13.12; chưa tạo Conda Python 3.10 hoặc build/chạy GPU Docker. Chi tiết commit ghi trong mục bàn giao tiếp theo.
+
 ## Tích hợp năm task TV2 vào main — 19/11/2026
 
 - Đã review và merge `feature/tv2-model-evaluation` tại `8b6a392` vào `main`, không conflict. Merge commit: `af280b91765a6e586dfdd20e69b9bab50e8d4e8c`.

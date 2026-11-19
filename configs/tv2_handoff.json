@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "updated_on": "2026-11-19",
+  "owner": "TV2",
+  "recipient": "TV3",
+  "checkout_ref": "main",
+  "reviewed_base_commit": "f0df09d82a2d11ce1b1baa6e202bc9eaf66cf872",
+  "resolve_run_commit_argv": [
+    "git",
+    "rev-parse",
+    "HEAD"
+  ],
+  "working_directory": "repository root",
+  "protocol": "docs/modeling/model_protocol.md",
+  "runbook": "docs/modeling/tv2_runbook.md",
+  "environment_guide": "environment/README.md",
+  "python_minimum": "3.10",
+  "runtime_status": "CPU/toy verified on local Python; GPU image and package versions unverified",
+  "files_sha256": {
+    "evaluation/__init__.py": "47fe5c3c117acdeaee61a18885ff4e09d80d8c53d8f76cafcdb044d2775a6680",
+    "evaluation/data.py": "e6221332f03fe37f09760c092c4aa58704c2226dbc1ecbfecd3b155686d5897f",
+    "evaluation/ranking.py": "8c744e95d50cc8d6425aad412e4bc3d80389e465d70dd1e4fde39b26fc0e151d",
+    "evaluation/run_popularity.py": "2a8b1106641bec53176b5f9da81d635caac7b382bda67c30e641da2597921889",
+    "evaluation/tests/test_tv2.py": "faac36de68c8a93508081e96cc9cd9269f2a3dfa4d518881c19fb3042397941f",
+    "evaluation/tests/fixtures/catalog.json": "a1ae9388c355a4f5dcdacd52f87b521351caac4c69119b2e17b87d7dc467c184",
+    "evaluation/tests/fixtures/sessions.jsonl": "8274e3a6edd2c836f83d238bc4725b8fbb91ee19eca9f1b85ad06417817122de",
+    "models/__init__.py": "b6942e7ed99420bbf98752e33183b998d3ebc02de646b33588380d20f91e99e9",
+    "models/popularity.py": "f69973f644522e1d2cb427053ea844ca707950d4fa1ad63830996449a27bfc9c"
+  },
+  "commands": [
+    {
+      "id": "unit-tests",
+      "status": "toy_verified",
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "evaluation/tests",
+        "-v"
+      ],
+      "optional_dependency": "pyarrow required for Parquet test; otherwise skipped"
+    },
+    {
+      "id": "popularity-toy",
+      "status": "toy_verified",
+      "argv": [
+        "python",
+        "-m",
+        "evaluation.run_popularity",
+        "--sessions",
+        "evaluation/tests/fixtures/sessions.jsonl",
+        "--catalog",
+        "evaluation/tests/fixtures/catalog.json",
+        "--train-through",
+        "1",
+        "--subset",
+        "toy",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output_dir}"
+      ],
+      "parameters": {
+        "run_id": "unique run label",
+        "output_dir": "new directory under metrics/local/; must not exist"
+      },
+      "expected": {
+        "n_sessions": 3,
+        "Recall@20": 0.6666666666666666,
+        "NDCG@20": 0.40922341623231767
+      },
+      "outputs": [
+        "metrics.json",
+        "predictions.jsonl",
+        "popularity.json"
+      ]
+    }
+  ],
+  "pending": [
+    {
+      "id": "real-data",
+      "owner": "TV1 + TV2",
+      "status": "awaiting_handoff",
+      "needs": [
+        "sequence Parquet",
+        "split membership and counts",
+        "schema/workflow/mapping/catalog",
+        "seed/runtime/checksums",
+        "TV2 acceptance"
+      ]
+    },
+    {
+      "id": "gpu-runtime",
+      "owner": "TV3",
+      "status": "unverified",
+      "needs": [
+        "Merlin image tag/digest",
+        "hardware and package snapshot",
+        "GPU preprocessing/model smoke logs"
+      ]
+    },
+    {
+      "id": "gru-xlnet",
+      "owner": "TV2",
+      "status": "not_implemented",
+      "command": null
+    },
+    {
+      "id": "E1-E4",
+      "owner": "TV2 + TV3",
+      "status": "not_ready",
+      "command": null,
+      "needs": [
+        "TV2 approved per-run config/command",
+        "TV1 data acceptance",
+        "TV3 runtime and collector"
+      ]
+    },
+    {
+      "id": "E5",
+      "owner": "TV2",
+      "status": "awaiting_E2_logs",
+      "command": null,
+      "note": "Analyze E2 logs; no separate model run"
+    }
+  ],
+  "evidence": {
+    "test_log": "metrics/tv2-environment-sync-tests.txt",
+    "historical_toy_metrics": "metrics/tv2-toy-day1/metrics.json",
+    "historical_toy_commit": "04cb5135079707ce4dbdcc09146e7f274b9c3bc7"
+  },
+  "limitations": [
+    "Manifest is a script handoff, not a GPU environment lockfile or experiment run registry.",
+    "Historical toy metrics retain original commit and hashes.",
+    "TV3 runs handed-off commands; protocol/config changes belong to TV2."
+  ],
+  "checksum_normalization": "Replace CRLF bytes with LF before SHA-256 (UTF-8 text files); independent of checkout line endings."
+}

@@ -35,6 +35,7 @@ Chưa Done chính thức: người nhận cần tái tạo/nhận artifact thậ
 | --- | --- | --- |
 | Đọc notebook 03 | Có model protocol | Đọc [notebook 03](https://nvidia-merlin.github.io/Transformers4Rec/stable/examples/tutorial/03-Session-based-recsys.html). Ghi rõ GRU dùng input nào, XLNet dùng masking nào, dataloader nào, loss nào, training arguments nào và metric nào. |
 | Chốt evaluation protocol | Có split/target/catalog/K | Viết một trang quy định: input prefix, next-item target, user/session đủ điều kiện, candidate catalog từ vocabulary tuần của subset đã fit trước split, seen-item rule, `K=20`, Recall@20 và NDCG@20. Không đổi quy định sau khi nhìn kết quả. |
+| Kiểm tra tiếp nhận dữ liệu TV1 (21/11, trước E1) | Xác nhận split/counts/catalog thật | Phụ thuộc TV1 bàn giao. Kiểm tra split, counts và catalog theo model_protocol.md; ghi xác nhận vào docs/handoff.md trước E1. |
 | Viết metric và Popularity | Toy test đúng | Tạo toy example có target nằm hạng 1, hạng 20 và ngoài top-20. Kiểm tra Recall/NDCG bằng tay. Popularity phải fit trên train rồi trả danh sách top-20 cho test prefix. |
 | Viết script GRU/XLNet | Smoke run thành công | Tận dụng model block của repo, chuyển path/schema/config thành arguments. Script phải nhận `--data`, `--split`, `--output`, `--batch-size`, `--epochs`, `--seed`, `--model`. |
 | Viết experiment matrix | Có `docs/experiment_matrix.md` | Mỗi dòng matrix phải có run_id, model, subset, input format, batch size, resource config, command, metric output và log output. Không để TV3 tự đoán config. |
@@ -46,6 +47,8 @@ Chưa Done chính thức: người nhận cần tái tạo/nhận artifact thậ
 | Reproduce/Q&A | Một command chạy lại được | Nhờ thành viên khác chạy evaluation từ checkpoint hoặc output đã lưu. Chuẩn bị trả lời về ground truth, leakage, K, candidate catalog, GRU và XLNet. |
 
 ## TV3 — Môi trường và vận hành run
+
+Đầu mối nhận việc: [environment/README.md](../environment/README.md) và [manifest TV2](../configs/tv2_handoff.json). Chỉ metric/Popularity toy sẵn chạy; GRU/XLNet và config E1–E4 chưa bàn giao.
 
 | Task | Yêu cầu đầu ra (done gate) | Ghi chú thực thi cụ thể |
 | --- | --- | --- |

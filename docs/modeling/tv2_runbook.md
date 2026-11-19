@@ -1,5 +1,7 @@
 # TV2 — Chạy metric và Popularity
 
+TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); chỉ metric/Popularity được kiểm tra toy, chưa có gói E1–E4 sẵn chạy.
+
 ## File bàn giao theo task ngày 20/11
 
 | Task | File chính | Kiểm tra / bằng chứng |
@@ -12,14 +14,14 @@
 
 ## Kiểm tra nhanh trên dữ liệu toy
 
-Từ root repo, Python >= 3.11 (môi trường local kiểm tra là Python 3.13.12):
+Từ root repo, code dùng Python >= 3.10; kiểm tra local thực tế trên Python 3.13.12. Chưa xác minh runtime GPU. Hash file đọc theo chunk, không cần API Python 3.11.
 
 ```powershell
 python -m unittest discover -s evaluation/tests -v
-python -m evaluation.run_popularity --sessions evaluation/tests/fixtures/sessions.jsonl --catalog evaluation/tests/fixtures/catalog.json --train-through 1 --subset toy --run-id tv2-toy-day1 --output metrics/tv2-toy-day1
+python -m evaluation.run_popularity --sessions evaluation/tests/fixtures/sessions.jsonl --catalog evaluation/tests/fixtures/catalog.json --train-through 1 --subset toy --run-id tv2-local-day1 --output metrics/local/tv2-local-day1
 ```
 
-Thư mục output phải chưa tồn tại; chọn tên mới khi chạy lại. Toy dùng thư viện chuẩn; Parquet cần `pyarrow` trong requirements của repo. Test Parquet tự skip khi chưa cài thư viện.
+Thư mục output phải chưa tồn tại; khi chạy lại đổi cả run_id và output. `metrics/local/` được Git bỏ qua; kết quả toy đã bàn giao vẫn giữ tại `metrics/tv2-toy-day1/`. Toy dùng thư viện chuẩn; Parquet cần `pyarrow` trong requirements của repo. Test Parquet tự skip khi chưa cài thư viện.
 
 Expected: 3 validation session partition 2; Recall@20 = `2/3`; NDCG@20 = `(1 + 1/log2(21))/3` ≈ `0.4092234162323177`. Train counts = `{3: 2, 4: 1, 5: 1}`; Top-20 là ID 3…22. Target 3 hạng 1, target 22 hạng 20, target 23 ngoài Top-20. Session có target 25 ở holdout và train tương lai không làm tăng popularity tại bước 1.
 

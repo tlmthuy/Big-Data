@@ -102,7 +102,7 @@ Những phần dưới đây là quy tắc tích hợp của nhóm, không khẳ
 
 ### Bàn giao và kiểm tra
 
-Năm điểm đã chốt, không còn là câu hỏi mở để TV1/TV2 quyết định lại. TV1 triển khai và bàn giao data path, mapping/schema, vocabulary/catalog, nguồn first-seen tháng, split membership, counts, seed và runtime. TV2 kiểm tra target/masking/metric, catalog dùng chung và lịch test cuối cùng; TV3 ghi thời gian/bộ nhớ/phạm vi đo. Lịch test cuối chưa được quyết định trong mục này.
+Năm điểm đã chốt, không còn là câu hỏi mở để TV1/TV2 quyết định lại. TV1 triển khai và bàn giao data path, mapping/schema, vocabulary/catalog, nguồn first-seen tháng, split membership, counts, seed và runtime. TV2 kiểm tra target/masking/metric và catalog dùng chung; TV3 ghi thời gian/bộ nhớ/phạm vi đo. Lịch test cuối đã chốt tại docs/modeling/model_protocol.md: sau khi cố định cấu hình bằng validation, dùng checkpoint sau train 1…D−1 đánh giá test D; D là day_index cuối thực tế của subset.
 
 Trước benchmark cần chạy toy/smoke test kiểm tra source sort, loại lặp, giữ 20 item cuối, session qua ngày, mã kỹ thuật và target. Chưa có code preprocessing/Parquet/log thực thi được xác nhận bởi lần cập nhật tài liệu này.
 
