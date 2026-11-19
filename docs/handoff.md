@@ -2,6 +2,55 @@
 
 ## Trạng thái hiện hành
 
+### TV1 — Timestamp, cleanup và first-seen tháng — review 20/11/2026
+
+- Commit sửa tài liệu sau review: `c4391e3`; đã đồng bộ `origin/main` vào
+  nhánh TV1 không conflict, giữ cập nhật phân công năm thành viên.
+- Commit triển khai đã push trên `feature/tv1-data`: timestamp `064eb4e`,
+  cleanup `c0d8afa`, first-seen `1afd27c`. Nguồn: NVIDIA Transformers4Rec
+  `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`, notebook 01 cell 12, 14, 25,
+  28–29 (chỉ số từ 0), Apache-2.0; LICENSE giữ tại
+  `docs/vendor/nvidia-transformers4rec/upstream/LICENSE`.
+- Điều chỉnh: triển khai ba bước bằng DuckDB CPU, giữ session ID gốc;
+  cleanup dùng `lag(product_id)` theo session/timestamp và thứ tự timestamp
+  trùng của DuckDB. Quyết định công cụ được người dùng chấp nhận trong chat,
+  đã ghi tại `AGENTS.md`; model train/inference vẫn dùng NVIDIA runtime.
+- Timestamp: bàn giao code `pipeline/event_timestamp.py` và
+  `data/manifests/event_timestamp.json`; cột `event_time_ts` là BIGINT giây
+  Unix UTC trong Parquet cleanup. 42.448.764 dòng trước/sau, 0 lỗi parse.
+  Người dùng đã yêu cầu ghi nhận bàn giao timestamp sau review code/manifest;
+  không yêu cầu xác nhận người nhận đã đọc file thật.
+- Cleanup: `pipeline/preprocess_raw_events.py`,
+  `data/manifests/timestamp_session_cleanup.json`; bỏ 2 dòng session null,
+  11.715.474 event lặp, còn 30.733.288 event tháng. Chênh tổng 13 dòng so
+  với output lưu sẵn NVIDIA. Ghi nhận nguyên nhân theo TV1 được người dùng
+  chuyển lại ngày 20/11: chênh lệch do thứ tự timestamp trùng. Nguồn là giải
+  thích của TV1; chưa có log đối chiếu từng event/session trong repo.
+- First-seen: `pipeline/build_monthly_first_seen.py`,
+  `data/manifests/monthly_first_seen.json`; 166.794 product, không null,
+  chi phí tạo artifact chung 1,516 giây. Đã thu hẹp mô tả kiểm tra về đúng
+  counts/khóa/null/bounds trong script; chưa có kiểm tra minimum độc lập từng
+  product. Không thay code tính MIN hay kết quả manifest đã ghi.
+- Command chạy lại và artifact path/checksum: xem `docs/event_timestamp.md`,
+  `docs/timestamp_session_cleanup.md`, `docs/monthly_first_seen.md` và ba
+  manifest tương ứng. Danh sách hai artifact cụ thể, schema/counts/checksum,
+  đã ghi tại `docs/tv1_data_handoff.md` và
+  `data/manifests/tv1_data_handoff.json` để TV2/TV3 tự tra cứu; không yêu cầu
+  receipt, log ký nhận hoặc xác nhận đã đọc file.
+- Review local: cú pháp ba script và JSON manifest hợp lệ; số dòng cleanup
+  nhất quán và checksum liên kết cleanup → first-seen khớp trong manifest;
+  `git diff --check` đạt. Không chạy lại CSV/Parquet thật hoặc GPU trong lần
+  review này; không phát sinh số benchmark mới.
+- Kiểm tra manifest bàn giao và liên kết hướng dẫn sau cập nhật: log
+  `data/manifests/tv1_handoff_review.log`; đây là review metadata local,
+  không phải kết quả chạy dữ liệu thật của TV2/TV3.
+- Commit cập nhật nguyên nhân và manifest bàn giao: `ec26bee`; sau đó theo
+  yêu cầu người dùng ngày 20/11/2026, bỏ receipt/gate xác nhận người nhận.
+  Ba task được chấp nhận qua review code/docs/manifest, tích hợp vào main
+  và xóa nhánh TV1 cũ. Manifest đủ thông tin để thành viên tự tra cứu.
+  Không còn yêu cầu đối chiếu cuDF bắt buộc cho bản DuckDB đã chốt; chưa có
+  benchmark model hoặc sequence/split cuối trong ba task này.
+
 Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã chốt trong [model_protocol.md](modeling/model_protocol.md). Kiểm chứng dữ liệu thật từ TV1 là task riêng ngày 21/11, trước E1. TV3 nhận script và trạng thái sẵn sàng qua [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn môi trường](../environment/README.md). Chưa có GPU runtime hoặc gói GRU/XLNet/E1–E4 được xác minh.
 
 ## Cập nhật phân công 5 thành viên — 20/11/2026

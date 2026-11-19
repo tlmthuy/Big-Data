@@ -63,6 +63,14 @@ brand, price, user_id, event_time_ts, prod_first_event_time_ts
 
 ## Năm điểm đã chốt theo tutorial NVIDIA — 19/11/2026
 
+Cập nhật công cụ ngày 20/11/2026: ba bước timestamp, cleanup event và
+first-seen tháng được triển khai bằng DuckDB CPU theo [AGENTS.md](../AGENTS.md).
+Riêng timestamp trùng ở cleanup dùng hành vi DuckDB thay cho cuDF; không
+thêm khóa phụ CSV. Bảng dưới giữ căn cứ phương pháp NVIDIA; ngoại lệ công cụ
+này thay thế yêu cầu runtime nguồn ở bước cleanup. Groupby/gom sequence,
+mapping và split vẫn theo quy định đã chốt. Xem kết quả và giới hạn tại
+[timestamp_session_cleanup.md](timestamp_session_cleanup.md).
+
 Theo quyết định mới nhất của Thúy, cả năm điểm áp dụng cách làm trong snapshot NVIDIA `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`. Bảng này thay thế các đề xuất trước đó về khóa phụ theo dòng CSV, mapping/catalog train-only và first-seen chỉ từ train. Đây là quyết định phương pháp; chưa phải kết quả chạy preprocessing.
 
 | Điểm | Cách làm đã chốt | Căn cứ trong snapshot |

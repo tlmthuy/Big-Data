@@ -9,6 +9,12 @@
 
 ## Nhận bàn giao TV2
 
+TV3 nhận hai artifact trung gian TV1 theo
+[hướng dẫn bàn giao dữ liệu](../docs/tv1_data_handoff.md) và tra cứu
+[manifest chung](../data/manifests/tv1_data_handoff.json), không cần ký nhận.
+Đây là event tháng
+và lookup first-seen, chưa phải sequence/split cuối để chạy model.
+
 Từ gốc repo:
 
 ```bash

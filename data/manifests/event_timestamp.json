@@ -1,0 +1,15 @@
+{
+  "input_path": "/Users/nguyenbaochau/Downloads/2019-Oct.csv",
+  "input_sha256": "fedd938409b5f836ec89b39c861b13dad99fc7cd9beb1fddd97a2d50488b5b80",
+  "started_at_utc": "2026-11-19T06:28:30.115983+00:00",
+  "timezone": "UTC",
+  "timestamp_unit": "unix_seconds",
+  "rows_before_timestamp": 42448764,
+  "rows_after_timestamp": 42448764,
+  "timestamp_parse_failures": 0,
+  "min_event_time_ts": 1569888000,
+  "max_event_time_ts": 1572566399,
+  "engine": "DuckDB CPU",
+  "engine_version": "2.0.0",
+  "platform": "macOS-26.0-arm64-arm-64bit-Mach-O"
+}
