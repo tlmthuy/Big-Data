@@ -39,3 +39,7 @@ Nguồn quy tắc: AGENTS.md, docs/preprocessing_review.md và docs/team_tasks.m
 | Brand | 3445 | 2640 |
 
 Missing từng cột và phân bố event/day nằm trong CSV. Runtime và peak RSS trong manifest; đây là số đo audit CPU thực tế. Commit kết quả: `98a60e7`; trạng thái bàn giao xem `docs/handoff.md`. Người nhận chưa xác nhận kiểm tra.
+
+Peak RSS được lưu bằng bytes. macOS giữ nguyên `ru_maxrss`; Linux (gồm
+Ubuntu) nhân với 1024. Manifest từ lần chạy mới ghi hệ điều hành thực tế
+và chuỗi platform. Manifest lịch sử trên macOS giữ số đo của lần chạy đó.

@@ -27,17 +27,20 @@ def main():
     parser.add_argument('--sampling-manifest', type=Path, default=Path('data/manifests/session_sampling_manifest.json'))
     parser.add_argument('--output-dir', type=Path, default=Path('data/subset/raw_week'))
     parser.add_argument('--manifest', type=Path, default=Path('data/manifests/raw_subset_manifest.json'))
+    parser.add_argument('--counts', type=Path, default=Path('data/manifests/raw_subset_counts.csv'))
     args = parser.parse_args()
     started = datetime.now(timezone.utc).isoformat()
     begin = time.perf_counter()
     sampling = json.loads(args.sampling_manifest.read_text())
     source = Path(sampling['input_path'])
     before = source.stat()
-    if args.manifest.exists():
-        raise FileExistsError(args.manifest)
     outputs = {o['percent']: args.output_dir / f'raw_week_{o["percent"]:03d}.csv' for o in sampling['outputs']}
-    if any(p.exists() for p in outputs.values()):
-        raise FileExistsError('Subset CSV already exists; choose another output directory')
+    destinations = [args.manifest, args.counts, *outputs.values()]
+    if len({p.resolve() for p in destinations}) != len(destinations):
+        raise ValueError('Manifest, counts and subset paths must be distinct')
+    for path in destinations:
+        if path.exists() or path.is_symlink():
+            raise FileExistsError(f'Output already exists: {path}')
     print('Checking input/session-list checksums', flush=True)
     assert checksum(source) == sampling['input_sha256']
     for o in sampling['outputs']:
@@ -90,7 +93,7 @@ def main():
     total = next(o['event_count'] for o in summaries if o['percent'] == 100)
     for o in summaries:
         o['actual_event_ratio'] = o['event_count'] / total
-    manifest = dict(input_path=str(source.resolve()), input_bytes=before.st_size,
+    manifest = dict(counts_path=str(args.counts.resolve()), input_path=str(source.resolve()), input_bytes=before.st_size,
                     input_sha256=sampling['input_sha256'], sampling_seed=sampling['seed'],
                     hash_rule=sampling['hash_rule'], scope=sampling['scope'],
                     sampling_manifest_path=str(args.sampling_manifest.resolve()),
@@ -105,13 +108,15 @@ def main():
                     git_base_commit=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip(),
                     script_sha256=checksum(Path(__file__)), input_unchanged=True)
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n')
-    summary = Path('data/manifests/raw_subset_counts.csv')
-    with summary.open('w', encoding='utf-8', newline='') as f:
+    args.counts.parent.mkdir(parents=True, exist_ok=True)
+    with args.counts.open('x', encoding='utf-8', newline='') as f:
         fields = ['percent','event_count','session_count','user_count','item_count','actual_event_ratio']
         w = csv.DictWriter(f, fieldnames=fields, extrasaction='ignore')
         w.writeheader()
         w.writerows(summaries)
+    with args.manifest.open('x', encoding='utf-8') as f:
+        json.dump(manifest, f, ensure_ascii=False, indent=2)
+        f.write('\n')
     con.close()
     print(f'PASS: {args.manifest}', flush=True)
 

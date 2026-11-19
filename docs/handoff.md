@@ -83,3 +83,15 @@ Không ghi secret hoặc credential vào file này. Cập nhật sau mỗi bàn 
 - Counts event/session/user/item: 10% = 882808/187563/163847/63398; 25% = 2213138/469728/356271/87247; 50% = 4421037/938071/601608/103940; 100% = 8829314/1877365/957543/118333.
 - Kiểm tra PASS: input/membership checksums; header 9 cột; counts nguồn/output; số event chính xác theo từng session; không có session ngoài membership; bốn output checksums khớp manifest; `git diff --check` đạt. 100% ít hơn raw-week audit một dòng thiếu session.
 - Dữ liệu giữ event lặp và session một event; chưa phải cleaned sequence. Không commit raw CSV lớn. Người nhận chưa xác nhận kiểm tra; chưa đánh dấu Done chính thức.
+
+## Xác nhận của người nhận — Raw subset TV1
+
+Phương án bàn giao là tái tạo từ CSV nguồn cùng SHA-256. Xem [lệnh tái tạo và cách đối chiếu](raw_subsets.md#người-nhận-tái-tạo-và-xác-nhận).
+
+- Tái tạo nội bộ: xuất đủ bốn CSV với đường dẫn counts riêng. SHA-256 raw và danh sách membership khớp bản gốc. Bảng counts khớp từng byte, số event từng session khớp nguồn và tổng kiểm tra băm theo dòng không phụ thuộc thứ tự khớp bản gốc. SHA-256 toàn file CSV khác giữa hai lần xuất.
+- Trạng thái: chờ người nhận kiểm tra độc lập.
+- Người nhận và ngày kiểm tra:
+- SHA-256 raw và bốn danh sách session:
+- SHA-256 và counts của bốn CSV:
+- Kết quả đối chiếu membership và số event từng session:
+- Xác nhận Done:

@@ -4,6 +4,7 @@ import csv
 import hashlib
 import json
 import resource
+import platform
 import subprocess
 import time
 from datetime import datetime, timezone
@@ -13,6 +14,14 @@ import duckdb
 
 COLUMNS = ['event_time', 'event_type', 'product_id', 'category_id',
            'category_code', 'brand', 'price', 'user_id', 'user_session']
+
+
+def peak_rss_bytes(system):
+    """Normalize the native ru_maxrss unit on supported systems."""
+    unit_bytes = {"Darwin": 1, "Linux": 1024}
+    if system not in unit_bytes:
+        raise NotImplementedError(f"Unknown ru_maxrss unit on {system}")
+    return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * unit_bytes[system]
 
 
 def main():
@@ -80,12 +89,14 @@ def main():
         w = csv.DictWriter(f, fieldnames=['scope','metric','column','value','count','denominator','ratio'])
         w.writeheader()
         w.writerows(rows)
+    system = platform.system()
     manifest = dict(input_path=str(src), input_bytes=before.st_size,
                     input_sha256=sha.hexdigest(), output_path=str(args.output.resolve()),
                     started_at_utc=started, completed_at_utc=datetime.now(timezone.utc).isoformat(),
                     elapsed_seconds=time.perf_counter()-start,
-                    peak_process_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
-                    peak_rss_platform='macOS ru_maxrss in bytes', duckdb_version=duckdb.__version__,
+                    peak_process_rss_bytes=peak_rss_bytes(system),
+                    peak_rss_platform=platform.platform(), peak_rss_system=system,
+                    duckdb_version=duckdb.__version__,
                     memory_limit=args.memory_limit, threads=2,
                     git_commit=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip(),
                     script_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),

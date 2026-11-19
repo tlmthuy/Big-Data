@@ -11,7 +11,7 @@ Phạm vi: `[2019-10-01 00:00:00, 2019-10-08 00:00:00)` UTC, session không null
 .venv/bin/python pipeline/export_raw_subsets.py
 ```
 
-Cần có input CSV và bốn danh sách session tại đường dẫn trong sampling manifest; checksum phải khớp. Nếu chuyển máy, tái tạo sampling manifest và danh sách bằng `pipeline/sample_sessions.py` với cùng input checksum/seed/rule rồi dùng `--sampling-manifest` tương ứng. Script từ chối ghi đè output. Muốn chạy ra nơi khác, chỉ định cả `--output-dir` và `--manifest` mới. Bảng counts nhỏ luôn được ghi tại `data/manifests/raw_subset_counts.csv`.
+Cần có input CSV và bốn danh sách session tại đường dẫn trong sampling manifest; checksum phải khớp. Nếu chuyển máy, tái tạo sampling manifest và danh sách bằng `pipeline/sample_sessions.py` với cùng input checksum/seed/rule rồi dùng `--sampling-manifest` tương ứng. Script từ chối ghi đè output. Muốn chạy ra nơi khác, chỉ định `--output-dir`, `--manifest` và `--counts` mới. Mặc định counts nằm tại `data/manifests/raw_subset_counts.csv`. Script kiểm tra các đường dẫn trước khi xuất và từ chối nếu bất kỳ đích nào đã tồn tại.
 
 ## Output
 
@@ -44,3 +44,27 @@ Script là tiện ích nhóm bổ sung; không sửa snapshot NVIDIA hay thay đ
 | 100% | 8829314 | 1877365 | 957543 | 118333 |
 
 100% có 8.829.314 event, ít hơn raw-week audit một dòng vì dòng đó thiếu user_session. Các checksum/multiplicity checks đều PASS. Counts là raw trước loại lặp/truncation, không phải số sequence cuối cùng.
+
+## Người nhận tái tạo và xác nhận
+
+Dùng một checkout sạch, có đủ chỗ trống cho bốn CSV. Giữ bản manifest
+đã commit để làm mốc đối chiếu. Thay đường dẫn raw trong lệnh bằng đường
+dẫn trên máy người nhận.
+
+```bash
+git show HEAD:data/manifests/session_sampling_manifest.json > /tmp/tv1-sampling-reference.json
+git show HEAD:data/manifests/raw_subset_manifest.json > /tmp/tv1-subset-reference.json
+python3 -m venv .venv
+.venv/bin/python -m pip install -r pipeline/requirements-audit.txt
+.venv/bin/python pipeline/sample_sessions.py --input /path/to/2019-Oct.csv --seed 42 --manifest /tmp/tv1-sampling-local.json
+.venv/bin/python pipeline/export_raw_subsets.py --sampling-manifest /tmp/tv1-sampling-local.json --manifest /tmp/tv1-subset-local.json --counts /tmp/tv1-counts-local.csv
+```
+
+Đối chiếu SHA-256 của raw và bốn danh sách session với manifest đã commit.
+Kiểm tra cả bốn dòng PASS của lệnh export. Script đọc lại từng CSV và kiểm
+tra membership, số event từng session và counts. Đối chiếu counts và SHA-256
+của bốn CSV với manifest tham chiếu. Nếu checksum CSV khác do thứ tự dòng
+hoặc cách ghi CSV, ghi rõ khác biệt và kiểm tra nội dung theo session trước
+khi xác nhận. Khi nhận bản sao của bốn CSV gốc, checksum phải khớp từng file.
+
+Ghi kết quả vào mục xác nhận trong [handoff](handoff.md) sau khi kiểm tra.
