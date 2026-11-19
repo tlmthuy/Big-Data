@@ -22,5 +22,15 @@
   "output_sha256": "c441efad3e94e318d84bb9075dee2f0b79eab1475e1bd371eec4685c05ed9016",
   "peak_process_rss_bytes": 834863104,
   "elapsed_seconds": 239.93496225000126,
-  "status": "passed"
+  "status": "passed",
+  "nvidia_notebook_comparison": {
+    "rows_before_deduplication": 42448762,
+    "notebook_saved_cudf_rows_after_cleanup": 30733301,
+    "notebook_saved_cudf_repeats_removed": 11715461,
+    "duckdb_additional_repeats_removed": 13,
+    "reported_cause": "Chênh lệch do thứ tự timestamp trùng",
+    "cause_source": "TV1 oral explanation relayed by user on 2026-11-20",
+    "comparison_basis": "DuckDB local run versus NVIDIA Notebook 01 saved output, not a new group cuDF run",
+    "per_event_comparison_log": null
+  }
 }

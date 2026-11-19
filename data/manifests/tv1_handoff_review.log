@@ -1,0 +1,8 @@
+Checked at 2026-11-19T17:53:05.385260+00:00
+PASS: handoff artifact paths/checksums/counts match producer manifests
+PASS: producer lineage and recorded 13-event difference
+PASS: no fabricated transfer location or recipient acceptance
+PASS: three producer scripts compile; no producer code changed
+PASS: JSON parses and edited guide links resolve
+PASS: git diff --check
+NOT RUN: transfer, actual Parquet checksum/schema/count reads, raw reproduction, GPU or model experiments.

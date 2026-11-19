@@ -27,6 +27,12 @@ Expected: 3 validation session partition 2; Recall@20 = `2/3`; NDCG@20 = `(1 + 1
 
 ## Đầu vào thật từ TV1
 
+Ba task notebook 01 hiện giao hai file trung gian: event tháng đã cleanup và
+lookup first-seen. Danh sách file, checksum/schema/counts và chỗ ghi xác nhận
+TV2/TV3 tại [tv1_data_handoff.md](../tv1_data_handoff.md). TV2 điền
+`recipient_checks.TV2` trong [manifest chung](../../data/manifests/tv1_data_handoff.json)
+sau kiểm tra file thật; bộ trung gian này chưa thay thế đầu vào model dưới đây.
+
 TV1 bàn giao Parquet sequence, không dùng raw subset CSV làm đầu vào model. CLI nhận đường dẫn root layout nguồn:
 
 ```text

@@ -23,7 +23,9 @@
 - Cleanup: `pipeline/preprocess_raw_events.py`,
   `data/manifests/timestamp_session_cleanup.json`; bỏ 2 dòng session null,
   11.715.474 event lặp, còn 30.733.288 event tháng. Chênh tổng 13 dòng so
-  với output lưu sẵn NVIDIA, chưa trace từng session để xác nhận nguyên nhân.
+  với output lưu sẵn NVIDIA. Ghi nhận nguyên nhân theo TV1 được người dùng
+  chuyển lại ngày 20/11: chênh lệch do thứ tự timestamp trùng. Nguồn là giải
+  thích của TV1; chưa có log đối chiếu từng event/session trong repo.
 - First-seen: `pipeline/build_monthly_first_seen.py`,
   `data/manifests/monthly_first_seen.json`; 166.794 product, không null,
   chi phí tạo artifact chung 1,516 giây. Đã thu hẹp mô tả kiểm tra về đúng
@@ -31,16 +33,21 @@
   product. Không thay code tính MIN hay kết quả manifest đã ghi.
 - Command chạy lại và artifact path/checksum: xem `docs/event_timestamp.md`,
   `docs/timestamp_session_cleanup.md`, `docs/monthly_first_seen.md` và ba
-  manifest tương ứng. Người nhận TV2/TV3 nhận Parquet cleanup và lookup qua
-  đường dẫn bàn giao hoặc tái tạo từ raw CSV cùng checksum; kiểm tra checksum,
-  schema/counts theo manifest rồi ghi tên, ngày và kết quả vào mục này.
+  manifest tương ứng. Danh sách hai artifact cụ thể, schema/counts/checksum,
+  phân công xác nhận và nơi lưu log đã ghi tại `docs/tv1_data_handoff.md` và
+  `data/manifests/tv1_data_handoff.json`. TV1 bổ sung vị trí chuyển file;
+  TV2/TV3 điền receipt riêng sau kiểm tra, không sửa kết quả đo lịch sử.
 - Review local: cú pháp ba script và JSON manifest hợp lệ; số dòng cleanup
   nhất quán và checksum liên kết cleanup → first-seen khớp trong manifest;
   `git diff --check` đạt. Không chạy lại CSV/Parquet thật hoặc GPU trong lần
   review này; không phát sinh số benchmark mới.
-- Trạng thái: chờ người dùng review bản sửa tài liệu để merge; chưa đánh dấu
-  Done toàn bộ ba task trước xác nhận output thật của người nhận theo mục 11
-  AGENTS.md. Không còn yêu cầu đối chiếu cuDF bắt buộc cho bản DuckDB đã chốt.
+- Kiểm tra manifest bàn giao và liên kết hướng dẫn sau cập nhật: log
+  `data/manifests/tv1_handoff_review.log`; đây là review metadata local,
+  không phải log nghiệm thu file thật của TV2/TV3.
+- Người dùng đã yêu cầu merge vào main và xóa nhánh TV1 cũ ngày 20/11/2026.
+  Các receipt dữ liệu thật TV2/TV3 vẫn pending theo mục 11 AGENTS.md; merge
+  code/docs không tự xác nhận việc chuyển/đọc hai file Parquet lớn.
+  Không còn yêu cầu đối chiếu cuDF bắt buộc cho bản DuckDB đã chốt.
 
 Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã chốt trong [model_protocol.md](modeling/model_protocol.md). Kiểm chứng dữ liệu thật từ TV1 là task riêng ngày 21/11, trước E1. TV3 nhận script và trạng thái sẵn sàng qua [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn môi trường](../environment/README.md). Chưa có GPU runtime hoặc gói GRU/XLNet/E1–E4 được xác minh.
 

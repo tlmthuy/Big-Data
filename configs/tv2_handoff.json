@@ -3,6 +3,7 @@
   "updated_on": "2026-11-19",
   "owner": "TV2",
   "recipient": "TV3",
+  "tv1_intermediate_data_handoff": "data/manifests/tv1_data_handoff.json",
   "checkout_ref": "main",
   "reviewed_base_commit": "f0df09d82a2d11ce1b1baa6e202bc9eaf66cf872",
   "resolve_run_commit_argv": [

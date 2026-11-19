@@ -23,9 +23,8 @@ và gom sequence thuộc các bước tiếp theo.
 
 ## Đối chiếu bổ sung trên runtime NVIDIA (tùy chọn)
 
-Đối chiếu cuDF phục vụ xác minh nguyên nhân chênh lệch, không phải điều kiện
-bắt buộc để dùng bản DuckDB đã chốt. Nếu chưa đối chiếu, giữ nguyên giới hạn
-chưa xác nhận nguyên nhân và không gọi số local là kết quả chạy cuDF.
+Đối chiếu cuDF là kiểm tra bổ sung, không phải điều kiện bắt buộc để dùng
+bản DuckDB đã chốt. Không gọi số local là kết quả chạy cuDF.
 
 Trên VM có cuDF/NVTabular đã qua smoke test theo
 [environment/README.md](../environment/README.md), đặt `INPUT_DATA_DIR` trỏ
@@ -41,7 +40,10 @@ Cả hai báo 42.448.762 dòng trước khi loại lặp. DuckDB local loại 11
 event, còn 30.733.288 dòng. Output cuDF lưu trong cell 25 loại 11.715.461
 event, còn 30.733.301 dòng. DuckDB loại nhiều hơn 13 event.
 
-Một nguyên nhân khả dĩ là hai runtime xếp thứ tự khác nhau cho các event
-cùng session và timestamp, làm thay đổi sản phẩm nào nằm liền nhau.
-Chưa đối chiếu từng session trên cùng file và runtime cuDF nên chưa xác
-nhận nguyên nhân của chênh lệch. Số cuDF là output lưu sẵn của NVIDIA.
+Ghi nhận nguyên nhân theo TV1, được người dùng chuyển lại ngày 20/11/2026:
+“Cùng 42.448.762 dòng đầu vào, DuckDB local loại 11.715.474 event lặp,
+nhiều hơn 13 event so với output cuDF lưu sẵn trong Notebook 01.
+Chênh lệch do thứ tự timestamp trùng.”
+
+Nguồn giải thích là xác nhận của TV1; repo chưa có log đối chiếu từng
+event/session giữa hai engine. Số cuDF là output lưu sẵn của NVIDIA.
