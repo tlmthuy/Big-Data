@@ -38,4 +38,4 @@ Nguồn quy tắc: AGENTS.md, docs/preprocessing_review.md và docs/team_tasks.m
 | Category code | 126 | 123 |
 | Brand | 3445 | 2640 |
 
-Missing từng cột và phân bố event/day nằm trong CSV. Runtime và peak RSS trong manifest; đây là số đo audit CPU thực tế. Chưa commit/push, chưa xác nhận bàn giao.
+Missing từng cột và phân bố event/day nằm trong CSV. Runtime và peak RSS trong manifest; đây là số đo audit CPU thực tế. Commit kết quả: `98a60e7`; trạng thái bàn giao xem `docs/handoff.md`. Người nhận chưa xác nhận kiểm tra.

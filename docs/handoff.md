@@ -55,3 +55,12 @@ Không ghi secret hoặc credential vào file này. Cập nhật sau mỗi bàn 
 - Nguồn: snapshot NVIDIA f0ca2b5343dd1e40b5d2422b942f014b224f5c20, notebook 01/02/03, data_utils.py và prediction_task.py; chi tiết code cell trong preprocessing_review.md. Upstream được giữ nguyên.
 - Kiểm tra: đối chiếu code cell và checksum manifest; kiểm tra link Markdown local, quy định cũ trong tài liệu hiện hành và git diff --check. Chưa chạy preprocessing, GPU model hoặc benchmark. Chưa có xác nhận nghiệm thu của người nhận.
 - Trạng thái Git: cập nhật tài liệu trong working tree, chưa commit/push ở lần bàn giao này; chưa đánh dấu Done chính thức.
+
+## TV1 raw audit trước sampling — 19/11/2026
+
+- Branch: `feature/tv1-data`; commit kết quả và script: `98a60e7`.
+- Output: `data/raw_audit.csv`, `data/manifests/raw_audit_manifest.json`; hướng dẫn tại `docs/raw_audit.md`.
+- Command: `.venv/bin/python pipeline/raw_audit.py --input /Users/nguyenbaochau/Downloads/2019-Oct.csv`.
+- Output thật: 42.448.764 event toàn tháng; 8.829.315 event tuần đầu. Counts distinct, missing 9 cột, event type và ngày trong CSV. Runtime khoảng 148,95 giây; peak process RSS 997.081.088 bytes trên macOS.
+- Kiểm tra: tổng event type/ngày bằng tổng dòng; bounds missing/distinct; tuần không vượt tháng; input size/mtime giữ nguyên; SHA-256 input và script trong manifest; `git diff --check` đạt.
+- Không commit CSV nguồn, không làm sạch/sampling hoặc tạo sequence. Người nhận TV1/TV2/TV3 chưa xác nhận; chưa đánh dấu Done chính thức.
