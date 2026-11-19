@@ -1,2 +1,0 @@
-# Preserve upstream bytes so manifest checksums survive checkout on Windows.
-upstream/** -text
