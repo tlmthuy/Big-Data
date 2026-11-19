@@ -1,5 +1,15 @@
 # TV2 — Chạy metric và Popularity
 
+## File bàn giao theo task ngày 20/11
+
+| Task | File chính | Kiểm tra / bằng chứng |
+| --- | --- | --- |
+| Chốt split | [model_protocol.md](model_protocol.md#preprocessing-và-split-đã-chốt) | Lịch test tại mục Daily fine-tuning; tiếp nhận artifact thật ngày 21/11 là task riêng |
+| Chốt catalog và K | [model_protocol.md](model_protocol.md#evaluation-chung-cho-ba-model), [data.py](../../evaluation/data.py) | Catalog/schema được mô tả bên dưới; K=20 trong ranking.py |
+| Recall@20 | [ranking.py](../../evaluation/ranking.py) | [test_tv2.py](../../evaluation/tests/test_tv2.py), [test log](../../metrics/tv2-final-test-tests.txt) |
+| NDCG@20 | [ranking.py](../../evaluation/ranking.py) | Cùng toy test: hạng 1/20/ngoài Top-20 và tổng hợp theo session |
+| Popularity | [popularity.py](../../models/popularity.py), [CLI](../../evaluation/run_popularity.py) | [Toy output](../../metrics/tv2-toy-day1/metrics.json), test cumulative/train-only/tie-break |
+
 ## Kiểm tra nhanh trên dữ liệu toy
 
 Từ root repo, Python >= 3.11 (môi trường local kiểm tra là Python 3.13.12):
@@ -50,7 +60,7 @@ Mọi real product của vocabulary cần có trong `items`, không chỉ các I
 python -m evaluation.run_popularity --sessions data/clean/10/sessions_by_day --catalog data/manifests/catalog_10.json --train-through 1 --subset 10 --run-id popularity-10-day1 --output metrics/popularity-10-day1
 ```
 
-Đây là **lệnh mẫu cho artifact tương lai**, chưa có các path đó trên checkout. `--train-through t` cộng train partition 1…t đúng một lần và đánh giá validation t+1. Chạy t tiếp theo tái dựng đúng cumulative counts từ đầu, không cần checkpoint; kết quả tương đương cộng dồn, nhưng chi phí đọc lại không được coi là benchmark incremental train. Không đếm lại theo epoch. Script từ chối test khi lịch test chưa chốt.
+Đây là **lệnh mẫu cho artifact tương lai**, chưa có các path đó trên checkout. `--train-through t` cộng train partition 1…t đúng một lần và đánh giá validation t+1. Chạy t tiếp theo tái dựng đúng cumulative counts từ đầu, không cần checkpoint; kết quả tương đương cộng dồn, nhưng chi phí đọc lại không được coi là benchmark incremental train. Không đếm lại theo epoch. Lịch test đã chốt: D là day_index cuối của membership đầy đủ; sau khi cố định cấu hình bằng validation, chạy `--train-through D-1 --eval-split test` để đánh giá test D. CLI từ chối test ở partition khác; test D rỗng báo lỗi. Không cắt membership đầu vào để thay đổi D.
 
 ## Output và giới hạn
 
@@ -60,4 +70,4 @@ python -m evaluation.run_popularity --sessions data/clean/10/sessions_by_day --c
 
 `train_with_input_scan_seconds` gồm scan dữ liệu; `ranking_once_seconds` chỉ đo tạo danh sách chung một lần. Đây chưa phải phép đo inference throughput/memory E1–E5. Audit giữ session membership và distinct-item sets trong RAM; checksum quét thêm file. Cần benchmark collector/runtime của TV3 và chuẩn đo TV2 trước chạy experiment chính thức. CLI không chứng minh preprocessing/RNG đúng nguồn chỉ bằng đọc output; vẫn cần manifest GPU của TV1.
 
-Protocol: [model_protocol.md](model_protocol.md). Chưa chạy dataset thật hoặc GPU; task chưa Done nếu thiếu artifact thực, lịch test hoặc nghiệm thu người nhận.
+Protocol: [model_protocol.md](model_protocol.md). Chưa chạy dataset thật hoặc GPU; kiểm tra tiếp nhận dữ liệu TV1 là task riêng ngày 21/11. Không coi toy là kết quả E1 hoặc xác nhận split thật.

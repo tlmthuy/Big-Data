@@ -131,13 +131,43 @@ class BaselineTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 Catalog.load(path)
 
-    def test_test_split_blocked_until_protocol_decision(self):
+    def test_test_split_rejects_nonfinal_partition(self):
         with tempfile.TemporaryDirectory() as directory:
             args = argparse.Namespace(sessions=FIXTURES / "sessions.jsonl",
                                       catalog=FIXTURES / "catalog.json", train_through=1,
                                       eval_split="test", subset="toy", run_id="test",
                                       output=Path(directory) / "run")
-            with self.assertRaisesRegex(ValueError, "test schedule"):
+            with self.assertRaisesRegex(ValueError, "final day_index"):
+                run(args)
+            self.assertFalse(args.output.exists())
+
+    def test_final_test_uses_train_through_previous_partition(self):
+        rows = list(read_sessions(FIXTURES / "sessions.jsonl"))
+        rows.append({"user_session": "final-test", "day_index": 3,
+                     "split": "test", "product_ids": [3, 25]})
+        with tempfile.TemporaryDirectory() as directory:
+            sessions = Path(directory) / "sessions.jsonl"
+            sessions.write_text("".join(json.dumps(row) + "\n" for row in rows),
+                                encoding="utf-8")
+            output = Path(directory) / "run"
+            result = run(argparse.Namespace(sessions=sessions,
+                         catalog=FIXTURES / "catalog.json", train_through=2,
+                         eval_split="test", subset="toy", run_id="final-test", output=output))
+            self.assertEqual(result["train_days"], [1, 2])
+            self.assertEqual(result["eval_day"], 3)
+            self.assertEqual(result["eval_split"], "test")
+            self.assertEqual(result["n_sessions"], 1)
+            self.assertEqual(result["Recall@20"], 1)
+            state = json.loads((output / "popularity.json").read_text())
+            self.assertEqual(state["counts"], {"3": 2, "4": 1, "5": 1, "24": 1, "25": 2})
+
+    def test_empty_final_test_does_not_fall_back(self):
+        with tempfile.TemporaryDirectory() as directory:
+            args = argparse.Namespace(sessions=FIXTURES / "sessions.jsonl",
+                                      catalog=FIXTURES / "catalog.json", train_through=2,
+                                      eval_split="test", subset="toy", run_id="empty-final",
+                                      output=Path(directory) / "run")
+            with self.assertRaisesRegex(ValueError, "No sessions"):
                 run(args)
             self.assertFalse(args.output.exists())
 

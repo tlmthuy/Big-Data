@@ -32,7 +32,7 @@ Cho phép gợi ý lại sản phẩm từng xuất hiện trong prefix. Ví d�
 
 Dataset là 2019-Oct.csv, giới hạn ngày 01–07/10/2019 UTC. Theo notebook 02, gom nguyên session rồi tính `day_index = (event_time_dt-first - col.min()).dt.days + 1`; trong mỗi partition chia ngẫu nhiên khoảng 80% train, 10% validation, 10% test, GPU seed 1. Không mặc định day_index là ngày lịch UTC. Đây là quyết định cập nhật ngày 19/11/2026.
 
-Model được daily fine-tuning trên train partition t rồi đánh giá validation partition t+1, tiếp tục từ trạng thái model đã học. Test không dùng chọn cấu hình hoặc cập nhật trọng số; TV2 cần xác nhận lịch test cuối cùng. Workflow/mapping fit trên tuần trước split; first-seen tính trên tháng trước lọc tuần. Popularity chỉ đếm train đã dùng, dù catalog chung lấy từ vocabulary tuần.
+Model được daily fine-tuning trên train partition t rồi đánh giá validation partition t+1, tiếp tục từ trạng thái model đã học. Test không dùng chọn cấu hình hoặc cập nhật trọng số; Lịch test cuối đã chốt: sau khi cố định cấu hình bằng validation, dùng checkpoint sau train 1…D−1 đánh giá test D; D là day_index cuối thực tế của subset, không train D trước test. Workflow/mapping fit trên tuần trước split; first-seen tính trên tháng trước lọc tuần. Popularity chỉ đếm train đã dùng, dù catalog chung lấy từ vocabulary tuần.
 
 Validation/test mặc định dùng item cuối không phải padding làm target, các item đứng trước làm prefix. Cách tạo nhãn khi train khác nhau: GRU học các bước next item; XLNet MLM học dự đoán item bị che.
 

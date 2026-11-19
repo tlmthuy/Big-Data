@@ -30,11 +30,12 @@ def fingerprint(path):
 def run(args):
     if args.train_through < 1:
         raise ValueError("train-through must be >= 1")
-    if args.eval_split == "test":
-        raise ValueError("Final test schedule is not approved; run validation only for now")
     catalog = Catalog.load(args.catalog)
     split_counts = audit_sessions(args.sessions, catalog)
     eval_day = args.train_through + 1
+    final_day = max(row["day_index"] for row in split_counts)
+    if args.eval_split == "test" and eval_day != final_day:
+        raise ValueError("Final test requires train-through = final day_index - 1")
     selected = next((r for r in split_counts if r["day_index"] == eval_day
                      and r["split"] == args.eval_split), None)
     if not selected or not selected["n_sessions"]:

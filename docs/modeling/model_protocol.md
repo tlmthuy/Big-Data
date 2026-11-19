@@ -29,7 +29,9 @@ Trong mỗi `day_index`, chia ngẫu nhiên khoảng 80/10/10 theo `save_time_ba
 
 Notebook 03 khởi tạo model trước vòng lặp; với `range(1, 4)`, train partition 1/2/3 và lần lượt đánh giá **validation** partition 2/3/4. Cùng trọng số model được tiếp tục cập nhật, có reset LR scheduler mỗi bước; không khởi tạo lại model mỗi ngày. Với dữ liệu nhóm, dùng các cặp `t, t+1` thực có, không sao chép giới hạn 4 của tutorial một cách mặc định.
 
-Notebook 02 tạo `test.parquet`, nhưng vòng lặp notebook 03 không đánh giá test. Lịch test cuối của nhóm **chưa chốt**; đề xuất rolling test chưa được TV2 phê duyệt và không phải protocol nguồn. Hiện chạy train/validation để kiểm tra; CLI Popularity từ chối test cho đến khi protocol này được cập nhật. Không đánh dấu task split hoàn tất trước khi có counts/membership thật và quyết định lịch test.
+Notebook 02 tạo `test.parquet`, nhưng vòng lặp notebook 03 không đánh giá test. **Quyết định bổ sung của nhóm ngày 19/11/2026, đã được Thúy thống nhất:** với mỗi subset, D là `day_index` lớn nhất trong membership đầy đủ đã được TV1/TV2 xác minh. Chọn cấu hình bằng validation theo lịch NVIDIA; sau khi cố định cấu hình, đánh giá test partition D bằng checkpoint sau khi học train partition 1…D−1. Không train partition D trước lần test này; không dùng test để chọn cấu hình, epoch, checkpoint hoặc cập nhật trọng số. Nếu cần chạy lại sau khi chọn cấu hình, tái lập train 1…D−1 bằng cấu hình đã cố định. Ba model dùng cùng membership, catalog và session test D. Test các partition trước D không thuộc kết quả test cuối này. Đây là bước nhóm bổ sung, không phải vòng test có sẵn trong notebook nguồn.
+
+CLI Popularity cho phép `--eval-split test` khi `--train-through D-1`, giữ nguyên quy tắc validation t+1; tập test D rỗng báo lỗi, không tự lùi về partition khác. Phải cung cấp membership đầy đủ, không cắt đầu vào để đổi D. Task chốt protocol đã đủ nội dung; kiểm chứng membership/counts/runtime manifest thật thuộc task tiếp nhận dữ liệu TV1 ngày 21/11, trước E1.
 
 ## Evaluation chung cho ba model
 
@@ -48,7 +50,7 @@ Notebook 02 tạo `test.parquet`, nhưng vòng lặp notebook 03 không đánh g
 ## Artifact và kiểm tra trước benchmark
 
 - TV1 bàn giao mapping/schema/vocabulary, catalog product ID thực, split membership, counts, nguồn first-seen tháng và phiên bản workflow. Fit độc lập trên tuần của từng subset 10/25/50/100%; ghi thời gian tạo first-seen chung riêng với preprocessing từng subset.
-- TV2 xác nhận lịch test cuối cùng; năm quyết định preprocessing đã chốt, không còn chờ TV1/TV2 chọn lại.
+- Lịch test cuối đã chốt ở trên; TV1 bàn giao membership/counts/runtime manifest thật để TV2 xác minh D và nghiệm thu split. Năm quyết định preprocessing đã chốt.
 - Pin runtime/version, lưu seed và kiểm tra toy session: source sort, loại lặp, truncation, target, masking, padding và metric. Timestamp bằng nhau phụ thuộc runtime nguồn; không tuyên bố tái lập qua runtime khác nếu chưa kiểm tra.
 - Chưa có kết quả train/inference hoặc benchmark thật. Quyết định tài liệu không thay thế smoke run.
 

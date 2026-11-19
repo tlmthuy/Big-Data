@@ -1,5 +1,12 @@
 # Handoff
 
+## TV2 — Chốt lịch test cuối sau review — 19/11/2026
+
+- Thúy đã thống nhất: giữ daily train t/validation t+1 theo NVIDIA; sau khi cố định cấu hình bằng validation, test partition D bằng checkpoint sau train 1…D−1. D là day_index cuối thực tế của từng subset, xác minh từ membership đầy đủ; không train D hoặc chọn cấu hình/checkpoint bằng test. Quyết định này thay trạng thái chờ lịch test trong các bàn giao cũ bên dưới.
+- Cập nhật protocol, runbook, mô tả bài toán và so sánh model. CLI Popularity cho phép test D với train-through D−1, từ chối test partition khác và báo lỗi khi test D rỗng. Thêm regression test lịch test cuối; nguồn daily training vẫn là notebook 03 NVIDIA tại pin f0ca2b5343dd1e40b5d2422b942f014b224f5c20, Apache-2.0; lịch test cuối là bổ sung của nhóm.
+- Task 3 chốt protocol đã đủ nội dung theo bảng task cập nhật. Kiểm chứng cleaned sequence Parquet, catalog/vocabulary tuần, membership split và counts/runtime manifest thật được tách sang task tiếp nhận dữ liệu TV1 ngày 21/11, trước E1. Raw audit/membership sampling/raw subset không thay thế membership train/validation/test sau preprocessing. Chưa chạy GPU/dataset thật hoặc nghiệm thu dữ liệu.
+- Kiểm tra cập nhật: `python -m unittest discover -s evaluation/tests -v` → 13/13 PASS; log tại `metrics/tv2-final-test-tests.txt`. Kiểm tra test D, chặn test trước D và test D rỗng; kết quả là toy, không phải benchmark thật. File bàn giao năm task ngày 20/11 được gom tại đầu `docs/modeling/tv2_runbook.md`; code giữ các module nhỏ hiện có.
+
 ## TV2 — Protocol, Recall/NDCG và Popularity — 19/11/2026
 
 - Đã `git pull --ff-only origin main`: main tại `56efb2c` đã mới nhất; tạo nhánh phụ trách `feature/tv2-model-evaluation`. Commit code/protocol/test: `04cb5135079707ce4dbdcc09146e7f274b9c3bc7`. Commit bằng chứng/handoff theo sau trên cùng nhánh.
