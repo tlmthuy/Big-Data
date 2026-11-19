@@ -32,7 +32,7 @@ Các CSV raw lớn chỉ lưu local theo quy tắc repo. Manifest nhỏ ghi inpu
 - So sánh chính xác số event của từng session giữa nguồn và output; không thiếu/thừa session hoặc multiplicity.
 - Input giữ nguyên size/mtime. Không thêm khóa phụ sort khi timestamp bằng nhau.
 
-Script là tiện ích nhóm bổ sung; không sửa snapshot NVIDIA hay thay đổi năm quyết định preprocessing. Chạy notebook 01/02 và bảng first-seen tháng thuộc các bước tiếp theo. Có hỗ trợ AI khi soạn script/tài liệu. Chưa commit/push; người nhận chưa xác nhận bàn giao.
+Script là tiện ích nhóm bổ sung; không sửa snapshot NVIDIA hay thay đổi năm quyết định preprocessing. Chạy notebook 01/02 và bảng first-seen tháng thuộc các bước tiếp theo. Có hỗ trợ AI khi soạn script/tài liệu. Commit kết quả: `45554ea`; trạng thái Git/bàn giao xem `docs/handoff.md`. Người nhận chưa xác nhận kiểm tra.
 
 ## Kết quả chạy ngày 19/11/2026
 

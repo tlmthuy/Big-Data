@@ -73,3 +73,13 @@ Không ghi secret hoặc credential vào file này. Cập nhật sau mỗi bàn 
 - Output thật tại `data/subset/session_ids/`: 187.563 / 469.728 / 938.071 / 1.877.365 session cho 10/25/50/100%. Danh sách CSV lớn giữ local theo quy tắc artifact; manifest ghi đường dẫn, seed, hash rule, counts và checksum để tái tạo.
 - Kiểm tra PASS: ID không null/trùng, đúng hash threshold, tập lồng nhau, 100% bằng population; bốn checksum output khớp manifest, checksum input khớp raw audit; `git diff --check` đạt.
 - Chưa xuất raw event subset hay chạy preprocessing. Người nhận chưa xác nhận; chưa đánh dấu Done chính thức theo AGENTS.md.
+
+## TV1 — Xuất raw subset theo session — 19/11/2026
+
+- Branch: `feature/tv1-data`; commit script/output nhỏ: `45554ea`.
+- Đã fetch và merge origin/main cùng origin/feature/tv1-data: không có thay đổi mới hoặc conflict tại lần bàn giao này.
+- Command: `.venv/bin/python pipeline/export_raw_subsets.py`.
+- Output: raw CSV local tại `data/subset/raw_week/`; manifest `data/manifests/raw_subset_manifest.json`, bảng `data/manifests/raw_subset_counts.csv`, hướng dẫn `docs/raw_subsets.md`.
+- Counts event/session/user/item: 10% = 882808/187563/163847/63398; 25% = 2213138/469728/356271/87247; 50% = 4421037/938071/601608/103940; 100% = 8829314/1877365/957543/118333.
+- Kiểm tra PASS: input/membership checksums; header 9 cột; counts nguồn/output; số event chính xác theo từng session; không có session ngoài membership; bốn output checksums khớp manifest; `git diff --check` đạt. 100% ít hơn raw-week audit một dòng thiếu session.
+- Dữ liệu giữ event lặp và session một event; chưa phải cleaned sequence. Không commit raw CSV lớn. Người nhận chưa xác nhận kiểm tra; chưa đánh dấu Done chính thức.
