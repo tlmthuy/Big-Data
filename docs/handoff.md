@@ -55,3 +55,43 @@ Không ghi secret hoặc credential vào file này. Cập nhật sau mỗi bàn 
 - Nguồn: snapshot NVIDIA f0ca2b5343dd1e40b5d2422b942f014b224f5c20, notebook 01/02/03, data_utils.py và prediction_task.py; chi tiết code cell trong preprocessing_review.md. Upstream được giữ nguyên.
 - Kiểm tra: đối chiếu code cell và checksum manifest; kiểm tra link Markdown local, quy định cũ trong tài liệu hiện hành và git diff --check. Chưa chạy preprocessing, GPU model hoặc benchmark. Chưa có xác nhận nghiệm thu của người nhận.
 - Trạng thái Git: cập nhật tài liệu trong working tree, chưa commit/push ở lần bàn giao này; chưa đánh dấu Done chính thức.
+
+## TV1 raw audit trước sampling — 19/11/2026
+
+- Branch: `feature/tv1-data`; commit kết quả và script: `98a60e7`.
+- Output: `data/raw_audit.csv`, `data/manifests/raw_audit_manifest.json`; hướng dẫn tại `docs/raw_audit.md`.
+- Command: `.venv/bin/python pipeline/raw_audit.py --input /Users/nguyenbaochau/Downloads/2019-Oct.csv`.
+- Output thật: 42.448.764 event toàn tháng; 8.829.315 event tuần đầu. Counts distinct, missing 9 cột, event type và ngày trong CSV. Runtime khoảng 148,95 giây; peak process RSS 997.081.088 bytes trên macOS.
+- Kiểm tra: tổng event type/ngày bằng tổng dòng; bounds missing/distinct; tuần không vượt tháng; input size/mtime giữ nguyên; SHA-256 input và script trong manifest; `git diff --check` đạt.
+- Không commit CSV nguồn, không làm sạch/sampling hoặc tạo sequence. Người nhận TV1/TV2/TV3 chưa xác nhận; chưa đánh dấu Done chính thức.
+
+## TV1 — Chọn session bằng seed cố định — 19/11/2026
+
+- Branch: `feature/tv1-data`; commit kết quả: `277abcf`.
+- Script: `pipeline/sample_sessions.py`; command: `.venv/bin/python pipeline/sample_sessions.py --input /Users/nguyenbaochau/Downloads/2019-Oct.csv --seed 42`.
+- Manifest: `data/manifests/session_sampling_manifest.json`; tài liệu: `docs/session_sampling.md`.
+- Output thật tại `data/subset/session_ids/`: 187.563 / 469.728 / 938.071 / 1.877.365 session cho 10/25/50/100%. Danh sách CSV lớn giữ local theo quy tắc artifact; manifest ghi đường dẫn, seed, hash rule, counts và checksum để tái tạo.
+- Kiểm tra PASS: ID không null/trùng, đúng hash threshold, tập lồng nhau, 100% bằng population; bốn checksum output khớp manifest, checksum input khớp raw audit; `git diff --check` đạt.
+- Chưa xuất raw event subset hay chạy preprocessing. Người nhận chưa xác nhận; chưa đánh dấu Done chính thức theo AGENTS.md.
+
+## TV1 — Xuất raw subset theo session — 19/11/2026
+
+- Branch: `feature/tv1-data`; commit script/output nhỏ: `45554ea`.
+- Đã fetch và merge origin/main cùng origin/feature/tv1-data: không có thay đổi mới hoặc conflict tại lần bàn giao này.
+- Command: `.venv/bin/python pipeline/export_raw_subsets.py`.
+- Output: raw CSV local tại `data/subset/raw_week/`; manifest `data/manifests/raw_subset_manifest.json`, bảng `data/manifests/raw_subset_counts.csv`, hướng dẫn `docs/raw_subsets.md`.
+- Counts event/session/user/item: 10% = 882808/187563/163847/63398; 25% = 2213138/469728/356271/87247; 50% = 4421037/938071/601608/103940; 100% = 8829314/1877365/957543/118333.
+- Kiểm tra PASS: input/membership checksums; header 9 cột; counts nguồn/output; số event chính xác theo từng session; không có session ngoài membership; bốn output checksums khớp manifest; `git diff --check` đạt. 100% ít hơn raw-week audit một dòng thiếu session.
+- Dữ liệu giữ event lặp và session một event; chưa phải cleaned sequence. Không commit raw CSV lớn. Người nhận chưa xác nhận kiểm tra; chưa đánh dấu Done chính thức.
+
+## Xác nhận của người nhận — Raw subset TV1
+
+Phương án bàn giao là tái tạo từ CSV nguồn cùng SHA-256. Xem [lệnh tái tạo và cách đối chiếu](raw_subsets.md#người-nhận-tái-tạo-và-xác-nhận).
+
+- Tái tạo nội bộ: xuất đủ bốn CSV với đường dẫn counts riêng. SHA-256 raw và danh sách membership khớp bản gốc. Bảng counts khớp từng byte, số event từng session khớp nguồn và tổng kiểm tra băm theo dòng không phụ thuộc thứ tự khớp bản gốc. SHA-256 toàn file CSV khác giữa hai lần xuất.
+- Trạng thái: chờ người nhận kiểm tra độc lập.
+- Người nhận và ngày kiểm tra:
+- SHA-256 raw và bốn danh sách session:
+- SHA-256 và counts của bốn CSV:
+- Kết quả đối chiếu membership và số event từng session:
+- Xác nhận Done:

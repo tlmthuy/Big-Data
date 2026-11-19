@@ -1,0 +1,2 @@
+# CPU-only raw audit dependency; independent of Merlin GPU runtime.
+duckdb==2.0.0

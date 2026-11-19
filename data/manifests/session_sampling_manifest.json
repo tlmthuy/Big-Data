@@ -1,0 +1,59 @@
+{
+  "started_at_utc": "2026-11-19T03:16:46.943486+00:00",
+  "completed_at_utc": "2026-11-19T03:17:16.967703+00:00",
+  "elapsed_seconds": 30.02582991700183,
+  "seed": 42,
+  "seed_purpose": "session sampling; independent of NVIDIA GPU split seed 1",
+  "input_path": "/Users/nguyenbaochau/Downloads/2019-Oct.csv",
+  "input_bytes": 5668612855,
+  "input_sha256": "fedd938409b5f836ec89b39c861b13dad99fc7cd9beb1fddd97a2d50488b5b80",
+  "population_sessions": 1877365,
+  "scope": "UTC [2019-10-01, 2019-10-08); non-null original user_session; view/cart/purchase",
+  "hash_rule": "UTF-8(str(seed) + colon + original user_session); SHA-256; first 8 digest bytes as unsigned big-endian integer h; select h < floor(percent * 2^64 / 100)",
+  "percentages_are": "Expected fractions of sessions, not exact quotas or event ratios",
+  "preprocessing": "Raw membership only; no deduplication, minimum-length filtering, truncation, mapping or split performed. Same membership may be reused after NVIDIA preprocessing; do not rehash encoded IDs.",
+  "event_retention": "Next step: join selected original session IDs and retain all their eligible events within the week; no row sampling. No event subset exported in this run.",
+  "outputs": [
+    {
+      "percent": 10,
+      "session_count": 187563,
+      "actual_session_ratio": 0.0999075832350129,
+      "threshold_integer": 1844674407370955161,
+      "path": "/Users/nguyenbaochau/Documents/ChatGPT/BigData/Big-Data/data/subset/session_ids/sessions_010.csv",
+      "bytes": 6939844,
+      "sha256": "b86a8b40c1f2ddbc8a179b8d4f828c7c777753f77b2242f23607aa4a0675f138"
+    },
+    {
+      "percent": 25,
+      "session_count": 469728,
+      "actual_session_ratio": 0.25020600682339345,
+      "threshold_integer": 4611686018427387904,
+      "path": "/Users/nguyenbaochau/Documents/ChatGPT/BigData/Big-Data/data/subset/session_ids/sessions_025.csv",
+      "bytes": 17379949,
+      "sha256": "9c4be4ffb98e924b87582969355e7761e82ff6caf4f20e6e982f6749342001af"
+    },
+    {
+      "percent": 50,
+      "session_count": 938071,
+      "actual_session_ratio": 0.49967427751129906,
+      "threshold_integer": 9223372036854775808,
+      "path": "/Users/nguyenbaochau/Documents/ChatGPT/BigData/Big-Data/data/subset/session_ids/sessions_050.csv",
+      "bytes": 34708640,
+      "sha256": "db3c1b35c0d9e7022f2286f47a995c61d7ebce7fe4d84d4f0c82f8efd60bfcf0"
+    },
+    {
+      "percent": 100,
+      "session_count": 1877365,
+      "actual_session_ratio": 1.0,
+      "threshold_integer": 18446744073709551616,
+      "path": "/Users/nguyenbaochau/Documents/ChatGPT/BigData/Big-Data/data/subset/session_ids/sessions_100.csv",
+      "bytes": 69462518,
+      "sha256": "0df5191e5381174b6055085f86d8ac9a72208beb2655d5b50f813cf79fd609fb"
+    }
+  ],
+  "checks": "PASS: unique non-null IDs, hash rule, nested 10 <= 25 <= 50 <= 100, 100% equals population, input unchanged",
+  "duckdb_version": "2.0.0",
+  "python_version": "3.14.0",
+  "git_base_commit": "82f8323022c078cf653bac07df3011b85ac6ca3f",
+  "script_sha256": "710fc2b9743bda109475d62eb467485fc7986ef9fdf54a52ae0af32cfe4d6a36"
+}

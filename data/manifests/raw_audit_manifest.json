@@ -1,0 +1,20 @@
+{
+  "input_path": "/Users/nguyenbaochau/Downloads/2019-Oct.csv",
+  "input_bytes": 5668612855,
+  "input_sha256": "fedd938409b5f836ec89b39c861b13dad99fc7cd9beb1fddd97a2d50488b5b80",
+  "output_path": "/Users/nguyenbaochau/Documents/ChatGPT/BigData/Big-Data/data/raw_audit.csv",
+  "started_at_utc": "2026-11-19T03:02:13.128955+00:00",
+  "completed_at_utc": "2026-11-19T03:04:42.087133+00:00",
+  "elapsed_seconds": 148.9470199999996,
+  "peak_process_rss_bytes": 997081088,
+  "peak_rss_platform": "macOS ru_maxrss in bytes",
+  "duckdb_version": "2.0.0",
+  "memory_limit": "1GB",
+  "threads": 2,
+  "git_commit": "6f46bc488fa858c98b46a35e924ac2d786dcce52",
+  "script_sha256": "30c0ff581c830029a664ca8ee3c121332c02db66ebd45b1004323455467af74b",
+  "missing_rule": "CSV empty fields only; distinct excludes NULL; no trimming or imputation",
+  "raw_month": "All rows, before cleaning/deduplication/sampling",
+  "raw_week": "UTC [2019-10-01, 2019-10-08), before cleaning/deduplication/sampling",
+  "checks": "PASS: event/day totals, distinct/missing bounds, week <= month, input unchanged"
+}
