@@ -6,7 +6,7 @@
 - Cả hai CLI train partition 1 và validation partition 2 thành công, mỗi model có prediction/metrics/checkpoint thật. Verifier đọc checkpoint, kiểm tra last-item label, che target và batch independence: **GRU PASS, XLNet PASS**. Lệnh/output/runtime tại [GPU smoke](../metrics/tv2-model-smoke/README.md). Offline tests vẫn **25/25 PASS**.
 - Pin npy-append-array 0.9.16 để tương thích NumPy 1.24.4; giữ log lỗi import attempt 1. Không đổi architecture, masking, metric hoặc experiment protocol. Checkpoint lớn không commit.
 - Hai task script GRU/XLNet đã đủ code, command và output GPU để TV3 nghiệm thu; chờ xác nhận người nhận theo quy định Done. E1–E5 vẫn cần dữ liệu/artifact TV1 và runtime chính thức TV3. Local toy smoke không thay benchmark hoặc xác nhận split thật.
-- Nhánh bàn giao: `feature/tv2-model-evaluation`. Commit thực thi model `06ba66e899f400720b44cb1b9b2feacac0590795`; commit chứng cứ/verifier được ghi bổ sung sau khi commit.
+- Nhánh bàn giao: `feature/tv2-model-evaluation`. Commit thực thi model `06ba66e899f400720b44cb1b9b2feacac0590795`; commit chứng cứ/verifier `b2cbb39bcc9deb3d865139a6635ff676f04e197f`.
 
 ## TV2 — Kiểm tra môi trường smoke GRU/XLNet — 20/11/2026
 
