@@ -224,15 +224,15 @@ Example shape for `app/public/run-results.json`. This excerpt shows both planned
 | --- | --- | --- | --- | --- |
 | 1 | Approve this contract, formats, field names, run-results shape and offline vs live inference scope | TV2 | Adapter and UI integration | Proposed read-only artifact workflow |
 | 2 | Export actual per-item scores and define their meaning for each model | TV2 | Recommendation score column | Both writers currently export ranked IDs |
-| 3 | Deliver confirmed predictions and catalog/mapping for all three models on a shared subset and split | TV2, TV1 (mapping) | Comparable recommendations | Toy artifacts available |
+| 3 | Deliver confirmed predictions and catalog for all three models on a shared subset and split, with the matching ID mapping | TV2 (predictions, catalog), TV1 (mapping support) | Comparable recommendations | Toy artifacts available |
 | 4 | Define the production session key and supply its mapping | TV2, TV1 | Session join and picker | Production representation pending |
 | 5 | Deliver official E1–E5 metrics and identify excluded runs and reasons | TV2 | Experiment panels | Matrix and toy evidence available |
-| 6 | Confirm effective eval batch for E1/E2 neural runs | TV2 | Configuration and comparison | Runner passes 32 |
+| 6 | Confirm the effective eval batch and sequence length for E1, E2 and E3 neural runs | TV2 | Configuration and comparison | Runner passes eval batch 32. Matrix plans sequence length 20, but `metrics.json` has no sequence-length field. |
 | 7 | Confirm E3 throughput definition and cost coverage | TV2 | E3 comparison | Evaluation throughput field available. Cost is **Chưa có**. |
-| 8 | Decide on numeric E5 uncertainty and confirm inference scope text | TV2 | E5 interpretation | Text limitations available. Final scope confirmation pending. |
+| 8 | Decide on numeric E5 uncertainty and align the E5 inference-scope text with `full_evaluation_wall_v1` | TV2 | E5 interpretation | `limitations` text says compute/ranking only, while `final_evaluation_including_io` uses full evaluation wall time. No variance or confidence interval measured. |
 | 9 | Provide CPU model, core count, RAM and OS for every run | TV3 | Environment view | Partial toy snapshot available |
 | 10 | Provide real resource logs linked to run IDs | TV3 | Runtime and memory comparisons | Toy logs available |
-| 11 | Provide per-subset pipeline metrics including session, user and item counts and bytes, with scope agreed by TV2 | TV1, TV2 | E2 scale and E5 inputs | Template has events and timings. Additional subset counts and bytes pending. |
+| 11 | Provide measured per-subset pipeline metrics (`n_events`, `read_seconds`, `preprocessing_seconds`, `first_seen_seconds`, `first_seen_artifact`, `source_log`), plus session, user and item counts and bytes with scope agreed by TV2 | TV1, TV2 (scope) | E2 scale and E5 inputs | Template only. All values are `null`. No count or bytes fields for sessions, users or items. |
 
 ## References
 
