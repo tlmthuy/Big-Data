@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "updated_on": "2026-11-19",
+  "updated_on": "2026-11-20",
   "owner": "TV2",
   "recipient": "TV3",
   "tv1_intermediate_data_handoff": "data/manifests/tv1_data_handoff.json",
   "checkout_ref": "main",
-  "reviewed_base_commit": "f0df09d82a2d11ce1b1baa6e202bc9eaf66cf872",
+  "reviewed_base_commit": "b40cd761d539acb8eebed9c7cafedcecc30f7401",
   "resolve_run_commit_argv": [
     "git",
     "rev-parse",
@@ -16,17 +16,34 @@
   "runbook": "docs/modeling/tv2_runbook.md",
   "environment_guide": "environment/README.md",
   "python_minimum": "3.10",
-  "runtime_status": "CPU/toy verified on local Python; GPU image and package versions unverified",
+  "runtime_status": "Config/collector integrated; E1 (three models) and E3 (batch 32/128) passed GPU toy runs; 29 offline tests passed. Real data and official TV3 runtime unverified.",
   "files_sha256": {
     "evaluation/__init__.py": "47fe5c3c117acdeaee61a18885ff4e09d80d8c53d8f76cafcdb044d2775a6680",
-    "evaluation/data.py": "e6221332f03fe37f09760c092c4aa58704c2226dbc1ecbfecd3b155686d5897f",
+    "evaluation/data.py": "dd8540317fdd5b86b5451bbb1cbaee345392f889434ecfa2d7a81d0473492edf",
     "evaluation/ranking.py": "8c744e95d50cc8d6425aad412e4bc3d80389e465d70dd1e4fde39b26fc0e151d",
-    "evaluation/run_popularity.py": "2a8b1106641bec53176b5f9da81d635caac7b382bda67c30e641da2597921889",
+    "evaluation/run_popularity.py": "82d6672d9762df1101655c7f98022305f20bf6372b316916fe151fdcb235c81e",
     "evaluation/tests/test_tv2.py": "faac36de68c8a93508081e96cc9cd9269f2a3dfa4d518881c19fb3042397941f",
     "evaluation/tests/fixtures/catalog.json": "a1ae9388c355a4f5dcdacd52f87b521351caac4c69119b2e17b87d7dc467c184",
     "evaluation/tests/fixtures/sessions.jsonl": "8274e3a6edd2c836f83d238bc4725b8fbb91ee19eca9f1b85ad06417817122de",
     "models/__init__.py": "b6942e7ed99420bbf98752e33183b998d3ebc02de646b33588380d20f91e99e9",
-    "models/popularity.py": "f69973f644522e1d2cb427053ea844ca707950d4fa1ad63830996449a27bfc9c"
+    "models/popularity.py": "f69973f644522e1d2cb427053ea844ca707950d4fa1ad63830996449a27bfc9c",
+    "models/session_models.py": "5e6c6ab87cc7f1959b86d01452ee391fab14f0ba6649f4a112e43b94b96e4c6c",
+    "evaluation/run_neural.py": "705814761d588fa89918ce29fcddf3e9a2a538c4783981504f23a69971d557f4",
+    "evaluation/tests/test_neural.py": "bcade4b890e9c30b6a2a325ed88cd42771079b7a9575211bb5f81d9b8590f831",
+    "evaluation/tests/fixtures/schema.pbtxt": "c2405d7751b184ec9a4a975a4163818acbfd1926fa89e43e95e041ade77ea067",
+    "environment/smoke-models.requirements.txt": "481cdaaa4a2ff742e19add953916609ce8acb6b4c78d9bf32aef6e27151918ed",
+    "scripts/runs/verify_neural_smoke.py": "2c41616112578e12c79a053245fbba96b40806ce1d58da7e76ec25d381e5c511",
+    "evaluation/timing.py": "238d7d1bb7696f28a52763edd331ecde9bef1611ca5aae12a635a686c2cff64e",
+    "evaluation/tests/test_inference_timing.py": "4fb52e457b18f195e92af9a6bb7d4659fac0b17bc73df48aaabda3bf004e2f9f",
+    "evaluation/tests/test_experiments.py": "c8bd7022bcb25f92c2f8884d7267ebb31ffc22e0cb9634a4fd71f3d13d23d124",
+    "benchmark/collect.py": "54f93049ed8e8c165725fc7b2f12374c5e685b5fb95dfa8ba008c3cdd27845ae",
+    "benchmark/format_io.py": "a0761729d47666f035d916725027cbeb69ff5c6f7953dab3ed2257f746c6a9b0",
+    "benchmark/scalability.py": "244c2a262b3ce146581c5f3c060b84224fd741cd9d5fc66c80a29fe93fefe6c7",
+    "configs/experiments.json": "1d919a1e66b74560137cbef80b51ff9ebd88a05651db0a44bbab51e906996862",
+    "configs/site.example.json": "238d97937fe8b60304d70ea86eaba4a9d896a9b6741fcb7a191d6c4fe4055c8f",
+    "configs/pipeline_metrics.example.json": "c7b006bb7dd916d93c1f976dedcf68fafa90632fe6125f8841e3b3f6b7cd082e",
+    "scripts/runs/run_experiments.py": "c652906ce8618fe1a62d05ca11c2ea9d60983eb527a08e518c7b9f0e2410659b",
+    "scripts/runs/prepare_toy_site.py": "6ffc41b998fd791d7bc2a51f7aac2fcfe5e54045e7918ebb5acf51001e2cdd41"
   },
   "commands": [
     {
@@ -77,6 +94,171 @@
         "predictions.jsonl",
         "popularity.json"
       ]
+    },
+    {
+      "id": "gru",
+      "status": "toy_gpu_verified_on_WSL_laptop",
+      "argv": [
+        "python",
+        "-m",
+        "evaluation.run_neural",
+        "--model",
+        "gru",
+        "--data",
+        "{sessions}",
+        "--schema",
+        "{schema}",
+        "--catalog",
+        "{catalog}",
+        "--batch-size",
+        "256",
+        "--eval-batch-size",
+        "32",
+        "--epochs",
+        "3",
+        "--seed",
+        "1",
+        "--split",
+        "validation",
+        "--subset",
+        "{subset}",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output_dir}"
+      ],
+      "outputs": [
+        "checkpoint.pt",
+        "predictions.jsonl",
+        "metrics.json",
+        "validation-dayN.jsonl"
+      ],
+      "requires": "actual fitted TV1 schema/catalog/membership plus compatible TV3 model runtime"
+    },
+    {
+      "id": "xlnet",
+      "status": "toy_gpu_verified_on_WSL_laptop",
+      "argv": [
+        "python",
+        "-m",
+        "evaluation.run_neural",
+        "--model",
+        "xlnet",
+        "--data",
+        "{sessions}",
+        "--schema",
+        "{schema}",
+        "--catalog",
+        "{catalog}",
+        "--batch-size",
+        "256",
+        "--eval-batch-size",
+        "32",
+        "--epochs",
+        "3",
+        "--seed",
+        "1",
+        "--split",
+        "validation",
+        "--subset",
+        "{subset}",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output_dir}"
+      ],
+      "outputs": [
+        "checkpoint.pt",
+        "predictions.jsonl",
+        "metrics.json",
+        "validation-dayN.jsonl"
+      ],
+      "requires": "actual fitted TV1 schema/catalog/membership plus compatible TV3 model runtime"
+    },
+    {
+      "id": "experiment-plan",
+      "status": "plan_verified",
+      "argv": [
+        "python",
+        "-m",
+        "scripts.runs.run_experiments",
+        "--experiment",
+        "{experiment}"
+      ],
+      "experiment_choices": [
+        "E1",
+        "E2",
+        "E3",
+        "E4"
+      ]
+    },
+    {
+      "id": "experiment-execute",
+      "status": "implemented_awaiting_bound_artifacts_and_runtime",
+      "argv": [
+        "python",
+        "-m",
+        "scripts.runs.run_experiments",
+        "--run-id",
+        "{run_id}",
+        "--site",
+        "{site_json}",
+        "--execute"
+      ],
+      "outputs": [
+        "run.json",
+        "stdout.txt",
+        "stderr.txt",
+        "artifacts/"
+      ]
+    },
+    {
+      "id": "E5",
+      "status": "aggregation_tested_on_synthetic_logs",
+      "argv": [
+        "python",
+        "-m",
+        "benchmark.scalability",
+        "--logs",
+        "{E2_logs_root}",
+        "--output",
+        "{output_dir}"
+      ],
+      "outputs": [
+        "scalability.csv",
+        "scalability.svg",
+        "summary.json"
+      ]
+    },
+    {
+      "id": "prepare-toy-site",
+      "status": "toy_verified",
+      "argv": [
+        "python",
+        "-m",
+        "scripts.runs.prepare_toy_site",
+        "--environment",
+        "{environment_snapshot}",
+        "--output",
+        "{toy_inputs_dir}"
+      ]
+    },
+    {
+      "id": "E1-toy-collector",
+      "status": "toy_GPU_verified",
+      "argv": [
+        "python",
+        "-m",
+        "scripts.runs.run_experiments",
+        "--experiment",
+        "E1",
+        "--smoke",
+        "--site",
+        "{toy_site_json}",
+        "--execute",
+        "--output-root",
+        "{toy_output_root}"
+      ]
     }
   ],
   "pending": [
@@ -95,7 +277,7 @@
     {
       "id": "gpu-runtime",
       "owner": "TV3",
-      "status": "unverified",
+      "status": "official_TV3_runtime_unverified_local_model_smoke_passed",
       "needs": [
         "Merlin image tag/digest",
         "hardware and package snapshot",
@@ -103,16 +285,10 @@
       ]
     },
     {
-      "id": "gru-xlnet",
-      "owner": "TV2",
-      "status": "not_implemented",
-      "command": null
-    },
-    {
       "id": "E1-E4",
       "owner": "TV2 + TV3",
-      "status": "not_ready",
-      "command": null,
+      "status": "configured_toy_verified_awaiting_real_inputs_and_TV3_runtime",
+      "command": "scripts/runs/run_experiments.py",
       "needs": [
         "TV2 approved per-run config/command",
         "TV1 data acceptance",
@@ -122,20 +298,53 @@
     {
       "id": "E5",
       "owner": "TV2",
-      "status": "awaiting_E2_logs",
-      "command": null,
+      "status": "synthetic_log_tests_passed_awaiting_real_E2_logs",
+      "command": "benchmark/scalability.py",
       "note": "Analyze E2 logs; no separate model run"
+    },
+    {
+      "id": "E2",
+      "owner": "TV1 + TV2",
+      "status": "awaiting_measured_pipeline_telemetry",
+      "template": "configs/pipeline_metrics.example.json"
+    },
+    {
+      "id": "E4",
+      "owner": "TV1 + TV2",
+      "status": "awaiting_shared_CSV_Parquet_preprocessing_entrypoint",
+      "needs": [
+        "same raw string-schema pair",
+        "one preprocessing argv template with input_path/input_format/output_dir bindings",
+        "shared first-seen artifact"
+      ]
     }
   ],
   "evidence": {
     "test_log": "metrics/tv2-environment-sync-tests.txt",
     "historical_toy_metrics": "metrics/tv2-toy-day1/metrics.json",
-    "historical_toy_commit": "04cb5135079707ce4dbdcc09146e7f274b9c3bc7"
+    "historical_toy_commit": "04cb5135079707ce4dbdcc09146e7f274b9c3bc7",
+    "local_gpu_smoke": "metrics/tv2-model-smoke/README.md",
+    "local_gpu_environment": "metrics/tv2-model-smoke/environment.json",
+    "gpu_verification": [
+      "metrics/tv2-model-smoke/gru-attempt2/verification.json",
+      "metrics/tv2-model-smoke/xlnet-attempt2/verification.json"
+    ],
+    "config_collector_toy": "metrics/tv2-config-collector-smoke/summary.json",
+    "current_test_result": "metrics/tv2-config-collector-smoke/checks.json"
   },
   "limitations": [
     "Manifest is a script handoff, not a GPU environment lockfile or experiment run registry.",
     "Historical toy metrics retain original commit and hashes.",
     "TV3 runs handed-off commands; protocol/config changes belong to TV2."
   ],
-  "checksum_normalization": "Replace CRLF bytes with LF before SHA-256 (UTF-8 text files); independent of checkout line endings."
+  "checksum_normalization": "Replace CRLF bytes with LF before SHA-256 (UTF-8 text files); independent of checkout line endings.",
+  "neural_runbook": "docs/modeling/neural_runbook.md",
+  "neural_implementation_commit": "ea717d91b28f252e845aeb1bf97c3cda6baa7ec0",
+  "neural_gpu_evidence_commit": "b2cbb39bcc9deb3d865139a6635ff676f04e197f",
+  "experiment_runbook": "docs/modeling/experiment_runbook.md",
+  "inference_timing_protocol": "full_evaluation_wall_v1",
+  "inference_timing_guide": "docs/modeling/inference_timing.md",
+  "experiment_matrix": "configs/experiments.json",
+  "site_template": "configs/site.example.json",
+  "real_data_verified": false
 }

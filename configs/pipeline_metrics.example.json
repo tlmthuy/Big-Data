@@ -1,0 +1,10 @@
+{
+  "status": "template_not_measurements",
+  "n_events": null,
+  "read_seconds": null,
+  "preprocessing_seconds": null,
+  "first_seen_seconds": null,
+  "first_seen_artifact": null,
+  "source_log": null,
+  "scope": "n_events = actual weekly events in sampled raw subset; preprocessing excludes raw read and shared monthly first-seen; include fit/workflow/groupby/split/write"
+}

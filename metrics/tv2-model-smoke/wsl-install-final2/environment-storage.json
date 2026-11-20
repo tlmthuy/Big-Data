@@ -1,0 +1,8 @@
+{
+  "status": "installed",
+  "root": "/root/.local/share/big-data-recsys/model-smoke-20261120",
+  "max_bytes": 7000000000,
+  "environment_bytes": 4040469059,
+  "source_archive_sha256": "6f9db694b9a5490f43d6bba086bcbd36f13422ab1cdb286c695dfe8254ef974e",
+  "scope": "model-only smoke; no GPU ETL or official cloud benchmark"
+}

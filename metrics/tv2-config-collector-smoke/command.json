@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "wsl",
+    "-d",
+    "Ubuntu-22.04",
+    "--cd",
+    "/mnt/c/\u1ed4 D/Big Data Project",
+    "--",
+    "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+    "-m",
+    "scripts.runs.run_experiments",
+    "--experiment",
+    "E1",
+    "--smoke",
+    "--site",
+    "metrics/local/config-smoke-inputs/site.json",
+    "--output-root",
+    "metrics/local/tv2-config-smoke",
+    "--execute"
+  ],
+  "exit_code": 0,
+  "data_kind": "toy",
+  "real_data_verified": false
+}
