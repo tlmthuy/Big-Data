@@ -2,6 +2,14 @@
 
 ## Trạng thái hiện hành
 
+### TV5 — Report/slide outline và cấu trúc bảng E1–E5 (mốc 19/11 và 20/11) — 20/11/2026
+
+- Output: `reports/README.md` (khung thư mục và quy tắc số liệu), `reports/report_outline.md` (outline tiếng Anh theo khung report mẫu của môn, I–VI, nguồn từng mục, ngân sách trang, lịch viết), `reports/slides/slide_outline.md` (18 slide, 15:00 + Q&A 5:00, backup, chuẩn bị Q&A), `reports/tables/README.md` (run_id, metric, đơn vị, field nguồn, phạm vi đo E1–E5, mẫu caption), `reports/tables/table09–13_*.csv` (bảng trống, đã điền sẵn run_id và đường dẫn nguồn).
+- Cách kiểm tra: đối chiếu outline với PDF report mẫu và `docs/course_requirements.txt` (bảng coverage cuối outline); field trong bảng lấy từ `configs/experiments.json`, `benchmark/collect.py`, `benchmark/format_io.py`, `benchmark/scalability.py`, `evaluation/run_neural.py`, `evaluation/run_popularity.py` và toy record `metrics/tv2-config-collector-smoke/` (chỉ để đọc tên field). Số liệu dataset đã điền trong outline đối chiếu với `data/raw_audit.csv`, `data/manifests/raw_audit_manifest.json`, `data/manifests/raw_subset_counts.csv`, các manifest cleanup/first-seen.
+- Chưa có số liệu benchmark; không dùng số toy hoặc tutorial. Bảng E1–E5 để trống tới khi có metrics package TV2.
+- Cần TV2 xác nhận: 11 điểm tại `reports/tables/README.md` mục 5, gồm nguồn counts E2, định nghĩa throughput E3, cost, uncertainty E5, và mâu thuẫn trong `benchmark/scalability.py` (`limitations` ghi inference compute-only trong khi stage cộng `final_evaluation_including_io`).
+- Branch: `feature/tv5-report-results`; commit output: `f762ca6`. Người nhận chưa xác nhận; chưa đánh dấu Done.
+
 ### TV2 — Config/collector và inference timing cho mốc 21/11 — kiểm tra 20/11/2026
 
 - Theo phạm vi user xác nhận: tích hợp config/collector, kiểm tra bằng toy; **chưa xác minh trên dữ liệu thật**. Bộ công cụ dùng để chạy benchmark E1–E5 và toy logs dùng tham khảo vận hành/format; chưa dùng số toy làm kết luận eCommerce/scalability.
