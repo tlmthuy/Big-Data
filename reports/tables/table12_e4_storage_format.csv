@@ -1,0 +1,3 @@
+run_id,status,format,subset,n_events,content_verified,bytes,size_mib,read_seconds,peak_read_process_rss_mib,preprocessing_elapsed_seconds,preprocessing_peak_rss_gib,cache_policy,schema_policy,source_metrics
+e4-010-csv,pending,csv,10,,,,,,,,,,,metrics/raw/e4-010-csv/artifacts/metrics.json
+e4-010-parquet,pending,parquet,10,,,,,,,,,,,metrics/raw/e4-010-parquet/artifacts/metrics.json

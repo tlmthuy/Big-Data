@@ -1,0 +1,6 @@
+run_id,status,data_kind,subset_pct_sessions,n_events,n_sessions_subset,n_users,n_items,vocabulary_size,data_bytes,read_seconds,preprocessing_seconds,train_with_input_scan_seconds,inference_seconds,peak_process_tree_rss_gib,peak_cuda_reserved_gib,recall_at_20,ndcg_at_20,source_run,source_counts
+e2-gru-010,pending,,10,,,,,,,,,,,,,,,metrics/raw/e2-gru-010/run.json,TV1 manifest
+e2-gru-025,pending,,25,,,,,,,,,,,,,,,metrics/raw/e2-gru-025/run.json,TV1 manifest
+e2-gru-050,pending,,50,,,,,,,,,,,,,,,metrics/raw/e2-gru-050/run.json,TV1 manifest
+e2-gru-100,pending,,100,,,,,,,,,,,,,,,metrics/raw/e2-gru-100/run.json,TV1 manifest
+shared-first-seen,,,all,,,,,,,,,,,,,,,metadata.pipeline_metrics.first_seen_seconds (report once),data/manifests/monthly_first_seen.json
