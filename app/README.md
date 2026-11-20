@@ -4,8 +4,8 @@
 React + Vite demo for session-based next-item recommendation.
 
 Status: draft UI with toy data, accepted for integration on 20/11/2026.
-The display protocol below describes the intended behavior; known ID/catalog
-and unavailable-model display issues remain. See [TODO.md](TODO.md) for the
+The display protocol below describes the intended behavior; known unavailable-model
+and data-validation issues remain. See [TODO.md](TODO.md) for the
 review findings, TV2 dependencies and checks required before UI acceptance.
 
 ## Run locally
@@ -28,28 +28,34 @@ Open the URL printed by Vite. Use `npm run build` to create a production build.
 
 ## Prediction data
 
-The demo reads `public/demo-data.json`. Its `Popularity` entries come from the checked-in TV2 toy predictions:
+From the repository root, run the existing Popularity CLI on the toy sessions.
+This writes `predictions.jsonl` and `metrics.json` to a new directory. Change
+both the run ID and output directory for a repeat run.
 
-- `metrics/tv2-toy-day1/predictions.jsonl`
-- `metrics/tv2-toy-day1/metrics.json`
-
-GRU and XLNet are shown as unavailable until TV2 provides prediction JSONL, run metadata and an approved catalog for the same subset/split. No synthetic GRU/XLNet rankings are generated.
-
-Live Python inference can be added with FastAPI later. Its response should use the same shape:
-
-```json
-{
-  "model": "Popularity",
-  "subset": "toy",
-  "split": "validation",
-  "catalog": ["3", "4", "5"],
-  "sessions": [
-    {
-      "user_session": "rank1",
-      "prefix": ["4"],
-      "target": "3",
-      "top20": ["3", "4", "5"]
-    }
-  ]
-}
+```bash
+python3 -m evaluation.run_popularity \
+  --sessions evaluation/tests/fixtures/sessions.jsonl \
+  --catalog evaluation/tests/fixtures/catalog.json \
+  --train-through 1 --subset toy --run-id tv4-local-toy \
+  --output metrics/local/tv4-local-toy
 ```
+
+Convert the ranked predictions into the file that React loads at
+`/demo-data.json`. The exporter preserves the published ranking order, verifies
+the run's catalog checksum, and maps prefix, target and Top-20 to original
+product IDs. It includes all 23 toy catalog entries.
+
+```bash
+python3 -m app.export_demo_data \
+  --run-dir metrics/local/tv4-local-toy \
+  --catalog evaluation/tests/fixtures/catalog.json \
+  --output app/public/demo-data.json
+```
+
+To reproduce the bundled file from the checked-in TV2 output, use
+`--run-dir metrics/tv2-toy-day1` in the export command. Start the UI using
+[Run locally](#run-locally) and select `rank1`, `rank20`, or `miss` to see the
+mapped history, target, and rankings.
+
+GRU and XLNet are shown as unavailable. See the [output contract](output_contract.md)
+for the reviewed offline fields and the pending production handoff decisions.

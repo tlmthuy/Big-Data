@@ -260,3 +260,21 @@ Phương án bàn giao là tái tạo từ CSV nguồn cùng SHA-256. Xem [lện
 - Cập nhật README, data/README và team_tasks để phân biệt membership, raw event subset và sequence; liên kết hướng dẫn tái tạo và trạng thái nghiệm thu.
 - Chưa chạy lại toàn bộ raw hoặc truy cập bốn CSV thật trên máy TV1. Hướng dẫn tái tạo và kiểm tra nội bộ của TV1 đã có; xác nhận độc lập của người nhận vẫn để trống. Merge/review code không thay thế bước này; ba task chưa Done chính thức.
 - Kiểm tra lại tài liệu: `git diff --check`, cú pháp ba script và các liên kết Markdown local trong tài liệu vừa sửa; trạng thái đồng bộ main kiểm tra qua Git sau khi push.
+
+## TV4 — Review model output contract — 20/11/2026
+
+- Tài liệu [output contract](../app/output_contract.md), commit `dd22733`, nhánh `feature/tv4-demo-documentation`. Đối chiếu main `b40cd76`, code TV2 `7277b65` và cây nguồn NVIDIA đã pin.
+- Kiểm tra từ root: chạy khối `Read-only toy verification` trong tài liệu, `python3 -m unittest discover -s evaluation/tests -v` và `git diff --check`. Xác minh 31 link Markdown local trong tài liệu. Toy có 3 dòng với target hạng 1, hạng 20 và miss. Mapping khớp catalog 23 item, còn fixture UI lưu 21 item dưới dạng chuỗi encoded ID. Unittest đạt 12, skip 1 vì thiếu pyarrow.
+- Trạng thái: chờ TV2 duyệt format bàn giao, score/rank, mapping/session key và run package dùng cho demo. Hai log runtime trên nhánh TV2 báo thiếu Transformers4Rec. Chưa nghiệm thu với artifact thật và chưa đánh dấu Done.
+
+### TV4 — Tái tạo fixture demo bằng prediction toy
+
+- Commit `1ff916b` trên `feature/tv4-demo-documentation`. [README demo](../app/README.md#prediction-data) ghi lệnh chạy Popularity và export sang JSON React. [Contract](../app/output_contract.md) có ví dụ một dòng prediction toy và đề xuất target rank `null` khi miss.
+- Chạy lại CLI Popularity và exporter cho file khớp từng byte với fixture đã commit. Verify trả về 3 session, target hạng 1, hạng 20 và miss, catalog nguồn/demo đều có 23 ID gốc. Build Vite đạt, unittest đạt 12 và skip 1 do thiếu pyarrow. TV2 vẫn cần duyệt contract production.
+
+## Duyệt task đọc output contract TV4 — 21/11/2026
+
+- Người dùng đã review và yêu cầu merge phần đề xuất contract của TV4 tại `5b2df90c099bdafcba9389dab0b09102fef1c28e` vào main. Task đọc hiểu/lập danh sách field và dependency được chấp nhận; không coi đây là nghiệm thu UI hoàn chỉnh hoặc contract production đã được TV2 duyệt.
+- File đích: [app/output_contract.md](../app/output_contract.md); các việc chờ bàn giao tại [Dependencies](../app/output_contract.md#dependencies). Bản này chia session predictions và run results E1–E5, ghi rõ cấu hình dự kiến/thực tế, batch/tài nguyên, nguồn metric và người phụ trách dependency.
+- Tích hợp cùng exporter toy, fixture ID gốc đủ 23 item, README và cập nhật TODO đã review. Không thay model, metric hoặc benchmark protocol. Các việc UI còn lại tiếp tục theo app/TODO.md; score/artifact thật và metrics package chờ đầu mối tương ứng trong Dependencies.
+- Kiểm tra trước merge: hai ví dụ JSON hợp lệ, 23 link local tồn tại, verification toy đạt (target hạng 1/20/miss; catalog 23 item), export từ run toy mới khớp fixture về nội dung, git diff --check sạch. Nhánh TV4 được xóa sau khi main push thành công theo yêu cầu người dùng; commit merge tra bằng lịch sử Git của mục này.
