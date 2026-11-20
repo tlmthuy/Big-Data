@@ -1,91 +1,243 @@
-# TV4 model output contract review
+# TV4 demo output contract proposal
 
-## 1. Purpose
+## 1. Purpose and scope
 
-Document the fields needed for the 20 November 2026 demo handoff and identify the decisions TV2 needs to approve before TV4 prepares the 21 November sample.
+Pending TV2 approval. Part A defines session predictions. Part B defines run-level results for E1–E5. The demo shows both views and reads artifacts only. Neither view triggers training. Evidence is from `main` at `86bc1c8`. All checked-in model and experiment runs referenced here use toy data.
 
-## 2. Scope
+## 2. Missing data rules
 
-Status: **Pending TV2 Confirmation**. Evidence comes from `main` at `b40cd76` and the TV2 feature branch at `7277b65`. The checked-in prediction evidence is a three-session Popularity toy run. TV1's current manifest describes intermediate monthly artifacts. The real model-ready sequences, runtime catalog and real prediction package still need verification.
+| Case | Adapter value | UI |
+| --- | --- | --- |
+| Applicable value still pending | `null` | **Chưa có** |
+| Inapplicable field | `null` with applicability determined by model or run kind | **Không áp dụng** |
+| Failed or excluded run | Status and available reason, with metric values suppressed | Status badge and reason, or **Chưa có** for a pending reason |
+| Toy run | `data_kind: "toy"` | Toy badge and exclusion from official benchmark comparisons |
 
-## 3. Input Contract
+Reserve zero for a value actually reported as zero. Preserve exported ranks and use artifact order for derived rank. Use only scores explicitly exported by TV2, without deriving a score from rank or position. Display metrics as delivered by TV2 without recomputing or redefining them. Keep planned configuration (**Dự kiến**) and actual configuration and measurements (**Thực tế**) separate. E2–E5 results belong in the run-level package.
 
-For offline evaluation, the persisted input is the full, ordered sequence including the held-out last item. Parquet uses `user_session` and `product_id-list` with partition/split inferred from the path. Debug JSONL uses `user_session`, `day_index`, `split` and `product_ids`. `Catalog.sequence` removes right padding and requires 2–20 real encoded IDs. A prediction request conceptually uses the prefix of 1–19 items. The session ID identifies the record for joining and display. Popularity uses a shared train-derived ranking independent of the prefix.
+## Part A — Session prediction
 
-## 4. Prediction Output Contract
+Offline input contains the full ordered sequence, including the held-out final item. The Parquet input has `user_session` and `product_id-list` with partition and split in the path. The debug JSONL input uses `user_session`, `day_index`, `split` and `product_ids`. After right-padding removal, the sequence has 2–20 real items. The model context is the prefix of 1–19 items. Popularity uses a shared ranking based on train interactions. [Session loader](../evaluation/data.py) · [Popularity evaluator](../evaluation/run_popularity.py)
 
-The current Popularity CLI writes one record per evaluated session to `predictions.jsonl`. Its keys are `user_session`, `prefix`, `target`, `top20` and `product_ids`. The last two arrays are aligned by position. Join the file with its run metadata in `metrics.json` and its exact catalog. The reviewed TV2 neural branch writes the same five keys in offline evaluation. The production delivery method and public names remain pending TV2 confirmation. React currently reads a separate bundled toy JSON file.
-
-## 5. Field Definitions
-
-Required/optional applies to the specified layer. Pending fields have no approved delivery requirement.
-
-| Field | Meaning | Data type | Input/Output | Required/Optional | Evidence | Status |
-| --- | --- | --- | --- | --- | --- | --- |
-| `user_session` | Session join key carried from input to prediction | String in toy and intermediate TV1 manifest. Loader preserves the input value. | Input and output | Required | [audit_sessions](../evaluation/data.py), [TV1 manifest](../data/manifests/tv1_data_handoff.json) | CONFIRMED key. Final original or encoded representation pending TV2 confirmation. |
-| `product_id-list` / `product_ids` | Full offline sequence in Parquet / debug JSONL. The debug input key is separate from the output field of the same name. | List of encoded integers | Offline input | Required for its format | [read_sessions](../evaluation/data.py) | CONFIRMED |
-| `prefix` | History before target. `input_prefix` is a descriptive alias. | List of encoded integers in prediction JSONL | Logical model input and offline output | Required in prediction row | [run](../evaluation/run_popularity.py) | CONFIRMED |
-| `model` | Model identity. `model_name` is a descriptive alias. | String | Run metadata | Required per run | [metrics.json](../metrics/tv2-toy-day1/metrics.json) | CONFIRMED |
-| `top20` | Ordered recommendations | List of at most 20 distinct encoded integers | Offline output | Required | [recommend](../models/popularity.py), [predictions.jsonl](../metrics/tv2-toy-day1/predictions.jsonl) | CONFIRMED |
-| `product_ids` (prediction JSONL) / `product_id` (catalog) | Original IDs for ranked items / original ID in each catalog entry | List of strings / string in the normalized mapping | Output / mapping | Required in current prediction row / catalog | [run](../evaluation/run_popularity.py), [Catalog.load](../evaluation/data.py) | CONFIRMED |
-| `encoded_id` | Vocabulary index identifying one product | Nonnegative integer | Mapping | Required in current catalog | [Catalog.load](../evaluation/data.py) | CONFIRMED |
-| `score` | Train count for Popularity. Neural ranking uses model scores internally. | Integer count or neural floating-point value internally | Potential output | Pending | [Popularity](../models/popularity.py), [TV2 neural evaluator](https://github.com/tlmthuy/Big-Data/blob/7277b65a0121f0f193fa046e33c37597f94561e7/evaluation/run_neural.py) | NEED TV2 CONFIRMATION for export, units and availability |
-| `rank` | One-based position in the ordered list | Integer 1–20 | Derived display output | Optional as a separate field | [score_session](../evaluation/ranking.py) | CONFIRMED as position. Explicit field PROPOSED. |
-| `target` | Last real encoded item. Also called ground truth. | Integer | Evaluation and demo output | Required for offline evaluation and demo display | [run](../evaluation/run_popularity.py), [model protocol](../docs/modeling/model_protocol.md) | CONFIRMED |
-| `run_id` | Identifier linking rows to run metadata | String | Run metadata | Required per run | [metrics.json](../metrics/tv2-toy-day1/metrics.json) | CONFIRMED |
-| Catalog metadata | Catalog reference, checksum and context. Popularity records subset and evaluation split/day separately. | Path and SHA-256 strings, subset/split metadata and integer day | Run metadata | Required for traceability | [run](../evaluation/run_popularity.py), [metrics.json](../metrics/tv2-toy-day1/metrics.json) | CONFIRMED for current CLI. Delivery naming pending TV2 confirmation. |
-| `recommendations` | Optional demo adapter array of per-item records | List of objects | Potential demo output | Optional proposal | Existing ordered arrays in [predictions.jsonl](../metrics/tv2-toy-day1/predictions.jsonl) | PROPOSED |
-| Target in live request | Held-out item for comparison | — | Live inference input | — | [model protocol](../docs/modeling/model_protocol.md) | NOT APPLICABLE |
-
-## 6. Session and Product ID Mapping
-
-Use the catalog from the same subset and run. `Catalog.load` validates a one-to-one mapping, converts original product IDs to strings and rejects overlaps with declared technical IDs. The demo should map prefix, target and recommendations through that same catalog. In the toy catalog, integer `3` maps to original string `p3`. Converting an encoded integer to text only yields `"3"`. Use catalog metadata for actual padding, null, OOV and mask IDs. Preserve the session key and confirm the original/encoded session mapping with TV2 and TV1 before joining production files.
-
-## 7. Ranking Rules
-
-Return at most 20 unique real items, ordered by descending score from the full real-item catalog fitted on the subset's weekly data. Items already in the prefix remain eligible. Exclude technical tokens and retain the artifact order in the demo. Popularity ties use ascending encoded ID. Its unseen catalog items have a count of zero. The TV2 feature branch's `rank_catalog` also uses ascending encoded ID for equal neural scores. This is verified in branch code. The exported rows contain no numeric score or explicit rank. A recommendation rank derives from position plus one. For an optional target-rank field, use `null` when the target is outside Top-20 (proposed). Treat internal neural scores as ranking values and ask TV2 to specify the semantics of any exported score.
-
-## 8. Ground Truth and Target Handling
-
-Take the last item after removing right padding from the retained sequence. All preceding items form the prefix. Keep the target available to the evaluator and demo even when absent from Top-20. In the offline neural evaluator, pass the full sequence to the library once. Causal shift for GRU or masking for XLNet isolates the prediction context. The branch compares runtime labels with the last-item labels and expects one prediction per session. Live inference uses observed history only.
-
-## 9. Model Compatibility
-
-| Model | Evidence and status |
+| Field | Source and meaning |
 | --- | --- |
-| Popularity | Integrated on main. `Popularity.update_partition` counts real train interactions, including train-session last items. `recommend` ranks once per run. `popularity.json` stores observed counts separately. Checked-in rankings use toy data. |
-| GRU | Causal masking in TV2 branch `build_model`. Its offline evaluator ranks the scores returned by the prediction head. The branch's runtime check reports missing `transformers4rec`. Successful predictions remain unverified. |
-| XLNet | Masked language modeling in TV2 branch `build_model`. It uses the same offline writer as GRU. The branch's runtime check reports missing `transformers4rec`. Successful predictions remain unverified. |
+| `user_session` | Input key carried into each prediction row. Confirm the production representation with TV1 and TV2. |
+| `prefix` | Encoded item IDs in history order, before the held-out item. |
+| `target` | Encoded ID of the last real item. |
+| `top20` | Ordered list of up to 20 distinct encoded recommendations. |
+| `product_ids` | Original IDs aligned with the output `top20` array. |
+| `product_id`, `encoded_id` | Original ID and vocabulary index from the exact run catalog. |
+| `model`, `run_id` | Model and run identifiers from `metrics.json`. |
+| `rank` | Proposed one-based position in the exported recommendations. |
+| `target_rank` | Proposed one-based position of the target, or `null` for a known miss. Show the actual next item in either case. |
+| `score` | NEED TV2. Both evaluators currently export exactly the five prediction keys above, from `user_session` through `product_ids`. Use `null` until a real per-item score and its meaning are delivered. |
 
-NVIDIA Notebook 03 demonstrates GRU/XLNet and computes library metrics. At the pinned source tree, `NextItemPredictionTask.forward` returns labels and prediction tensors in evaluation, or scores and vocabulary indices with `top_k` in inference. Its projection returns logits with optional temperature scaling. The team's exporter applies the real-item catalog and reverse mapping and writes per-session artifacts with separate run metadata. The NVIDIA reference is Apache-2.0. This review reuses no NVIDIA code.
+Use the exact catalog for the run and subset, including its SHA-256. Map prefix, target and recommendations to original ID strings and keep the session key for joining. The eligible catalog contains real products from the subset's fitted weekly vocabulary. Previously seen items remain eligible and technical IDs are excluded. Both writers rank ties by ascending encoded ID and the demo preserves their order. Neural scoring stays internal. Popularity is on main. GRU and XLNet GPU smoke runs are on main since `835a09e` and demonstrate the same output shape on toy data. [Neural evaluator](../evaluation/run_neural.py) · [Popularity ranking](../models/popularity.py) · [GPU smoke evidence](../metrics/tv2-model-smoke/README.md)
 
-## 10. Confirmed vs Proposed Fields
-
-The current file shape and ordering are confirmed by code and toy output. A demo adapter with named per-item fields and explicit rank is proposed. Public naming, score delivery and production ID representation are pending TV2 confirmation. The bundled UI toy fixture is generated from the source run using the full
-23-item catalog. See the [export command](README.md#prediction-data).
-
-This complete offline prediction row comes from the checked-in Popularity toy
-run. The arrays `top20` and `product_ids` share the same order. The demo
-adapter separately maps `prefix` and `target` to original IDs.
+The following proposed adapter excerpt shows one session from the toy fixture with an abbreviated catalog and recommendation list. The full payload retains the existing fixture keys and aligned arrays.
 
 ```json
-{"user_session": "rank1", "prefix": [4], "target": 3, "top20": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], "product_ids": ["p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20", "p21", "p22"]}
+{
+  "model": "Popularity",
+  "subset": "toy",
+  "split": "validation",
+  "run_id": "tv2-toy-day1",
+  "data_kind": "toy",
+  "catalog_sha256": "a1ae9388c355a4f5dcdacd52f87b521351caac4c69119b2e17b87d7dc467c184",
+  "catalog": ["p3", "p4"],
+  "sessions": [
+    {
+      "user_session": "rank1",
+      "prefix": ["p4"],
+      "target": "p3",
+      "top20": ["p3", "p4"],
+      "target_rank": 1,
+      "recommendations": [
+        {"rank": 1, "product_id": "p3", "score": null},
+        {"rank": 2, "product_id": "p4", "score": null}
+      ]
+    }
+  ]
+}
 ```
 
-## 11. Open Questions for TV2
+## Part B — Run results (E1–E5)
 
-1. Will the demo receive offline prediction files and run metadata, a callable for live inference, or both? Which format and keys should TV4 use?
-2. Will each model export a score? For Popularity, can TV4 read counts with a zero default for unseen catalog items? For GRU and XLNet, what do exported scores represent and should they be displayed? Is rank derived from order or delivered explicitly?
-3. What are the production locations and version identifiers for each subset's catalog and inverse mapping? Which session key joins predictions to session metadata and where is its mapping when encoded?
-4. Which run package, validation/test partition and catalog should TV4 use for the demo? Please approve this contract before TV4 drafts the 21 November sample.
+### B1. Sources
 
-## 12. References to Repository Files
+- E1–E3 model runs use `run.json`, `stdout.txt`, `stderr.txt`, `artifacts/metrics.json` and `artifacts/predictions.jsonl`. Predictions feed Part A. Collector metadata links the environment and input artifacts with paths and hashes. Failed runs may have only the collector record and logs. [Collector](../benchmark/collect.py) · [Toy run example](../metrics/tv2-config-collector-smoke/smoke-e1-gru-010/run.json)
+- E4 uses `artifacts/metrics.json` from the format benchmark, the collector record and logs, and the nested preprocessing record. [Format benchmark](../benchmark/format_io.py)
+- E5 uses `summary.json` derived from passed E2 runs. Its rows retain source run IDs and `source_log`. Display the approved stages and limitations from the same package. [Scalability summary writer](../benchmark/scalability.py)
 
-- [Project scope](../AGENTS.md), [TV4 schedule](../docs/team_tasks.md), [team handoff](../docs/handoff.md).
-- [Problem definition](../docs/modeling/next_item_problem.md), [model protocol](../docs/modeling/model_protocol.md), [TV2 runbook](../docs/modeling/tv2_runbook.md).
-- [Toy sessions](../evaluation/tests/fixtures/sessions.jsonl), [toy catalog](../evaluation/tests/fixtures/catalog.json), [Popularity counts](../metrics/tv2-toy-day1/popularity.json), [React fixture](public/demo-data.json), [demo review](TODO.md).
-- [TV2 model code at 7277b65](https://github.com/tlmthuy/Big-Data/blob/7277b65a0121f0f193fa046e33c37597f94561e7/models/session_models.py), [GRU runtime log](https://github.com/tlmthuy/Big-Data/blob/7277b65a0121f0f193fa046e33c37597f94561e7/metrics/tv2-model-scripts/gru-runtime/failure.json), [XLNet runtime log](https://github.com/tlmthuy/Big-Data/blob/7277b65a0121f0f193fa046e33c37597f94561e7/metrics/tv2-model-scripts/xlnet-runtime/failure.json).
-- [NVIDIA tutorial](https://nvidia-merlin.github.io/Transformers4Rec/stable/examples/tutorial/03-Session-based-recsys.html), [reference instructions and license](../docs/references.md). The imported reference tree at `e2859fd` matches the documented tree hash `0cd72aa1d3abd17cd65d46b9c1314b4ea26db9a6` for upstream pin `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`.
+### B2. Run identity
+
+| Field | Source or rule |
+| --- | --- |
+| `experiment` | `run.json` → `metadata.run.experiment`. E5 is the summary panel for source E2 runs. |
+| `run_id` | Collector `metadata.run.run_id`, checked against the result artifact. E5 retains E2 run IDs. |
+| `model` | Matrix model for the planned run and `metrics.json.model` for model runs. E4 has no model. |
+| `status` | Collector `passed` or `failed`. Preserve E4 artifact status and E5 summary completeness separately. `excluded` is a proposed TV2 package status. |
+| `data_kind` | Collector `metadata.data_kind` (`toy` or `real`). |
+| `exclusion_note` | NEED TV2. Proposed exclusion reason supplied by TV2. For failures use the available failure information from the collector and logs. |
+
+### B3. Planned and actual configuration
+
+For model runs, actual sources below refer to `artifacts/metrics.json` unless qualified. E4 uses the format benchmark artifact. Flag discrepancies beside the two values and retain provenance. Keep unavailable actual fields `null` until supported by the artifact or confirmed package.
+
+| Field | Planned source | Actual source | Unit |
+| --- | --- | --- | --- |
+| Train batch | Matrix `batch_size` | Neural `config.batch_size` | sessions/batch |
+| Eval batch | Runner passes `--eval-batch-size 32` for neural runs. The matrix has no eval batch field. | Neural `config.eval_batch_size` | sessions/batch |
+| Epochs | Matrix `epochs` | Neural `config.epochs` | epochs/train partition |
+| Sequence length | Matrix `sequence_length` | Metrics have no sequence-length field. NEED TV2 verified runtime value. | items |
+| Seed | Matrix `seed` | Neural `config.seed` | integer |
+| Learning rate | Matrix has no field | Neural `config.learning_rate` | scalar |
+| Subset | Matrix `subset` | Top-level `subset` for model runs. E4 requires package provenance. | % of sessions or toy label |
+| Split | Matrix `split` | `eval_split` | label |
+| Train partitions | Matrix `train_partitions` | `train_days` | day indices |
+| Eval partition | Matrix `eval_partition` | `eval_day` | day index |
+| Input format | Matrix `input_format` | E4 `format`. For model runs the runner enforces a session Parquet directory and records the session artifact. | label |
+| Device / varied parameter | Matrix `resource_config.device` / `resource_config.change_only` | Neural `device`. The varied parameter is a planned constraint, with actual values shown from each run. | labels |
+| Data versions | Matrix `artifact_versions` | Collector `metadata.versions` and `metadata.artifacts` fingerprints | versions and SHA-256 |
+
+[Experiment matrix](../configs/experiments.json) · [Runner](../scripts/runs/run_experiments.py) · [Neural metrics example](../metrics/tv2-config-collector-smoke/smoke-e3-gru-010-b32/artifacts/metrics.json)
+
+### B4. Environment
+
+Join each run to its fingerprinted environment snapshot via `metadata.environment`. The toy snapshot provides `gpu`, `cuda`, `driver`, `python` and `torch`. Neural metrics also record `gpu`, `cuda`, `python` and package versions in `packages`. Popularity metrics record `platform`. CPU model, core count, total RAM and OS across all runs need TV3. Keep the fields tied to the specific run environment. [GPU smoke snapshot](../metrics/tv2-model-smoke/environment.json)
+
+### B5. Metrics by experiment
+
+| Metric | Field | Unit | Measurement scope | Experiments |
+| --- | --- | --- | --- | --- |
+| Ranking accuracy | `Recall@20`, `NDCG@20` | ratios | Evaluated sessions in the reported split and partition | E1–E3 |
+| Training time | `train_with_input_scan_seconds` | s | Training stages including input scan | E1–E3 |
+| Evaluation wall time | `inference_seconds` | s | `full_evaluation_wall_v1`. Full split read, preparation, prediction and ranking, metrics aggregation and JSONL write. Excludes audit, training, checkpointing and metrics JSON write. | E1–E3 |
+| Evaluation time per session | `inference_ms_per_session` | ms/session | Full evaluation wall time normalized by evaluated sessions, including I/O | E1–E3 |
+| Evaluation throughput | `inference_sessions_per_second` | sessions/s | Full evaluation wall throughput. NEED TV2 for the official E3 throughput definition. | E1–E3 |
+| Collector wall time | `elapsed_seconds` | s | Whole launched command in `run.json` | E1–E4 |
+| Peak process RSS | `peak_process_tree_rss_bytes` | bytes | Sampled sum of parent and child RSS. Shared pages may be counted twice. | E1–E4 |
+| Peak CUDA reserved memory | `peak_cuda_reserved_bytes` | bytes | Peak PyTorch CUDA allocator reservation for the neural run | E1–E3 neural runs |
+| Weekly sampled events | `metadata.pipeline_metrics.n_events` | events | Actual event count in the sampled raw weekly subset | E2 |
+| Pipeline read and preprocessing | `read_seconds`, `preprocessing_seconds`, `first_seen_seconds` in `metadata.pipeline_metrics` | s | Separate TV1 raw read, subset preprocessing excluding raw read and first-seen, and shared monthly first-seen | E2 |
+| Subset counts and dataset size | NEED TV1/TV2 | sessions, users, items, bytes | Per-subset counts and artifact size with agreed scope | E2 |
+| Cost | **Chưa có** | NEED TV2 | Measurement availability and scope pending TV2 | E3 |
+| File size | `bytes` | bytes | Input file size | E4 |
+| Read wall time | `read_seconds` | s | Full streamed decode, excluding pair verification. Show cache and schema policies from the result. | E4 |
+| Peak reader RSS | `peak_read_process_rss_bytes` | bytes | RSS sampled at batch boundaries, including existing reader/cache allocations | E4 |
+| Preprocessing wall time | `preprocessing.elapsed_seconds` | s | TV1 preprocessing command including its input read | E4 |
+| Normalized scalability time | `seconds_per_million_events` | s/million events | Composed stages excluding shared first-seen, normalized by measured weekly events | E5 |
+| Slowest stage | `bottleneck` | stage name | Largest included stage in the E5 composition | E5 |
+| Stage timings | `raw_read`, `preprocessing_excluding_raw_read_and_first_seen`, `train_including_sequence_io`, `final_evaluation_including_io` | s | Composed E2 stage measurements with distinct input scopes | E5 |
+| Composed and observed timings | `composed_seconds_excluding_first_seen`, `first_seen_seconds_shared`, `composed_seconds_with_first_seen`, `process_wall_seconds` | s | Composed stage totals, shared monthly cost and observed model process wall time | E5 |
+| Uncertainty | `limitations` | text | One run per subset. NEED TV2 decision on numeric uncertainty. | E5 |
+
+Evaluation wall timing includes I/O and aggregation. `prediction_compute_seconds` is diagnostic only and excluded from comparisons. The E5 writer consumes `inference_seconds` for `final_evaluation_including_io`, while its current limitations text describes compute and ranking only. TV2 must confirm the final scope and limitations text before publication. [Timing protocol](../docs/modeling/inference_timing.md) · [Pipeline metrics template](../configs/pipeline_metrics.example.json) · [E5 writer](../benchmark/scalability.py)
+
+### B6. E3 comparison
+
+Show `e3-gru-010-b32` and `e3-gru-010-b128` side by side. Both plan GRU on the 10% subset, validation split and eval batch 32. Train batch is the selected variable (32 vs 128). The view reads approved artifacts without rerunning training. [Experiment matrix](../configs/experiments.json) · [Runner](../scripts/runs/run_experiments.py)
+
+### B7. Proposed run-results adapter
+
+Example shape for `app/public/run-results.json`. This excerpt shows both planned E3 configurations with null measurements. Metric entries carry value, unit and scope, and source entries point to the records supporting them.
+
+```json
+{
+  "package_id": null,
+  "confirmed_by_tv2": false,
+  "runs": [
+    {
+      "experiment": "E3",
+      "run_id": "e3-gru-010-b32",
+      "model": "gru",
+      "status": null,
+      "data_kind": null,
+      "exclusion_note": null,
+      "planned": {
+        "train_batch_size": 32, "eval_batch_size": 32, "epochs": 3,
+        "sequence_length": 20, "seed": 1, "learning_rate": null,
+        "subset": "10", "split": "validation", "train_partitions": "1..D-1",
+        "eval_partition": "D", "input_format": "session Parquet",
+        "device": "cuda", "change_only": "train_batch_size",
+        "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version"
+      },
+      "actual": {
+        "train_batch_size": null, "eval_batch_size": null, "epochs": null,
+        "sequence_length": null, "seed": null, "learning_rate": null,
+        "subset": null, "split": null, "train_partitions": null,
+        "eval_partition": null, "input_format": null, "device": null, "artifact_versions": null
+      },
+      "environment": {
+        "gpu": null, "cuda": null, "driver": null, "python": null, "torch": null,
+        "cpu_model": null, "cpu_cores": null, "ram_bytes": null, "os": null
+      },
+      "metrics": {
+        "inference_seconds": {"value": null, "unit": "s", "scope": "full_evaluation_wall_v1"},
+        "cost": {"value": null, "unit": null, "scope": null}
+      },
+      "sources": {"matrix": "configs/experiments.json", "runner": "scripts/runs/run_experiments.py", "run": null, "metrics": null, "environment": null}
+    },
+    {
+      "experiment": "E3",
+      "run_id": "e3-gru-010-b128",
+      "model": "gru",
+      "status": null,
+      "data_kind": null,
+      "exclusion_note": null,
+      "planned": {
+        "train_batch_size": 128, "eval_batch_size": 32, "epochs": 3,
+        "sequence_length": 20, "seed": 1, "learning_rate": null,
+        "subset": "10", "split": "validation", "train_partitions": "1..D-1",
+        "eval_partition": "D", "input_format": "session Parquet",
+        "device": "cuda", "change_only": "train_batch_size",
+        "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version"
+      },
+      "actual": {
+        "train_batch_size": null, "eval_batch_size": null, "epochs": null,
+        "sequence_length": null, "seed": null, "learning_rate": null,
+        "subset": null, "split": null, "train_partitions": null,
+        "eval_partition": null, "input_format": null, "device": null, "artifact_versions": null
+      },
+      "environment": {
+        "gpu": null, "cuda": null, "driver": null, "python": null, "torch": null,
+        "cpu_model": null, "cpu_cores": null, "ram_bytes": null, "os": null
+      },
+      "metrics": {
+        "inference_seconds": {"value": null, "unit": "s", "scope": "full_evaluation_wall_v1"},
+        "cost": {"value": null, "unit": null, "scope": null}
+      },
+      "sources": {"matrix": "configs/experiments.json", "runner": "scripts/runs/run_experiments.py", "run": null, "metrics": null, "environment": null}
+    }
+  ]
+}
+```
+
+### B8. UI layout
+
+- **Recommendation** shows a session picker, model selector, history, actual next item and Top-20 with rank and score. Show **Chưa có** for an undelivered score, and display the run ID and toy badge where applicable.
+- **Experiments** has one panel each for E1 model comparison, E2 subset scaling, E3 train-batch comparison, E4 CSV/Parquet and E5 scalability. Each panel presents **Dự kiến** and **Thực tế**, the run environment, source run IDs and measurement scope. E5 uses its source E2 records for configuration and environment.
+
+## Dependencies
+
+| # | Item | Owner | Needed for | Current state |
+| --- | --- | --- | --- | --- |
+| 1 | Approve this contract, formats, field names, run-results shape and offline vs live inference scope | TV2 | Adapter and UI integration | Proposed read-only artifact workflow |
+| 2 | Export actual per-item scores and define their meaning for each model | TV2 | Recommendation score column | Both writers currently export ranked IDs |
+| 3 | Deliver confirmed predictions and catalog/mapping for all three models on a shared subset and split | TV2, TV1 (mapping) | Comparable recommendations | Toy artifacts available |
+| 4 | Define the production session key and supply its mapping | TV2, TV1 | Session join and picker | Production representation pending |
+| 5 | Deliver official E1–E5 metrics and identify excluded runs and reasons | TV2 | Experiment panels | Matrix and toy evidence available |
+| 6 | Confirm effective eval batch for E1/E2 neural runs | TV2 | Configuration and comparison | Runner passes 32 |
+| 7 | Confirm E3 throughput definition and cost coverage | TV2 | E3 comparison | Evaluation throughput field available. Cost is **Chưa có**. |
+| 8 | Decide on numeric E5 uncertainty and confirm inference scope text | TV2 | E5 interpretation | Text limitations available. Final scope confirmation pending. |
+| 9 | Provide CPU model, core count, RAM and OS for every run | TV3 | Environment view | Partial toy snapshot available |
+| 10 | Provide real resource logs linked to run IDs | TV3 | Runtime and memory comparisons | Toy logs available |
+| 11 | Provide per-subset pipeline metrics including session, user and item counts and bytes, with scope agreed by TV2 | TV1, TV2 | E2 scale and E5 inputs | Template has events and timings. Additional subset counts and bytes pending. |
+
+## References
+
+- [Project scope](../AGENTS.md) · [Demo fixture](public/demo-data.json) · [TV2 experiment runbook](../docs/modeling/experiment_runbook.md) · [Toy collector evidence](../metrics/tv2-config-collector-smoke/README.md)
+- [NVIDIA tutorial](https://nvidia-merlin.github.io/Transformers4Rec/stable/examples/tutorial/03-Session-based-recsys.html) · [Pinned source and license](../docs/references.md)
 
 ## Read-only toy verification
 
