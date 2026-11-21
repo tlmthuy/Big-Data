@@ -74,6 +74,29 @@ dãy tối đa 20 product ID cuối theo timestamp. Các session có timestamp
 trùng được đếm riêng và không áp đặt thứ tự phụ. SHA-256 từng Parquet,
 số session kiểm tra và đường dẫn log VM có trong manifest xác minh.
 
+### Chạy lại phép kiểm chứng sequence
+
+Đặt script `pipeline/verify_weekly_sequences.py`, helper
+`pipeline/fit_weekly_workflow.py` và manifest xác minh vào workspace VM
+`~/tv1-weekly-20261121`. Từ workspace đó, chạy:
+
+```bash
+docker run --rm -v "$PWD:/workspace:ro" -w /workspace big-data-recsys:smoke \
+  python pipeline/verify_weekly_sequences.py --workspace /workspace \
+  --manifest data/manifests/weekly_workflows_verified.json \
+  > sequence-recheck-full.log 2>&1 &&
+grep '^PASS subset=' sequence-recheck-full.log
+```
+
+Script chạy trên CPU với artifact đã xuất bằng NVTabular. Nó kiểm tra
+checksum input, Parquet và mapping, session hợp lệ xuất hiện đúng một
+lần, số interaction gốc, ID sản phẩm, padding phải và độ dài đồng nhất
+của mọi cột list. Với session không có timestamp trùng, script đối chiếu
+chính xác dãy tối đa 20 item cuối, tính cả target. Với session có timestamp
+trùng, script vẫn kiểm tra membership, counts, ID và padding, đồng thời báo
+riêng số session có tie. Log ngắn từ lần chạy VM:
+[weekly_sequence_recheck.txt](../data/manifests/weekly_sequence_recheck.txt).
+
 ## Chia train, validation và test theo day_index
 
 Chạy sau khi fit và xuất sequence. Runner đọc `day_index` đã tính tại
