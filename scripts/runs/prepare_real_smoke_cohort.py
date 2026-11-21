@@ -81,7 +81,9 @@ def prepare(sessions, catalog_path, schema_path, split_manifest_path, output,
         if (split_counts.get(key, 0) != row["sessions"]
                 or distinct_counts.get(key, 0) != row["distinct_items"]
                 or interaction_counts.get(key, 0) != row["item_interactions"]):
-            raise ValueError("Full source session/distinct-item/interaction count differs from official split manifest")
+            raise ValueError(f"Source counts for {key} differ from split manifest: "
+                             f"actual={(split_counts.get(key, 0), distinct_counts.get(key, 0), interaction_counts.get(key, 0))}, "
+                             f"expected={(row['sessions'], row['distinct_items'], row['item_interactions'])}")
         source_file = sessions / row["path"]
         if sha256(source_file) != row["sha256"]:
             raise ValueError(f"Partition checksum mismatch: {source_file}")
