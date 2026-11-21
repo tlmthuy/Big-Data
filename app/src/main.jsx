@@ -1,130 +1,124 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { readLanguage, setLanguage, t } from "./i18n.js";
+import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { loadJson, normalizeDemo, normalizeProductInfo, normalizeResults } from "./data.js";
+import Recommendation from "./Recommendation.jsx";
+import { routeFromHash } from "./navigation.js";
+import Dataset from "./Dataset.jsx";
+import { normalizeDataset } from "./dataset.js";
+import Experiments from "./Experiments.jsx";
 import "./styles.css";
 
-const models = [
-  { id: "Popularity", available: true },
-  { id: "GRU", available: false },
-  { id: "XLNet", available: false },
+const branding = import.meta.glob(["./branding/logo.png", "./branding/cover.jpg"], {
+  eager: true, query: "?url", import: "default",
+});
+const logo = branding["./branding/logo.png"];
+const cover = branding["./branding/cover.jpg"];
+
+const TABS = () => [
+  { id: "recommendation", label: t("recommendations") },
+  { id: "data", label: t("dataset") },
+  { id: "experiments", label: t("experiments_e1_e5") },
 ];
 
+// Optional overrides for testing broken files, e.g. ?demo=/tests/fixtures/empty.json
+// Only same-origin absolute paths are accepted.
+function source(param, fallback) {
+  if (!import.meta.env.DEV) return fallback;
+  const value = new URLSearchParams(window.location.search).get(param);
+  return value && value.startsWith("/") && !value.startsWith("//") ? value : fallback;
+}
+const base = import.meta.env.BASE_URL;
+const DEMO_URL = source("demo", `${base}demo-data.json`);
+const PRODUCTS_URL = source("products", `${base}product-info.json`);
+const DATASET_URL = source("dataset", `${base}dataset-overview.json`);
+const RESULTS_URL = source("results", `${base}run-results.json`);
+
+function useData(url, normalize, language) {
+  const [state, setState] = useState({ loading: true });
+  useEffect(() => {
+    let alive = true;
+    loadJson(url).then(({ data, error }) => {
+      if (!alive) return;
+      setState(error ? { error } : { ...normalize(data), provenance: {
+        team_commit: data?.team_commit, generated_at: data?.generated_at, data_kind: data?.data_kind,
+      } });
+    });
+    return () => { alive = false; };
+  }, [url, normalize, language]);
+  return state;
+}
+
+function currentRoute() {
+  return routeFromHash(window.location.hash);
+}
+
 function App() {
-  const [demo, setDemo] = useState(null);
-  const [model, setModel] = useState("Popularity");
-  const [sessionId, setSessionId] = useState("");
-  const [error, setError] = useState("");
+  const [language, updateLanguage] = useState(readLanguage);
+  setLanguage(language);
+  const siteName = t("site_name");
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.title = siteName;
+  }, [language, siteName]);
+  function chooseLanguage(next) {
+    try { localStorage.setItem("tv4-language", next); } catch { /* Storage is optional. */ }
+    updateLanguage(next);
+  }
+  const [{ tab, experiment }, setRoute] = useState(currentRoute);
+  const demo = useData(DEMO_URL, normalizeDemo, language);
+  const products = useData(PRODUCTS_URL, normalizeProductInfo, language);
+  const dataset = useData(DATASET_URL, normalizeDataset, language);
+  const results = useData(RESULTS_URL, normalizeResults, language);
 
   useEffect(() => {
-    fetch("/demo-data.json")
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.json();
-      })
-      .then((data) => {
-        setDemo(data);
-        setSessionId(data.sessions[0]?.user_session ?? "");
-      })
-      .catch((cause) => setError(cause.message));
+    const onHash = () => setRoute(currentRoute());
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
-  const selectedModel = models.find((item) => item.id === model);
-  const session = useMemo(
-    () => demo?.sessions.find((item) => item.user_session === sessionId),
-    [demo, sessionId],
-  );
-  const targetRank = session?.top20.findIndex((id) => String(id) === String(session.target));
-
-  if (error) return <main className="shell"><p className="error">Unable to load demo data: {error}</p></main>;
-  if (!demo) return <main className="shell"><p className="loading">Loading demo…</p></main>;
+  const state = { recommendation: demo, data: dataset, experiments: results }[tab];
 
   return (
     <main className="shell">
       <header className="topbar">
-        <div>
-          <p className="eyebrow">TV4 / Session recommender</p>
-          <h1>Next-item recommendation</h1>
+        <div className="header-utility">
+          <div className="language-switch" role="group" aria-label={t("language")}>
+            {["en", "vi"].map((code) => <button type="button" key={code}
+              aria-pressed={language === code} onClick={() => chooseLanguage(code)}>{code.toUpperCase()}</button>)}
+          </div>
         </div>
-        <span className="badge">Toy data · K=20</span>
+        <div className="brand">
+          {logo && <img className="brand-logo" src={logo} alt="" />}
+          <h1>{siteName}</h1>
+        </div>
+        <nav className="tabs" role="tablist" aria-label={t("views_2")}>
+          {TABS().map(({ id, label }) => (
+            <a key={id} href={`#${id}`} role="tab" aria-selected={tab === id} className={tab === id ? "active" : ""}>{label}</a>
+          ))}
+        </nav>
       </header>
-
-      <section className="controls" aria-label="Demo controls">
-        <label>Model
-          <select value={model} onChange={(event) => setModel(event.target.value)}>
-            {models.map((item) => (
-              <option key={item.id} value={item.id}>{item.id}{item.available ? "" : " — no output"}</option>
-            ))}
-          </select>
-        </label>
-        <label>Session
-          <select value={sessionId} onChange={(event) => setSessionId(event.target.value)}>
-            {demo.sessions.map((item) => (
-              <option key={item.user_session} value={item.user_session}>{item.user_session}</option>
-            ))}
-          </select>
-        </label>
-        <label>Subset<input value={demo.subset} readOnly /></label>
-        <label>Split<input value={demo.split} readOnly /></label>
+      {cover && <img className="brand-cover" src={cover} alt="" />}
+      <section className="site-intro" aria-label={t("demo_intro")}>
+        <p className="lede">{t("a_session_is_one_visit_an")}</p>
+        <p className="definition">{t("recall_20_measures_how_often_the")}</p>
+        <p className="definition">{t("popularity_is_the_baseline_all_three")}</p>
+        <p className="definition">{t("the_demo_replays_saved_predictions_see")}</p>
       </section>
+      <div role="tabpanel">
+        {state.loading ? <p className="loading">{t("loading_data")}</p>
+          : tab === "recommendation" ? <Recommendation state={state} productInfo={products} protocol={dataset.overview?.evaluation_protocol} /> : tab === "data" ? <Dataset state={state} /> : <Experiments state={state} active={experiment} />}
+      </div>
 
-      {!selectedModel.available ? (
-        <section className="unavailable" role="status">
-          <strong>{model} prediction output is not available.</strong>
-          <p>The selection is preserved, but no synthetic ranking is shown.</p>
-        </section>
-      ) : (
-        <>
-          <section className="grid">
-            <article className="panel history-panel">
-              <div className="panel-heading">
-                <div><p className="eyebrow">Input</p><h2>Session history</h2></div>
-                <span>{session.prefix.length} items</span>
-              </div>
-              <p className="definition">Prefix after splitting out the target</p>
-              <div className="history" aria-label="Session history">
-                {session.prefix.map((id, index) => (
-                  <React.Fragment key={`${id}-${index}`}>
-                    {index > 0 && <span className="arrow" aria-hidden="true">→</span>}
-                    <span className="product-chip">{String(id)}</span>
-                  </React.Fragment>
-                ))}
-              </div>
-            </article>
-            <article className="panel actual-panel">
-              <p className="eyebrow">Ground truth</p>
-              <h2>Actual next item</h2>
-              <div className="actual-id">{String(session.target)}</div>
-              <p className={targetRank >= 0 ? "match" : "miss"}>
-                {targetRank >= 0 ? `Hit · rank ${targetRank + 1} of 20` : "Miss · outside Top-20"}
-              </p>
-            </article>
-          </section>
-
-          <section className="panel recommendations">
-            <div className="panel-heading">
-              <div><p className="eyebrow">Output</p><h2>Top-20 recommendations</h2></div>
-              <span>{model}</span>
-            </div>
-            <div className="ranking">
-              {session.top20.map((id, index) => {
-                const isTarget = String(id) === String(session.target);
-                return (
-                  <div className={isTarget ? "rank-row hit" : "rank-row"} key={`${id}-${index}`}>
-                    <span className="rank">{index + 1}</span>
-                    <span className="rank-id">{String(id)}</span>
-                    {isTarget && <span className="hit-label">Actual next item</span>}
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-
-          <footer>
-            <span>Subset: <strong>{demo.subset}</strong></span>
-            <span>Split: <strong>{demo.split}</strong></span>
-            <span>Catalog: <strong>{demo.catalog.length} items</strong></span>
-          </footer>
-        </>
-      )}
+      <footer>
+        <p>{t("values_pending_delivery_show_not_available")}</p>
+        <ul>{[
+          ["demo-data.json", demo], ["product-info.json", products],
+          ["dataset-overview.json", dataset], ["run-results.json", results],
+        ].map(([name, file]) => <li key={name}>
+          <code>{name}</code> {t("commit")} {file.provenance?.team_commit ?? t("not_available_yet")} {t("exported")} {file.provenance?.generated_at ?? t("not_available_yet")} · {file.provenance?.data_kind ?? t("not_available_yet")}
+        </li>)}</ul>
+      </footer>
     </main>
   );
 }

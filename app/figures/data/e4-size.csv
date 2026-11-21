@@ -1,0 +1,3 @@
+team_commit,generated_at,run_id,series,status,metric,value,unit,scope
+43841c9,2026-11-21,e4-010-csv,planned,,bytes,,bytes,Input file size
+43841c9,2026-11-21,e4-010-parquet,planned,,bytes,,bytes,Input file size

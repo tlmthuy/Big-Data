@@ -1,0 +1,5 @@
+team_commit,generated_at,run_id,series,status,metric,value,unit,scope
+43841c9,2026-11-21,e3-gru-010-b32,planned,,peak_cuda_reserved_bytes,,bytes,Peak PyTorch CUDA allocator reservation
+43841c9,2026-11-21,e3-gru-010-b128,planned,,peak_cuda_reserved_bytes,,bytes,Peak PyTorch CUDA allocator reservation
+43841c9,2026-11-21,smoke-e3-gru-010-b128,toy,passed,peak_cuda_reserved_bytes,25165824,bytes,Peak PyTorch CUDA allocator reservation
+43841c9,2026-11-21,smoke-e3-gru-010-b32,toy,passed,peak_cuda_reserved_bytes,25165824,bytes,Peak PyTorch CUDA allocator reservation

@@ -1,0 +1,5 @@
+team_commit,generated_at,run_id,series,status,metric,value,unit,scope
+43841c9,2026-11-21,e2-gru-010,planned,,peak_process_tree_rss_bytes,,bytes,Sampled parent+child RSS; shared pages may be counted twice
+43841c9,2026-11-21,e2-gru-025,planned,,peak_process_tree_rss_bytes,,bytes,Sampled parent+child RSS; shared pages may be counted twice
+43841c9,2026-11-21,e2-gru-050,planned,,peak_process_tree_rss_bytes,,bytes,Sampled parent+child RSS; shared pages may be counted twice
+43841c9,2026-11-21,e2-gru-100,planned,,peak_process_tree_rss_bytes,,bytes,Sampled parent+child RSS; shared pages may be counted twice

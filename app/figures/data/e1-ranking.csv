@@ -1,0 +1,13 @@
+team_commit,generated_at,run_id,series,status,metric,value,unit,scope
+43841c9,2026-11-21,e1-popularity-010,planned,,Recall@20,,ratio,
+43841c9,2026-11-21,e1-popularity-010,planned,,NDCG@20,,ratio,
+43841c9,2026-11-21,e1-gru-010,planned,,Recall@20,,ratio,
+43841c9,2026-11-21,e1-gru-010,planned,,NDCG@20,,ratio,
+43841c9,2026-11-21,e1-xlnet-010,planned,,Recall@20,,ratio,
+43841c9,2026-11-21,e1-xlnet-010,planned,,NDCG@20,,ratio,
+43841c9,2026-11-21,smoke-e1-gru-010,toy,passed,Recall@20,1.0,ratio,"1 session(s), split test, partition 3"
+43841c9,2026-11-21,smoke-e1-gru-010,toy,passed,NDCG@20,0.6309297535714575,ratio,"1 session(s), split test, partition 3"
+43841c9,2026-11-21,smoke-e1-popularity-010,toy,passed,Recall@20,1.0,ratio,"1 session(s), split test, partition 3"
+43841c9,2026-11-21,smoke-e1-popularity-010,toy,passed,NDCG@20,0.6309297535714575,ratio,"1 session(s), split test, partition 3"
+43841c9,2026-11-21,smoke-e1-xlnet-010,toy,passed,Recall@20,1.0,ratio,"1 session(s), split test, partition 3"
+43841c9,2026-11-21,smoke-e1-xlnet-010,toy,passed,NDCG@20,0.43067655807339306,ratio,"1 session(s), split test, partition 3"

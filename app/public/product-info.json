@@ -1,0 +1,122 @@
+{
+  "data_kind": "toy",
+  "source": "toy sample metadata for UI testing, not from dataset",
+  "price_rule": "last observed price in the subset week",
+  "products": {
+    "p3": {
+      "brand": "samsung",
+      "category_code": "electronics.smartphone",
+      "price": 130.76
+    },
+    "p4": {
+      "brand": "sample",
+      "category_code": "furniture.living_room.table",
+      "price": null
+    },
+    "p5": {
+      "brand": "demo",
+      "category_code": null,
+      "price": null
+    },
+    "p6": {
+      "brand": null,
+      "category_code": null,
+      "price": null
+    },
+    "p7": {
+      "brand": "sample",
+      "category_code": "furniture.living_room.shelf",
+      "price": null
+    },
+    "p8": {
+      "brand": "demo",
+      "category_code": "electronics.smartphone",
+      "price": null
+    },
+    "p9": {
+      "brand": null,
+      "category_code": "appliances.kitchen.kettle",
+      "price": null
+    },
+    "p10": {
+      "brand": "sample",
+      "category_code": "computers.notebook",
+      "price": null
+    },
+    "p11": {
+      "brand": "demo",
+      "category_code": "furniture.living_room.chair",
+      "price": null
+    },
+    "p12": {
+      "brand": null,
+      "category_code": "furniture.living_room.table",
+      "price": null
+    },
+    "p13": {
+      "brand": "sample",
+      "category_code": "furniture.bedroom.wardrobe",
+      "price": null
+    },
+    "p14": {
+      "brand": "demo",
+      "category_code": "furniture.living_room.lamp",
+      "price": null
+    },
+    "p15": {
+      "brand": null,
+      "category_code": "furniture.living_room.shelf",
+      "price": null
+    },
+    "p16": {
+      "brand": "sample",
+      "category_code": "electronics.smartphone",
+      "price": null
+    },
+    "p17": {
+      "brand": "demo",
+      "category_code": "appliances.kitchen.kettle",
+      "price": null
+    },
+    "p18": {
+      "brand": null,
+      "category_code": "computers.notebook",
+      "price": null
+    },
+    "p19": {
+      "brand": "sample",
+      "category_code": "furniture.living_room.chair",
+      "price": null
+    },
+    "p20": {
+      "brand": "demo",
+      "category_code": "furniture.living_room.table",
+      "price": null
+    },
+    "p21": {
+      "brand": null,
+      "category_code": "furniture.bedroom.wardrobe",
+      "price": null
+    },
+    "p22": {
+      "brand": "sample",
+      "category_code": "furniture.living_room.lamp",
+      "price": null
+    },
+    "p23": {
+      "brand": "demo",
+      "category_code": "furniture.living_room.shelf",
+      "price": null
+    },
+    "p24": {
+      "brand": null,
+      "category_code": "electronics.smartphone",
+      "price": null
+    },
+    "p25": {
+      "brand": "sample",
+      "category_code": "appliances.kitchen.kettle",
+      "price": null
+    }
+  }
+}

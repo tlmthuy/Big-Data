@@ -1,0 +1,5 @@
+team_commit,generated_at,run_id,series,status,metric,value,unit,scope
+43841c9,2026-11-21,e2-gru-010,planned,,seconds_per_million_events,,s/million events,
+43841c9,2026-11-21,e2-gru-025,planned,,seconds_per_million_events,,s/million events,
+43841c9,2026-11-21,e2-gru-050,planned,,seconds_per_million_events,,s/million events,
+43841c9,2026-11-21,e2-gru-100,planned,,seconds_per_million_events,,s/million events,

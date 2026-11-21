@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.DS_Store
+__pycache__/
+*.log
+# large data never goes here
+*.parquet
+*.csv
+*.pt
+*.ckpt
+
+!figures/data/*.csv
+
+tests/fixtures/large/
+
+screenshots/
+
+!public/sample-predictions.csv

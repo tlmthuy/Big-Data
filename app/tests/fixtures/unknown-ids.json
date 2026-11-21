@@ -1,0 +1,19 @@
+{
+  "model": "Popularity",
+  "data_kind": "toy",
+  "catalog": ["p3", "p4"],
+  "sessions": [
+    {
+      "user_session": "unknown-ids",
+      "prefix": ["p3", "<padding>", null, "0", "p-unknown-history", "p4"],
+      "target": "p5",
+      "top20": ["p4", 0, null, "p5", "p3"]
+    },
+    {
+      "user_session": "invalid-target",
+      "prefix": ["p4"],
+      "target": "[MASK]",
+      "top20": ["p3"]
+    }
+  ]
+}

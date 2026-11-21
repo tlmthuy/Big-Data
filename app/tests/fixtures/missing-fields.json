@@ -1,0 +1,9 @@
+{"runs": [{"model": "Popularity", "run_id": "broken-run", "subset": "toy", "split": "validation", "data_kind": "toy",
+  "catalog": ["p3", "p4", "p5"],
+  "sessions": [
+    {"user_session": "no-prefix", "target": "p3", "top20": ["p3", "p4"]},
+    {"user_session": "no-target", "prefix": ["p4"], "top20": ["p3", "p4"]},
+    {"user_session": "no-top20", "prefix": ["p4"], "target": "p3"},
+    {"user_session": "technical-id", "prefix": ["p4"], "target": "p5", "top20": ["p3", "0", "p5"]},
+    {"prefix": ["p4"], "target": "p3", "top20": ["p3"]}
+  ]}]}
