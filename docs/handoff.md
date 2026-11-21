@@ -2,6 +2,13 @@
 
 ## Trạng thái hiện hành
 
+### TV2 — Đồng bộ main và bắt đầu preflight dữ liệu thật — 21/11/2026
+
+- Merge main `6d449da` vào `feature/tv2-model-evaluation`, commit đồng bộ `b9d7c4f`. Giải conflict theo bản config/timing mới trên main; loại phần auto-merge ghi đè `inference_seconds` Popularity về ranking một lần. **29/29 test đạt**, checksum manifest TV2 khớp.
+- Dùng bộ cuDF tuần chính thức tại `/home/ubuntu/tv1-weekly-20261121/data/clean/e2-weekly/<subset>/` theo `data/manifests/e2_preprocessing_verified.json`; sessions/schema/catalog/workflow/telemetry phải cùng run. Không quay về bộ DuckDB tháng/workflows cũ; first-seen chung giữ checksum đã chốt.
+- Đã thử SSH alias `bigdata-ec2` hai lần; cả hai timeout cổng 22. Chưa truy cập được artifact/runtime VM, **chưa chạy smoke model trên dữ liệu thật**; không coi manifest TV1 là kết quả TV2 đã chạy lại. [Status và log preflight](../metrics/tv2-real-smoke-20261121/status.json).
+- Bước tiếp theo sau khi VM/SSH truy cập được: kiểm tra artifact/checksum/membership/counts, runtime model; chạy validation smoke bằng dữ liệu thật cho Popularity/GRU/XLNet, giữ test ngoài bước thử; bind config/E2 telemetry và command E4 theo cùng bộ dữ liệu đã chọn. Cần xác nhận VM đang bật, IP SSH hiện tại hoặc mở truy cập SSH đúng máy chạy.
+
 ### TV1 — Tích hợp workflow/sequence/split/bốn subset — 21/11/2026
 
 - Người dùng chấp nhận bộ cuDF `data/clean/e2-weekly/<subset>/` làm dữ liệu
