@@ -53,6 +53,9 @@ class RealSmokeCohortTests(unittest.TestCase):
         mapping.write_bytes(b"test mapping fingerprint")
         week = self.root / "week.parquet"
         week.write_bytes(b"test workflow sequence fingerprint")
+        sequence = mapping.parent / "processed_nvt/part_0.parquet"
+        sequence.parent.mkdir()
+        sequence.write_bytes(b"test split sequence fingerprint")
         self.workflow_manifest = mapping.parent / "manifest.json"
         self.workflow_manifest.write_text(json.dumps({
             "technical_ids": {"padding": 0, "null": 1, "oov": 2},
@@ -66,7 +69,7 @@ class RealSmokeCohortTests(unittest.TestCase):
         self.split_manifest.write_text(json.dumps({
             "no_overlap_and_complete_coverage": True,
             "catalog_sha256": sha256(self.catalog), "schema_sha256": sha256(self.schema),
-            "input_hashes": {"part_0.parquet": sha256(week)},
+            "input_hashes": {"part_0.parquet": sha256(sequence)},
             "counts": counts,
         }), encoding="utf-8")
 

@@ -57,10 +57,11 @@ def prepare(sessions, catalog_path, schema_path, split_manifest_path, output,
             or sha256(schema_path) != checksums["processed_nvt/schema.pbtxt"]
             or sha256(mapping_path) != checksums["product_mapping.parquet"]):
         raise ValueError("Schema/mapping/catalog checksum differs from same-run workflow/split manifests")
-    source_sequence_hash = workflow_manifest["input_sha256"]
-    if (source_sequence_hash != split_manifest["input_hashes"].get("part_0.parquet")
-            or sha256(workflow_root / "week.parquet") != source_sequence_hash):
-        raise ValueError("Workflow input sequence differs from selected split run")
+    workflow_input_hash = workflow_manifest["input_sha256"]
+    split_input_hash = split_manifest["input_hashes"].get("part_0.parquet")
+    if (sha256(workflow_root / "week.parquet") != workflow_input_hash
+            or sha256(workflow_dir / "processed_nvt/part_0.parquet") != split_input_hash):
+        raise ValueError("Workflow weekly input or split sequence checksum differs from its same-run manifest")
     if workflow_manifest.get("technical_ids") != {
             key: int(value) for key, value in json.loads(catalog_path.read_text(encoding="utf-8"))["technical_ids"].items()
             if key in {"padding", "null", "oov"}}:
@@ -107,6 +108,8 @@ def prepare(sessions, catalog_path, schema_path, split_manifest_path, output,
         "seed": seed,
         "source_split_manifest": fingerprint(split_manifest_path),
         "source_workflow_manifest": fingerprint(workflow_manifest_path),
+        "workflow_week_input_sha256": workflow_input_hash,
+        "split_sequence_input_sha256": split_input_hash,
         "source_sessions": fingerprint(sessions),
         "catalog": fingerprint(catalog_path),
         "schema": fingerprint(schema_path),
