@@ -1,19 +1,19 @@
 # Slide outline (English) — 15 min presentation + 5 min Q&A
 
-Same storyline as `reports/report_outline.md` (sections I–VI of the sample report), compressed for talking.
+Same storyline as `reports/report_outline.md` (chapters 1–6, updated 21/11/2026), compressed for talking.
 Course rule: prioritise **experiments, results and analysis** over theory → results get 6:30 of 15:00.
 
 ## Time budget
 
-| Block | Slides | Time | Report section |
+| Block | Slides | Time | Report chapter |
 | --- | --- | --- | --- |
-| Opening, problem, related work | 1–4 | 2:00 | I, II |
-| Dataset & sampling | 5–7 | 1:45 | III |
-| Method & protocol | 8–10 | 2:00 | IV |
-| Environment & experiment design | 11–12 | 1:00 | V.A–C |
-| Results E1–E5 | 13–16 | 6:30 | V.D–E |
-| Demo | 17 | 1:00 | V.F |
-| Conclusion | 18 | 0:45 | V.E, VI |
+| Opening, problem, related work, what we added | 1–4 | 2:00 | Ch. 1 (1.1, 1.3), 4.1.1 |
+| Dataset, sampling, representativeness, imbalance | 5–7 | 1:45 | Ch. 2.1–2.3 |
+| Pipeline, models, protocol | 8–10 | 2:00 | Ch. 2.4, Ch. 3 |
+| Environment & experiment design | 11–12 | 1:00 | Ch. 4 |
+| Results E1–E5 | 13–16 | 6:30 | Ch. 5.1–5.2 |
+| Demo | 17 | 1:00 | Ch. 5.3 |
+| Conclusion | 18 | 0:45 | Ch. 6 |
 | **Total** | 18 (+ backup) | **15:00** | |
 | Q&A | — | 5:00 | |
 
@@ -58,6 +58,8 @@ Format: **Title** (time · speaker) · on-slide content · visual · key message
 - Source: `data/raw_audit.csv`, cleanup manifest. Status: available.
 
 ### 6. Sampling  (0:40 · TV1)
+- Population: every event of 1–7 Oct with a non-null session (8,829,314 events, 1,877,365 sessions); the % is a
+  share of **sessions** of that population.
 - First 7 days; stable SHA-256 hash on session ID; nested 10/25/50/100%; whole sessions, never single rows.
 - Why it fits next-item prediction: whole sessions keep the target; nested sizes isolate the size effect;
   7 days = enough daily partitions within the GPU budget.
@@ -66,10 +68,12 @@ Format: **Title** (time · speaker) · on-slide content · visual · key message
 - Key message: "The two ratios are close, and both were measured." (not "match").
 - Source: `data/manifests/raw_subset_counts.csv`. Status: available.
 
-### 7. Representativeness  (0:25 · TV1)
+### 7. Representativeness and event imbalance  (0:25 · TV1)
 - Full eligible week vs each subset: event-type share, top categories/brands, session length — scope stated
   (raw or after cleanup).
 - One sentence with the **largest observed difference**; conclude only from that number.
+- Imbalance: ~96% view; not rebalanced (lecturer: not required) — its effect on Recall/NDCG is discussed on slide 13
+  (by target event type if TV2 exports it).
 - Status: PENDING TV1 distributions.
 
 ### 8. Pipeline  (0:40 · TV1)
@@ -114,6 +118,8 @@ Format: **Title** (time · speaker) · on-slide content · visual · key message
 - Right: seconds per 1M events (composed stage times ÷ weekly events) + bottleneck highlighted; shared first-seen
   shown separately.
 - Takeaway: how each stage grows; bottleneck; `partial` if any subset is missing.
+- If TV2 adopts the lecturer's suggestion: accuracy for 10–100% is measured on **one fixed validation/test set**
+  and only the training sessions grow — say this on the slide.
 - Status: PENDING.
 
 ### 15. E3 — Batch size on one GPU  (1:15 · TV5)
@@ -139,7 +145,7 @@ Format: **Title** (time · speaker) · on-slide content · visual · key message
 
 ### Backup slides (Q&A only)
 - B1 Hyper-parameters per model. · B2 Run registry (pass / fail / OOM / timeout).
-- B3 Measurement scope: `full_evaluation_wall_v1`, `ms/session` = full evaluation wall ÷ evaluated sessions incl.
+- B3 Measurement scope: `full_evaluation_wall_v1`, `ms/session` = 1000 × full evaluation wall (s) ÷ evaluated sessions incl.
   I/O, RSS caveat, warm-up/cache.
 - B4 Encoded vs original ID example; padding 0 / null 1 / OOV 2.
 - B5 Preprocessing numbers: 2 null rows, 11,715,474 repeats removed, 30.7 M monthly events left, 13-row difference
@@ -156,10 +162,10 @@ Format: **Title** (time · speaker) · on-slide content · visual · key message
 | How is the ground truth chosen? Can it leak? | Last real item; causal shift / masking hides it; GPU smoke checked label = last item and target hiding | TV2 |
 | Is fitting the workflow before the split leakage? | Yes, it is a stated limitation: vocabulary and feature statistics see the whole week; weights and Popularity counts learn only from train; test used once after fixing config | TV2/TV5 |
 | Why keep Popularity? | Cheap reference; any neural gain is measured against it | TV2 |
-| Why only 7 days / why 100% ≠ full month? | GPU/time budget; E5 gives cost per million events | TV1/TV5 |
+| Why only 7 days / why 100% ≠ full month? | GPU/time budget; E5 gives seconds per million events (composed stage time) | TV1/TV5 |
 | How do you know subsets are representative? | Stable session hash + measured distribution differences (slide 7) | TV1 |
 | **Why does E3 use validation D and not test?** | Test is reserved for the final evaluation after config is fixed; comparing configs on test would be tuning on test | TV2 |
-| **What does ms/session include?** | Full evaluation wall (read, prepare, predict, rank, aggregate, write) ÷ evaluated sessions | TV2/TV3 |
+| **What does ms/session include?** | ms/session = 1000 × full evaluation wall seconds (read, prepare, predict, rank, aggregate, write JSONL) ÷ evaluated sessions | TV2/TV3 |
 | **What can you conclude if 100% is missing or XLNet OOMs?** | Conclusions limited to passed runs; E5 marked partial; OOM itself is a resource result (logged) | TV5 |
 | Are CSV and Parquet the same data in E4? | Same row count + multiplicity-sensitive fingerprint of the 9 columns before measuring | TV3 |
 | Why DuckDB, not cuDF, for the first steps? | Simpler for the monthly CSV on CPU; 13-row difference documented | TV1 |

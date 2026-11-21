@@ -1,576 +1,364 @@
-# Report outline (English)
+# Report outline (English) — updated 21/11/2026
 
-**Working title:** SESSION-BASED NEXT-ITEM RECOMMENDATION ON ECOMMERCE BEHAVIOR DATA: POPULARITY, GRU AND XLNET
-UNDER GROWING DATA AND CHANGING RESOURCES
+**Title:** Session-Based Next-Item Recommendation on eCommerce Behavior Data: Popularity, GRU and XLNet under Growing
+Data and Changing Resources
+**Class / group:** MSIS406.R12.CTTT · Group 9 · Instructor: Dr. Phạm Đỗ Kim Chi
 
-**Base template:** the course sample report "Realtime Log Anomaly Detection & Log Insight Streaming"
-(MSIS405, Group 10). We follow its skeleton — header block, ABSTRACT, INDEX TERMS, six Roman-numbered sections
-(I Introduction, II Related Works, III Dataset, IV Methods, V Experiments and Results, VI Conclusion),
-ACKNOWLEDGMENT, numbered REFERENCES. Sub-sections that **match the sample by name**: I.A–D, II.A–B, III.A–B,
-IV.A, V (processing model, system design, user interface), VI.A Challenges, VI.B Achievements,
-VI.C Development directions (same order as the sample). IV.B is renamed from the sample's topic-specific method
-("Pattern recognition for log analytics") to "Data processing pipeline" for our recommendation topic.
-Sub-sections **added by us** (because the course requires them and the sample has no measured results):
-III.C–E, IV.C, V.A, V.C–E, VI.D Limitations, VI.E Reproducibility, Appendix. The sample's use-case and database
-diagrams are replaced by a demo use-case figure and an artifact-layout figure (V.B). Re-check every sub-section
-against the PDF before the final layout.
+How to read this file: each section lists **Write** (what the text says), **Show** (table or figure) and, where it
+matters, **Dig into** (the analysis that makes the section more than a description). Numbers marked `[AVAILABLE]` are
+in the repo; `[PENDING: owner]` waits for input; `[DECIDE: owner]` needs a protocol decision.
 
-**Where we deliberately go further than the sample:** the sample has almost no measured results. The course brief
-asks to prioritise experiments, results and analysis, so Section V (Experiments and Results) is the largest
-section here (~40% of the pages) and Section IV.A (theory) is kept short.
+---
+
+## A. Where the team stands (21/11/2026, `origin/main` and member branches)
+
+| Member | Done | Not done / blocked |
+| --- | --- | --- |
+| TV1 data | Four weekly subsets; **official experiment data selected 21/11: cuDF cleanup of the raw week** (`data/clean/e2-weekly/<subset>/` on the VM); NVTabular workflow, sequences and day_index splits for 10/25/50/100%; per-subset profiles; preprocessing timings for the four sizes; E4 CSV/Parquet smoke (`docs/weekly_workflow.md`, `data/manifests/e2_preprocessing_verified.json`, `e4_preprocessing_smoke.json`) | Split counts of the official cuDF run not found in the repo manifests (the split manifest in the repo is the DuckDB comparison set) |
+| TV2 models | Popularity, GRU, XLNet scripts; 29 local tests pass; experiment matrix of 11 runs; protocol (test D after freezing the configuration) | No real-data model run yet: **blocked by SSH access to the VM** (`metrics/tv2-real-smoke-20261121/status.json` on the TV2 branch). Fixed validation/test for E2 not decided |
+| TV3 environment | Runtime verified on AWS: Ubuntu 22.04.5, Tesla T4 15,360 MiB, 8 vCPU, 31 GiB RAM, Merlin PyTorch 23.12 (`environment/README.md`) | No benchmark run on real data yet; warm-up/cache policy not fixed |
+| TV4 demo | Output contract and demo data export on `main` | Demo on real predictions waits for model runs |
+
+Consequence for the report: Chapters 1–4 can be written now with real numbers; Chapter 5 waits for the model runs
+and the TV2 metrics package (deadline plan: E1 22/11, E2 23/11, E3 + E5 24/11, E4 25/11, package 27/11).
+
+The DuckDB monthly cleanup used in the 20/11 outline is now a **comparison set** only; it stays the source of the shared
+monthly first-seen lookup. All dataset numbers below use the official cuDF weekly run unless stated.
+
+## B. Storyline and what to dig into
+
+The course and the lecturer ask for the effect of **data size and resources on the system**, with analysis, not only
+model scores. Six findings already visible in the data are worth building the report around:
+
+1. **Fixed cost dominates preprocessing at small sizes.** 10× more events (0.88 M → 8.83 M) only makes preprocessing
+   1.5× longer (30.4 s → 45.4 s). The NVTabular workflow fit takes ~20–26 s at every size, so cost per million events
+   falls from ~34 s to ~5 s. → Ch. 5.1.2, 5.1.5, 5.2.1. *(TV1 manifest, one run, cache not controlled — confirm in the
+   TV2 package before quoting as E2/E5.)*
+2. **The candidate catalog grows with the data.** 63,398 products at 10% → 118,333 at 100% (+87%). A larger catalog
+   makes top-20 ranking harder, so E2 accuracy mixes "more training data" with "harder task" and "different test
+   sessions". → Ch. 3.2, 5.1.2, 5.2.2; supports the fixed validation/test question.
+3. **After repeat removal the sequences are almost only views.** Raw week: ~96% view. After cleanup: 99.98% view
+   (100%: 6,389,507 view, 795 cart, 626 purchase). A cart or purchase usually follows a view of the same product and is
+   removed as a consecutive repeat. Analysis by target event type has almost no cart/purchase targets. → Ch. 2.3,
+   5.2.2 (answers lecturer point 4 with evidence).
+4. **Half of the sessions are dropped by the ≥ 2 interaction rule.** 48.6% of sessions have one item after cleanup
+   at every size; 96,433 of 187,563 sessions remain at 10%. → Ch. 2.2.2, 2.4.
+5. **Subsets keep the same shape.** Session length after cleanup: median 2, p90 8, 1.67% with ≥ 20 items at all four
+   sizes; 557–565 of 565 category IDs and 2,277–2,640 brands covered. Product coverage grows (long tail). → Ch. 2.2.3.
+6. **The final test set at 10% is small.** Test partition D has ~1,300 sessions at 10% (~13,000 at 100%) in the
+   comparison split; Recall@20 differences of 1–2 points between models may be within noise. → Ch. 3.4, 5.1.1, 5.2.3.
+
+Plus, from the E4 smoke (not official): Parquet is 4.55× smaller than CSV and reads faster, but reading is < 1% of
+preprocessing time on the GPU pipeline, so the end-to-end difference is small. → Ch. 5.1.4.
+
+## C. Structure decisions (team proposal, optimised)
+
+| Part | Keep / add / merge | Reason |
+| --- | --- | --- |
+| Chapters 1–6 of the team proposal | **Keep** headings and order | Cover the content the course asks for (`docs/course_requirements.txt` §6–7) and the lecturer's e-mail (table D) |
+| Related Works | **Merge**, no separate chapter | Course: prioritise results over theory. Papers cited in 1.1 and 3.1.x; NVIDIA reuse in 1.3 and 4.1.1 |
+| 6.3 Reproducibility | **Add** (Future Works → 6.4) | TV5 task "results, limitations and reproducibility"; deliverable "README chạy lại" (`AGENTS.md` §13) |
+| 2.4 vs 4.1.1 | Keep both, split content | 2.4 = data steps; 4.1.1 = code and run architecture |
+| 5.1.3 E3, 5.1.4 E4 | Keep, optional | Lecturer: not all experiments are mandatory; if not run, keep the heading and state the reason |
+| 3.2 | Keep, content pending | Fixed validation/test for E2 waits for TV2 |
+| 5.2.3 vs 6.2 | Keep both, split content | 5.2.3 = what the numbers can and cannot show; 6.2 = short list referring to 5.2.3 |
+
+## D. Lecturer feedback (e-mail 20/11/2026) → where it is addressed
+
+| # | Feedback | Section |
+| --- | --- | --- |
+| 1 | Keeping whole sessions and testing 10/25/50/100% fits next-item prediction | 2.2.1 |
+| 2 | State on **which data** the percentages are computed | 2.2.1 |
+| 3 | Subsets must be diverse and representative: show statistics and explain the choice | 2.2.2, 2.2.3 |
+| 4 | Mostly `view` events: no need to rebalance, but analyse the effect on results | 2.3, 5.2.2 |
+| 5 | Train/validation/test split must avoid data leakage | 3.2 |
+| 6 | For the training-size study, keep validation/test fixed and change only the train size | 3.2, 4.3, 5.1.2 |
+| 7 | Report users, sessions, events, products and the split | 2.2.2, 3.2 |
+| 8 | Public cloud GPU VM + Ubuntu + Docker + Transformers4Rec allowed; cloud not mandatory | 4.1.2 |
+| 9 | Focus on the effect of data size on processing time, training time and resource use | 4.2, 5.1.2, 5.1.5, 5.2.1 |
+| 10 | Not all experiments are mandatory; each chosen one needs comparisons and comments | 4.3, 5.1 |
+| 11 | The goal is the workflow and its analysis, not the largest data or the most complex model | 1.2, 6.1 |
 
 ## Conventions
-
-- Format: two-column journal style, ~9–10 pages, English. Figures numbered "FIGURE n:", tables "TABLE n:".
-  Page footer: `<course code> – Group <n>`; running header: `Author et al.: <short names>` (as in the sample).
-- Every number has a source. **[AVAILABLE]** = already in the repo (path given), still re-check before final.
-  **[PENDING: X]** = wait for input X. Never type numbers from the NVIDIA tutorial or toy runs as our results.
-- Owner = who provides the content; TV5 writes the final text.
-- Pages = target length in the final two-column layout.
+- English; ~10–12 pages of body text on the group template (Google Docs report linked in the team sheet).
+- Dataset numbers cite their manifest. Experiment numbers (E1–E5) come only from the official TV2 metrics package,
+  with `run_id`, config, unit and source log. Never report toy or NVIDIA tutorial numbers as results.
+- Table templates for Chapter 5: `reports/tables/` (see `reports/README.md`). Official figures: TV4.
 
 ---
 
-## Header block  (owner: TV5 · 0.2 page)
-
-- Institution line: UNIVERSITY OF INFORMATION TECHNOLOGY / FACULTY OF INFORMATION SYSTEMS (confirm faculty).
-- Title (above).
-- Authors with superscript numbers, faculty and e-mail, same format as the sample:
-  `NAME1, NAME2, ... , 1Faculty of ..., University of Information Technology, (e-mail: ...)`. 5 members.
-
-## ABSTRACT  (owner: TV5 · 150–200 words · write last)
-
-One paragraph, in this order (the sample follows the same order):
-
-1. Context — eCommerce sessions are short and often anonymous; recommending the next item from in-session behavior.
-2. What we built — a reproducible pipeline on the Kaggle "eCommerce Behavior Data from Multi-Category Store"
-   (first 7 days of October 2019) that turns raw events into session sequences and evaluates three recommenders:
-   Popularity, GRU and XLNet (Transformers4Rec), with Recall@20 and NDCG@20.
-3. System side — five experiments: model comparison (E1), data size 10–100% (E2), resources (E3),
-   CSV vs Parquet (E4), scalability per million events (E5), run on a cloud GPU VM with Docker + NVIDIA Merlin.
-4. Key findings — 2 sentences with the main numbers. **[PENDING: TV2 metrics package]**
-5. Tools — DuckDB, NVTabular/cuDF, PyTorch, Transformers4Rec, Docker, cloud GPU VM, React demo.
-
-## INDEX TERMS
-
-Session-based recommendation, next-item prediction, GRU, XLNet, Transformers4Rec, NVTabular, Parquet,
-scalability, cloud GPU.
-
----
-
-## I. INTRODUCTION  (≈1 page)
-
-### A. REASONS FOR CHOOSING THE TOPIC
-Bullets in the same style as the sample (bold lead-in + 2–3 sentences each):
-
-- **Wide applicability:** next-item recommendation is used in eCommerce, media, news; session-based methods work
-  even for anonymous users with no long history.
-- **Data volume (Big Data need):** one month of one store is a 5.67 GB CSV (5,668,612,855 bytes) with 42,448,764
-  events, 3,022,290 users and 9,244,421 session IDs **[AVAILABLE: data/raw_audit.csv,
-  data/manifests/raw_audit_manifest.json]**. This scale motivates our technical choices: columnar storage, GPU ETL
-  and session-level sampling. (Do not claim pandas "cannot" handle it — we did not measure that.)
-- **Business value:** top-K recommendation quality can be measured offline with Recall@K/NDCG@K; a cheap popularity
-  baseline is the reference that neural models must be compared against. (No claim about CTR/conversion — not
-  measured.)
-- **Technical challenges:** building time-ordered session sequences and stating clearly what the preprocessing sees
-  (fitted on the whole week before the split), comparing models fairly under one protocol, and measuring how
-  runtime/memory change with data size, resources and storage format.
-
-### B. SCOPE OF RESEARCH
-One paragraph + bullet list:
-- Task: given the item prefix of one `user_session`, return the top-20 products; the target is the next real item.
-  Example: A → B → C ⇒ predict D.
-- Data: `2019-Oct.csv`, 2019-10-01 00:00:00 to 2019-10-07 23:59:59 UTC, event types view/cart/purchase.
-- Models: Popularity (baseline), GRU, XLNet; only product ID as input.
-- Metrics: Recall@20, NDCG@20 plus training time, inference time, memory.
-- Experiments E1–E5 (one line each).
-- Out of scope: feature ablation, extra models or cloud services, online/real-time serving, cold-start benchmark.
-- **Goal statement (course objective, say it explicitly):** the aim is not the best algorithm or the largest data,
-  but to select suitable data, build a processing pipeline, deploy and experiment, and analyse **how data size and
-  computing resources affect system performance**.
-- **What we reuse vs. what we add** (course encourages reusing known models/code and extending towards Big Data &
-  Cloud). One short paragraph + 2 bullets:
-  - Reused: GRU/XLNet models and ETL steps from NVIDIA Transformers4Rec tutorial notebooks 01–03 (pinned commit,
-    Apache-2.0); standard metrics Recall/NDCG.
-  - Added by the team: session-level stable-hash sampling at 4 sizes, monthly cleanup in DuckDB, a shared evaluation
-    protocol and catalog for 3 models, the Popularity baseline, a benchmark collector, the five system experiments
-    E1–E5 on a cloud GPU VM, and the offline demo.
-
-### C. STUDY PARTICIPANTS
-The sample lists stakeholder groups. We list (1) the team roles and (2) the intended stakeholders.
-
-- Team table (TABLE 1): TV1 Data & preprocessing · TV2 Model, experiments & evaluation · TV3 Environment & runs ·
-  TV4 Demo & report support · TV5 Report & results — name + main deliverables. Source: `AGENTS.md` §9.
-- Stakeholders (short bullets, sample style): data engineers (pipeline), ML engineers/researchers (models,
-  protocol), platform/DevOps (cloud GPU, Docker, cost), product/business owners (recommendation value),
-  end users (shoppers receiving the top-20 list).
-
-### D. TOOLS USED
-Bulleted list "**Tool:** role in our project" (same format as the sample):
-- **Python** — all scripts (pipeline, evaluation, benchmark collector).
-- **DuckDB** — CPU processing of the monthly CSV: UTC timestamps, null-session removal, repeated-item cleanup,
-  monthly first-seen table.
-- **NVIDIA NVTabular / cuDF** — GPU ETL: categorify, feature statistics, Groupby to session sequences, Parquet.
-- **PyTorch + Transformers4Rec** — GRU and XLNet next-item models, adapted from NVIDIA tutorial notebook 03.
-- **Apache Parquet / PyArrow** — columnar storage for sequences; compared with CSV in E4.
-- **Docker + NVIDIA Merlin image** — reproducible GPU runtime.
-- **Public cloud GPU VM (Ubuntu)** — training/benchmark machine. **[PENDING: TV3 provider + instance type]**
-- **Git/GitHub** — branches per member, manifests, handoff log.
-- **React + Vite** — offline demo UI.
-- **Visual Studio Code, Kaggle, Google Sheets/Docs** — development, dataset source, task tracking.
-
----
-
-## II. RELATED WORKS  (≈1 page)
-
-Opening paragraph (3–4 sentences): from popularity/item-kNN baselines to RNN and Transformer models for sessions;
-GPU data pipelines make large-scale training practical.
-
-### A. RESEARCH PAPERS
-Same format as the sample: numbered title + authors + [ref], then **Main Content** and **Contribution**.
-We add one line **Relevance to our project**.
-
-1. **"Session-based Recommendations with Recurrent Neural Networks"** — Hidasi et al., ICLR 2016 (GRU4Rec).
-   Main content: GRU over the click sequence of a session, session-parallel mini-batches, ranking losses.
-   Contribution: first strong RNN approach for anonymous sessions. Relevance: our GRU is *inspired by* GRU4Rec but
-   *implemented* following Transformers4Rec notebook 03 (embedding → MLP → GRU → next-item head, cross-entropy,
-   causal training) — say both, do not call our model "GRU4Rec".
-2. **"XLNet: Generalized Autoregressive Pretraining for Language Understanding"** — Yang et al., NeurIPS 2019.
-   Main content: permutation language modelling (PLM) with Transformer-XL for text. Contribution: bidirectional
-   context without BERT's mask mismatch. Relevance: we reuse only the **XLNet Transformer block**; our training
-   objective is **item-level masked language modelling (MLM)** from Transformers4Rec, not the paper's PLM.
-3. **"Transformers4Rec: Bridging the Gap between NLP and Sequential / Session-Based Recommendation"** —
-   de Souza Pereira Moreira et al., RecSys 2021. Main content: library that plugs NLP Transformer architectures
-   into sequential/session recommendation, with several training objectives (causal LM, MLM, PLM, replacement token
-   detection) and side-information fusion; evaluated on eCommerce and news datasets incl. REES46.
-   Contribution: in the authors' experiments, **XLNet trained with replacement token detection (RTD)** gave the best
-   results on most datasets. Relevance: our GRU/XLNet code and ETL come from this library's tutorial; we use the
-   tutorial's **MLM** setting for XLNet (not RTD) — state this as a scope choice. Re-check the claim against the
-   paper before final.
-4. **"BERT4Rec: Sequential Recommendation with Bidirectional Encoder Representations from Transformer"** —
-   Sun et al., CIKM 2019. Main content: bidirectional Transformer trained by masked item prediction (Cloze task).
-   Relevance: explains why MLM training differs from last-item evaluation.
-5. *(Cut first if space is short)* **"Self-Attentive Sequential Recommendation" (SASRec)** — Kang & McAuley,
-   ICDM 2018.
-
-### B. PROJECTS AND IMPLEMENTATIONS
-Sample format: name, **Features**, **Benefits**.
-- **NVIDIA Merlin Transformers4Rec** (pinned commit `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`, Apache-2.0):
-  tutorial notebooks 01 preprocess, 02 ETL with NVTabular, 03 session-based recsys. What we reused, what we changed
-  (sampling, split protocol, Popularity baseline, collector). Source: `docs/references.md`, `docs/preprocessing_review.md`.
-- **NVTabular / cuDF (RAPIDS)**: GPU dataframe and feature engineering.
-- **REES46 / Kaggle dataset release** — the public data we use.
-
----
-
-## III. DATASET  (≈1.2 pages)
-
-### A. INTRODUCTION
-What the data is (behavior logs of a large multi-category online store, collected by REES46 Open CDP, published on
-Kaggle), why it suits session-based recommendation (has `user_session`, event order, product IDs, event types).
-
-### B. DESCRIPTION
-- TABLE 2 — the 9 columns: name, type, meaning, example. Source: `docs/data_dictionary.md` **[AVAILABLE]**.
-- Bullet statistics in the sample's style ("Total number of …"). **[AVAILABLE: data/raw_audit.csv]**
-  - Total events (October 2019): 42,448,764; time range 2019-10-01 00:00:00 – 2019-10-31 23:59:59 UTC; 0 invalid timestamps.
-  - Distinct products 166,794; categories 624 (`category_id`), category codes 126; brands 3,445.
-  - Users 3,022,290; sessions 9,244,421; sessions with null `user_session`: 2 rows.
-  - Event types: view 96.07%, cart 2.18%, purchase 1.75%.
-  - Missing values: `category_code` 31.8%, `brand` 14.4%.
-  - Daily volume in the first week: ~1.13 M – 1.42 M events per day.
-- FIGURE 1 — sample raw rows (screenshot/table, like "FIGURE 1: Log data" in the sample).
-- FIGURE 2 — events per day for October (bar chart). **[TV4 figure from raw audit]**
-
-### C. 5V ANALYSIS
-TABLE 3 — V, evidence, number, implication:
-- **Volume:** 42,448,764 rows; `2019-Oct.csv` = 5,668,612,855 bytes ≈ 5.67 GB
-  **[AVAILABLE: data/manifests/raw_audit_manifest.json `input_bytes`]** → sampling + Parquet + GPU.
-- **Velocity:** events *recorded* per day: ~1.13–1.42 M/day in the first week (check full-month range in
-  `data/raw_audit.csv`) → daily partitions and daily fine-tuning. Batch processing, not streaming, in our scope.
-- **Variety:** 3 event types, 624 categories, 3,445 brands, numeric price, timestamps.
-- **Veracity:** 31.8% missing `category_code`, 14.4% missing `brand`, 2 rows without `user_session`, 11,715,474
-  consecutive repeated events removed **[AVAILABLE: data/manifests/timestamp_session_cleanup.json]**. Note the rule:
-  an event is removed when its `product_id` equals the previous event of the session **even if the event type
-  differs** (e.g. view → cart of the same product keeps only the view). Sessions may cross midnight.
-- **Value:** the data lets us measure next-item recommendation quality offline (Recall@20, NDCG@20) and the
-  system cost of producing it.
-
-### D. SUBSET SELECTION
-- Rule: 7-day window → SHA-256 stable hash on the original session ID (seed 42) → nested 10/25/50/100% →
-  keep every event of a selected session → never sample individual rows. Source: `docs/session_sampling.md`.
-- **Why this subset fits the task** (course: "explain why the selected data suits the problem") — one paragraph:
-  - *Session-level, not row-level:* next-item prediction needs complete, ordered sessions; sampling rows would cut
-    sessions and destroy the target. Hashing the session ID keeps every event of a selected session.
-  - *Stable hash, nested sizes:* the same session is always in or out, so 10% ⊂ 25% ⊂ 50% ⊂ 100%; E2/E5 then measure
-    only the effect of size, not of a different random sample.
-  - *7 days:* enough daily partitions for daily fine-tuning (train t → validate t+1) and a final test day, while
-    fitting the GPU/time budget; the full month is analysed in the raw audit only.
-  - *Not filtered by category/brand/user type:* all categories, brands and event types stay in, so the subset keeps the
-    diversity of the store (checked in III.E).
-- TABLE 4 — raw subset counts **[AVAILABLE: data/manifests/raw_subset_counts.csv]** (raw weekly events, before
-  cleanup and sequence building — say this in the caption). Add columns **categories, brands** per subset
-  **[PENDING: TV1 counts]**, as required by `AGENTS.md` §3:
-
-  | Subset | Events | Sessions | Users | Items | Actual event ratio |
-  | --- | --- | --- | --- | --- | --- |
-  | 10% | 882,808 | 187,563 | 163,847 | 63,398 | 0.1000 |
-  | 25% | 2,213,138 | 469,728 | 356,271 | 87,247 | 0.2507 |
-  | 50% | 4,421,037 | 938,071 | 601,608 | 103,940 | 0.5007 |
-  | 100% | 8,829,314 | 1,877,365 | 957,543 | 118,333 | 1.0000 |
-
-- Add two separate ratio columns (both computed from the CSV, never assumed):
-  **session ratio** 0.0999 / 0.2502 / 0.4997 / 1.0 and **event ratio** 0.1000 / 0.2507 / 0.5007 / 1.0.
-  Write "the two ratios are close", not "match".
-- Notes for the caption: "100%" = every eligible session of the first week, not the whole month. The 100% subset has
-  8,829,314 events while the weekly audit counts 8,829,315 — the difference is the one weekly row without
-  `user_session` (dropped before sampling). Source: `docs/raw_subsets.md`.
-- After-sequence counts per subset (sessions ≥ 2 interactions, vocabulary size) **[PENDING: TV1 ETL]**.
-
-### E. REPRESENTATIVENESS
-The course requires the subset to be **diverse and representative** (many groups, labels, features, cases).
-- TABLE 5 — per subset: number of categories and brands covered, event-type shares (view/cart/purchase), share of
-  sessions with a purchase, session-length distribution (median, p90, share ≥ 20 items), price range.
-- FIGURE 3 — event-type, top-10 categories, top-10 brands and session-length histograms: full week vs each subset
-  (overlaid or small multiples).
-- State the scope of the comparison: raw weekly events (before cleanup) **or** after cleanup/sequence building —
-  pick one and write it in the caption.
-- One paragraph that answers a **question**, not a pre-written conclusion: "How far is each subset from the full
-  eligible week?" Report the observed differences (e.g. max absolute difference in event-type share, in top-10
-  category share, in median session length) and only then judge whether the subset is representative.
-  Note what no subset can represent (other months, seasonality). **[PENDING: TV1 distributions]**
-
----
-
-## IV. METHODS  (≈2 pages)
-
-### A. THEORETICAL BASIS  (short: ~0.8 page total)
-Same pattern as the sample: concept → "In this project, X is used for:" bullets.
-**Length cap: 3–4 sentences (or one formula block) per item.** The course says not to spend too much on theory;
-the sample's 3 pages of generic theory (Python, Kafka, AWS) is the part we do not copy.
-Budget for all non-result parts (I.D + II + IV.A) ≤ 2.5 pages.
-
-1. **Session-based next-item prediction** — formal definition: session s = (i1, …, in); input prefix (i1…i(n−1)),
-   target in; model returns a ranked list of K = 20 items from the candidate catalog.
-2. **Popularity baseline** (group-built, not in notebook 03) — cumulative count of every real interaction in the
-   train sequences used so far (partitions 1…t, each counted once, not per epoch); catalog items never counted get
-   score 0; ties broken by ascending encoded ID; same list for every session.
-3. **GRU** — recurrent cell with update/reset gates; embedding → MLP → GRU → prediction head; causal training
-   (predict each next item from the past). FIGURE 4: GRU-based architecture (redraw, credit NVIDIA).
-4. **XLNet / Transformer** — self-attention over positions; trained with masked language modelling (MLM) on items;
-   evaluation always predicts the last item. FIGURE 5: causal vs MLM masking (redraw, credit NVIDIA).
-5. **Evaluation metrics** — formulas:
-   - Recall@K = (1/|S|) Σ 1[rank(target) ≤ K]
-   - NDCG@K = (1/|S|) Σ 1/log2(rank + 1) if rank ≤ K, else 0 (single target → IDCG = 1)
-   - Aggregation = sum over valid sessions / number of valid sessions (not mean of batch means).
-6. **Columnar storage (Parquet) and GPU dataframes** — why columnar + compression helps reading;
-   cuDF/NVTabular run ETL on GPU.
-7. **Cloud GPU VM and containers** — pay-per-use GPU, Docker images for reproducibility.
-
-### B. DATA PROCESSING PIPELINE
-FIGURE 6 — pipeline diagram (one row of boxes): `2019-Oct.csv` → timestamp UTC → drop null sessions →
-monthly sort + remove consecutive repeats → monthly first-seen → week filter → stable-hash sampling →
-NVTabular workflow (categorify, features) → Groupby session → `ListSlice(-20)` → `day_index` → split → Parquet +
-schema + mapping + manifest. Source: `AGENTS.md` §6.
-
-1. **Preliminary preprocessing (DuckDB CPU, adapted from notebook 01)** — results **[AVAILABLE]**: 42,448,764
-   rows in/out of the timestamp step with 0 parse errors; 2 null-session rows dropped; 11,715,474 consecutive
-   repeated events removed; 30,733,288 monthly events left; 166,794 products in the first-seen lookup.
-   First-seen build time 1.516 s — scope: monthly Parquet scan + group-by minimum + Parquet write on DuckDB CPU,
-   excluding upstream cleanup, verification and checksums (`data/manifests/monthly_first_seen.json`).
-   The cleaned output differs from NVIDIA's saved cuDF output by **13 rows in total**. TV1 attributes this to the
-   ordering of events with equal timestamps; this is **TV1's explanation — there is no per-event/session comparison
-   log yet**. Write it as a likely cause, not a proven one.
-   Source: `docs/event_timestamp.md`, `docs/timestamp_session_cleanup.md`, `docs/monthly_first_seen.md`.
-2. **Sampling** — summary of III.D.
-3. **ETL with NVTabular (notebook 02)** — workflow fitted on the whole week of each subset **before** the split
-   (mapping + feature statistics), fixed across partitions; padding 0, null 1, OOV 2, known items from 3;
-   sessions with ≥ 2 interactions; keep the last 20 items including the target. **[PENDING: TV1 ETL run]**
-4. **Split and training schedule** — write all of these explicitly:
-   - Sessions are grouped **first** (whole session kept inside the 7-day window, even if it crosses midnight);
-     `day_index` is computed **after Groupby** as `(event_time_dt-first − min).dt.days + 1`, where `min` is the
-     minimum first-event timestamp in that subset's workflow — it is an index from the source formula, not a UTC
-     calendar day.
-   - Equal timestamps: sorted as the source runtime does; no extra CSV-row key (DuckDB order in the monthly cleanup).
-   - Inside each `day_index` partition: random ~80/10/10 train/validation/test (`save_time_based_splits`, GPU seed 1,
-     sessions sorted by `user_session`); a threshold split, so shares are approximate.
-   - Daily fine-tuning: the same model trains on partition t and is validated on t+1 (weights continue, LR scheduler
-     reset). Configuration is chosen on validation only.
-   - Final test (E1, E2): D = largest `day_index` in the verified membership; evaluate test partition D with the
-     checkpoint trained on 1…D−1; report the number of evaluated sessions `n_sessions`.
-   - E3 compares configurations on **validation** partition D, not test.
-   FIGURE 7: timeline of partitions 1…D with train/val/test colours.
-   Source: `docs/modeling/model_protocol.md`.
-5. **Encoded ID vs original product ID** — models only see encoded IDs; the saved reverse mapping turns top-20
-   back into original product IDs; technical tokens never appear in outputs.
-
-### C. MODEL CONFIGURATION AND EVALUATION PROTOCOL
-- TABLE 6 — hyper-parameters per model (sequence length, masking, d_model, layers/heads, batch, epochs, LR,
-  prediction head). Start from `docs/modeling/model_comparison.md` but report the **values actually used in our runs**.
-  **[PENDING: TV2 final config]**
-- Shared protocol bullets: same split, same ground truth (last real item), same candidate catalog (real products in
-  the subset's weekly vocabulary), seen items allowed, technical tokens excluded, K = 20, same aggregation.
-- Honest statement (use this wording, never "leakage-free"): this is an **offline evaluation in which the
-  preprocessing workflow (mapping, vocabulary, feature statistics) is fitted on the whole week of each subset,
-  including validation/test sessions, before the split**. Model weights and Popularity counts learn only from train
-  partitions; test is used once, after the configuration is fixed. Consequence: the vocabulary/catalog can contain
-  products that never appear in train (they get an ID, not OOV). Limitation: results may be optimistic compared with
-  a deployment where the vocabulary is built only from past data (repeated in VI.D).
-
----
-
-## V. EXPERIMENTS AND RESULTS  (≈3.5–4 pages — largest section)
-
-Order follows the sample's V (`1) Processing Model → 2) System Design → 3) User Interface`), with our experiment
-parts inserted between System Design and User Interface:
-Processing Model (opening) → A Environment → B System Design → C–E Experiments, Results, Summary → F User Interface.
-
-### PROCESSING MODEL  (opening paragraph, ~0.25 page, mirrors the sample's "1) Processing Model")
-- One paragraph + FIGURE (reuse the pipeline figure of IV.B in compact form, or a 4-box flow) describing how one
-  run goes from data to metrics, without repeating IV.B in detail:
-  **session Parquet (per subset, partitions 1…D) → model script (Popularity / GRU / XLNet, daily fine-tuning
-  train t → validate t+1) → top-20 over the shared catalog for each evaluated session → Recall@20 / NDCG@20 +
-  timings/memory → `metrics.json` + `predictions.jsonl` + `run.json` (collector) → tables, figures, demo.**
-- One sentence per experiment family on what is varied in this flow (model, subset, batch size, input format) and
-  that E5 reuses the E2 runs.
-
-### A. DEPLOYMENT ENVIRONMENT
-- **Why a public cloud GPU VM** (the course allows public cloud or a local VM, so justify the choice):
-  NVTabular/cuDF ETL and GRU/XLNet training need an NVIDIA GPU with enough VRAM (XLNet memory grows with sequence
-  length and batch); the team's laptops do not give a common, reproducible GPU (local smoke only on an RTX 3050);
-  a cloud VM gives one shared machine, a fixed Docker image and a measurable cost per hour. Mention the trade-off
-  (cost, setup time) and that the VM is stopped after the runs (cleanup record).
-- TABLE 7 — cloud provider, instance, GPU, CPU, RAM, disk, OS, driver, CUDA, Docker image tag/digest, Python,
-  package versions (cudf, nvtabular, torch, transformers4rec). **[PENDING: TV3 environment/README.md]**
-- Cost per hour and total cost, if measured. **[PENDING: TV3]**
-- Measurement tooling: benchmark collector records run_id, start/end, exit code, wall time, peak process RSS,
-  peak CUDA reserved memory, config and output paths. Source: `benchmark/collect.py`.
-- Measurement scope notes: inference time = `full_evaluation_wall_v1` (whole evaluation incl. I/O), warm-up/cache
-  policy, RSS may double-count shared pages. Source: `docs/modeling/inference_timing.md`.
-
-### B. SYSTEM DESIGN
-Mirrors "System Design" in the sample (architecture, use case, sequence and database diagrams), adapted to an
-offline benchmark: no database, so the database diagram becomes an artifact-layout figure; the use-case diagram is
-kept small and only for the demo (FIGURE 10b: viewer selects subset/split/session/model → sees history, top-20,
-actual next item). Keep at most 3 figures here; move the rest to the appendix.
-- FIGURE 8 — **system architecture**: local/Git → cloud GPU VM → Docker (Merlin) → pipeline/models/evaluation →
-  metrics + logs → report/demo.
-- FIGURE 9 — **run sequence diagram**: TV2 config → TV3 runner → collector → model script → predictions.jsonl +
-  metrics.json → run.json.
-- FIGURE 10 — **artifact layout**: what is stored in Git (code, config, manifests, metrics, small logs) vs external
-  storage (raw CSV, large Parquet, checkpoints). Replaces the sample's database diagram.
-
-### C. EXPERIMENTAL DESIGN
-TABLE 8 — experiment matrix (source: `docs/experiment_matrix.md`, `configs/experiments.json`):
-
-| ID | Question | Variable | Fixed settings | Outputs |
-| --- | --- | --- | --- | --- |
-| E1 | Which model ranks better, at what cost? | Popularity / GRU / XLNet | 10% subset, same split, catalog, K | Recall@20, NDCG@20, train/inference time, memory |
-| E2 | How does the pipeline react to more data? | 10 / 25 / 50 / 100% sessions | GRU, same config | counts, read/preprocess/train time, memory |
-| E3 | How do resources change performance? | train batch 32 vs 128 | GRU, 10%, same epochs, seq length | runtime, throughput, memory, cost |
-| E4 | CSV vs Parquet? | input format | raw 10% subset, identical content | file size, read time, preprocessing time, memory |
-| E5 | Does it scale? | derived from E2 | no new runs | seconds per 1M events, curve, bottleneck |
-
-Plus: number of repeats per run, how failed/OOM runs are handled (kept and reported).
-
-**Why batch size is the resource variable in E3** (the course examples are CPU, RAM, number of workers): on a single
-GPU, train batch size directly controls GPU memory use and throughput, so it is the resource knob that matters for
-GRU/XLNet; changing only this one variable isolates its effect. State the limitation: CPU/RAM limits and number of
-workers/GPUs were not varied (budget), listed again in VI.D.
-
-### D. RESULTS
-For each experiment use the same 4-part pattern: **Setup (1–2 sentences: subset, split, partition, n_sessions)
-→ Table → Figure → Analysis**. The analysis answers three questions, in this order:
-**what changed, how much was measured, which limitation affects how to read the number.**
-Do not write the conclusion before the numbers exist; the bullets below are the *questions* each analysis answers.
-All values **[PENDING: TV2 metrics package]**; each caption lists the source run_id(s), fields and scope
-(`reports/tables/README.md`). If a run failed / OOM / timed out, show its status and log path instead of numbers,
-and narrow the conclusion to the confirmed runs; E5 with missing E2 runs is labelled `partial`.
-
-1. **E1 — Model comparison** (10% subset, **test partition D**). TABLE 9 (Recall@20, NDCG@20, n_sessions, train
-   time, inference time `full_evaluation_wall_v1`, ms/session, peak RSS, peak CUDA). FIGURE 11 grouped bars of
-   Recall/NDCG; FIGURE 12 time and memory. Questions: Do GRU/XLNet differ from Popularity, and by how much? What
-   does each extra point of Recall/NDCG cost in time and memory? Did XLNet fit in GPU memory?
-2. **E2 — Data size** (GRU, 10/25/50/100%, **test partition D**). TABLE 10 per subset (measured events, sessions,
-   users, vocabulary, bytes, read, preprocessing, train time, memory; shared monthly first-seen cost shown once,
-   separately). FIGURE 13 time vs measured events. Questions: How does each stage grow with events — roughly
-   proportional or not? Does accuracy change with more data?
-3. **E3 — Batch size on one GPU** (GRU, 10%, **validation partition D**). TABLE 11 batch 32 vs 128 (runtime,
-   throughput with its definition, RSS, CUDA memory, cost if measured). FIGURE 14. Name it "effect of train batch
-   size on resource use", not general "resources". Questions: speed vs GPU memory trade-off? Any change in
-   validation Recall/NDCG?
-4. **E4 — Storage format** (raw 10% subset, same 9 string columns). TABLE 12 CSV vs Parquet (rows, content check,
-   size, read time, preprocessing time, peak reader RSS). FIGURE 15. Scope to state: identical string schema, OS cache
-   warm after the pair check, preprocessing time includes the pipeline's own input read. Questions: compression
-   ratio? read speed-up? does it carry over to preprocessing?
-5. **E5 — Scalability** (derived from passed E2 runs). TABLE 13 and FIGURE 16. Define the metric exactly:
-   **composed time = sum of separately measured stages** (raw read, preprocessing excl. raw read and first-seen,
-   training incl. sequence I/O, final evaluation incl. I/O) **÷ measured weekly events before sequence building ×
-   10⁶**; shared first-seen reported separately; state the number of train partitions actually used. Questions:
-   which stage is the bottleneck? Is seconds-per-million-events stable across sizes? Projection to the full month
-   only if clearly labelled. Uncertainty: one run per subset.
-   **Open issue to resolve with TV2 before quoting `summary.json`:** `benchmark/scalability.py` sums
-   `final_evaluation_including_io` (full evaluation wall), but its `limitations` text says "Final inference is
-   compute/ranking only" — the text must be corrected or the field changed.
-
-### E. SUMMARY OF FINDINGS
-- 5 numbered sentences, one per experiment (E1–E5), each with its key number and table/figure.
-- **Closing paragraph that answers the course objective directly:** how did *data size* (E2, E5) and *computing
-  resources / storage format* (E3, E4) affect runtime, memory, throughput and accuracy? Which stage is the
-  bottleneck and what would we change first to scale? **[PENDING: TV2 package]**
-
-### F. USER INTERFACE (DEMO)
-Like "User Interface" in the sample, with screenshots (FIGURE 17–19). Source: `app/README.md` (TV4).
-- Session picker (subset, split, session) — FIGURE 17.
-- Session history (prefix) with original product IDs + actual next item card — FIGURE 18.
-- Top-20 list with rank, hit/miss highlight, model switch (Popularity/GRU/XLNet) on the same session — FIGURE 19.
-- How it works: offline predictions → exporter maps encoded IDs to original IDs → React UI; no training per request.
-
----
-
-## VI. CONCLUSION  (≈1 page)
-
-### A. CHALLENGES
-Sample style: numbered items with a short paragraph each. Fill with what really happened (collect from
-`docs/handoff.md` and the team):
-1. **Building a fair, leakage-aware protocol** — split by `day_index`, shared catalog, last-item target, MLM vs
-   causal training with the same evaluation.
-2. **Reproducing the NVIDIA preprocessing** — duplicate-timestamp ordering (13-row difference), DuckDB instead of
-   cuDF for the monthly steps.
-3. **GPU runtime and memory** — Merlin/Docker setup, XLNet memory, OOM handling. **[PENDING: TV3]**
-4. **Measuring system cost correctly** — separating shared first-seen cost, defining inference time scope,
-   warm-up/cache effects.
-5. **Team coordination** — five branches, handoffs with manifests and commit hashes.
-
-### B. ACHIEVEMENTS
-Numbered, sample style. **Only list an item once its evidence exists** (run_id / log / commit); otherwise move it
-to limitations or development directions.
-1. A reproducible pipeline from raw CSV to session Parquet with manifests and checksums — *partly available now*
-   (monthly cleanup, first-seen, sampling done; ETL/split pending TV1).
-2. Three models evaluated under one protocol (E1) — only if all three runs passed; otherwise state which did.
-3. A system benchmark of data size, batch size, storage format and scalability (E2–E5) — list runs that passed.
-4. An offline demo showing predictions with original product IDs — only if it runs on real prediction output.
-5. Skills gained: GPU ETL, cloud deployment, experiment design, technical writing in English.
-
-### C. DEVELOPMENT DIRECTIONS
-(Same position as in the sample: A → B → C. D and E below are added because TV5 must write them.)
-Sample style bullets: side features (category, brand, price, recency); longer time windows / whole month;
-more resource configs (CPU/RAM limits, number of workers, multi-GPU); hyper-parameter search; vocabulary built only
-from past data; online/streaming inference service; cold-start evaluation. Each direction should follow from a
-limitation in VI.D or a result in V.
-
-### D. LIMITATIONS
-- Offline evaluation only; preprocessing fitted on the whole week before the split, so the vocabulary includes
-  products seen only in validation/test (results may be optimistic vs. a past-only vocabulary); one run per configuration
-  (no confidence interval); only 7 days; product ID only (no side features); E3 changes only train batch size
-  (no CPU/RAM/worker/multi-GPU variation); measurement caveats; failed/OOM runs listed.
-
-### E. REPRODUCIBILITY
-- Commands from raw → subset → Parquet → train/eval → metrics; config files; seeds (hash seed 42, split seed 1);
-  pinned NVIDIA commit; manifests/checksums; result of one re-run by another member. Source: `README.md`,
-  runbooks, `docs/handoff.md`. **[PENDING: TV3 re-run log]**
-
-## ACKNOWLEDGMENT
-Thank the course lecturer by name and title **[confirm name]**, same tone as the sample (guidance, responsibility,
-openness to feedback).
-
-## REFERENCES
-IEEE style. Rules: number `[n]` **in order of first citation in the text** (the list below is not the final
-order); every entry cited at least once; give authors, title, venue, year, pages and DOI when they exist; online
-sources get URL + real access date; **verify every field against the publisher page before final** (TV4
-standardises, `docs/references.md`; IEEE Reference Guide).
-
-Candidates (draft metadata — verify):
-- Dataset: M. Kechinov, "eCommerce behavior data from multi category store," Kaggle. [Online]. Available:
-  https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store (Accessed: <date>).
-  Add data provider REES46 Open CDP. Use the dataset version/date shown on Kaggle — do not write "2019/2020".
-- B. Hidasi, A. Karatzoglou, L. Baltrunas, and D. Tikk, "Session-based recommendations with recurrent neural
-  networks," in *Proc. ICLR*, 2016 (arXiv:1511.06939).
-- K. Cho *et al.*, "Learning phrase representations using RNN encoder–decoder for statistical machine translation,"
-  in *Proc. EMNLP*, 2014, pp. 1724–1734 (GRU cell).
-- Z. Yang *et al.*, "XLNet: Generalized autoregressive pretraining for language understanding," in *Proc. NeurIPS*,
-  2019.
-- G. de Souza Pereira Moreira, S. Rabhi, J. M. Lee, R. Ak, and E. Oldridge, "Transformers4Rec: Bridging the gap
-  between NLP and sequential / session-based recommendation," in *Proc. 15th ACM RecSys*, 2021 (add pages + DOI).
-- F. Sun *et al.*, "BERT4Rec: Sequential recommendation with bidirectional encoder representations from
-  transformer," in *Proc. 28th ACM CIKM*, 2019 (add pages + DOI).
-- *(optional)* W.-C. Kang and J. McAuley, "Self-attentive sequential recommendation," in *Proc. IEEE ICDM*, 2018.
-- *(only if RTD is mentioned)* K. Clark *et al.*, "ELECTRA: Pre-training text encoders as discriminators rather
-  than generators," in *Proc. ICLR*, 2020.
-- K. Järvelin and J. Kekäläinen, "Cumulated gain-based evaluation of IR techniques," *ACM Trans. Inf. Syst.*,
-  vol. 20, no. 4, 2002 (NDCG).
-- NVIDIA, "Transformers4Rec," GitHub repository, commit f0ca2b5343dd1e40b5d2422b942f014b224f5c20 (full hash),
-  Apache-2.0. Cite the tutorial notebooks 01–03 separately with URL + access date.
-- NVIDIA NVTabular, RAPIDS cuDF, Apache Parquet, DuckDB documentation — only those actually used, with the version.
-
-## APPENDIX  (not counted in page budget)
-- A. AI-use statement (source: `docs/ai-use-statement.md`; update with all AI use, including this report).
-- B. Team contribution table.
-- C. Run registry: run_id → experiment, config, status (pass / fail / OOM / timeout), source log.
-- D. Data dictionary (full) if not shown in III.B.
-
----
-
-## Course requirement coverage (`docs/course_requirements.txt`)
-
-| Course requirement | Where in this outline |
-| --- | --- |
-| 1. Dataset with Big Data characteristics, explain relevant V's | III.B, III.C |
-| 1. Subset allowed; must be diverse and representative | III.D (why), III.E (evidence) |
-| 1. Explain how the subset was chosen and why it fits the problem | III.D |
-| 2. Clear, testable problem | I.B, IV.A.1 |
-| 3. Reuse known algorithms; understand and compare them | II, IV.A, IV.C, V.D.1 |
-| 4. Deployment environment (cloud or VM, Docker…) and why | I.D, V.A |
-| 5. Compare models with suitable metrics | E1 |
-| 5. Vary dataset size | E2 |
-| 5. Vary computing resources | E3 (+ justification in V.C) |
-| 5. Compare storage / processing methods | E4 |
-| 5. Scalability analysis | E5 |
-| 6. Report in English; focus on problem, data, method, environment, design, results, discussion | whole outline; V is largest |
-| 6. Prioritise results over theory | IV.A length cap, page budget |
-| 7. Not just one model without analysis | 3 models + Analysis part per experiment |
-| 7. Reuse previous code, extend towards Big Data & Cloud | I.B "What we reuse vs. what we add", II.B |
-| 7. Goal: effect of data and resources on system performance | V.E closing paragraph, VI |
-
-## Figure and table checklist
-
-| No. | Item | Section | Owner | Status |
-| --- | --- | --- | --- | --- |
-| Fig 1 | Raw data sample | III.B | TV1/TV5 | can do now |
-| Fig 2 | Events per day | III.B | TV4 | data available |
-| Fig 3 | Distribution full week vs subsets | III.E | TV4 | PENDING TV1 |
-| Fig 4–5 | GRU architecture; causal vs MLM masking | IV.A | TV4 | can do now (credit NVIDIA) |
-| Fig 6 | Data pipeline | IV.B | TV4 | can do now |
-| Fig 7 | Partition / training timeline | IV.B | TV4 | can do now |
-| Fig 8–10 | Architecture, run sequence, artifact layout | V.B | TV4/TV3 | draft now |
-| Fig 11–16 | E1–E5 charts | V.D | TV4 | PENDING TV2 |
-| Fig 17–19 | Demo screenshots | V.F | TV4 | PENDING demo |
-| Tab 1 | Team roles | I.C | TV5 | can do now |
-| Tab 2 | 9 columns | III.B | TV5 | available |
-| Tab 3 | 5V | III.C | TV5 | mostly available |
-| Tab 4 | Subset counts | III.D | TV5 | available |
-| Tab 5 | Representativeness | III.E | TV5 | PENDING TV1 |
-| Tab 6 | Hyper-parameters | IV.C | TV5 | PENDING TV2 |
-| Tab 7 | Environment | V.A | TV5 | PENDING TV3 |
-| Tab 8 | Experiment matrix | V.C | TV5 | available |
-| Tab 9–13 | E1–E5 results | V.D | TV5 | PENDING TV2 |
-
-## Page budget and what goes to the appendix
-
-I–VI as listed sum to ~9.7–10.2 pages before header, abstract and references — too long with 19 figures and
-13 tables. Keep in the main text: Tables 1(short), 2, 4, 8, 9–13 and Figures 2, 6, 7, 8, 11, 13–16, 18.
-Move to the appendix / slide backup: full data dictionary, hyper-parameter table (keep one sentence in IV.C),
-run registry, Figures 4–5 (cite NVIDIA instead), Figure 9–10, extra demo screenshots. Do a **trial layout in the
-two-column template by 24/11** to check the length.
-
-## Writing order and timeline
-
-1. **21–22/11** — lock fields, units and table IDs (`reports/tables/README.md`); build an exportable two-column
-   draft with I, II, III.A–D, IV.A–C, V.C, Tables 1–4 and 8, empty result tables, captions and slide skeleton.
-2. **23–24/11** — trial layout; add III.E, IV.B.3, V.A, V.B when TV1/TV3 deliver; send the open questions to TV2.
-3. **25–26/11** — read the handed-over logs with TV2/TV4: config, split, failed runs, sources; draft result
-   paragraphs as questions; prepare speaker notes.
-4. **27/11** — fill the official TV2 package into tables **and** figures from the same data; write V.D–E, VI.B, VI.D–E,
-   then ABSTRACT.
-5. **28/11** — check the exported PDF (numbers vs package, run_id in every caption, references, AI statement,
-   page limit) and rehearse.
-If something must be cut: architecture theory, tool logos, duplicate UI screenshots and the full-month projection
-go first. Missing runs are labelled `partial` with the scope of the conclusion narrowed.
+## ABSTRACT  (150–200 words, write last)
+- Write: context (short, often anonymous sessions) → what we built (pipeline on the first week of October 2019 from
+  the Kaggle "eCommerce Behavior Data from Multi-Category Store", Popularity / GRU / XLNet, Recall@20 and NDCG@20) →
+  system side (E1–E5 on a cloud GPU VM with Docker + NVIDIA Merlin) → two sentences of key findings
+  `[PENDING: TV2 package]` → tools.
+
+## CHAPTER 1. INTRODUCTION  (≈1 page)
+
+### 1.1. Background and Problem Statement
+- Write: why session-based recommendation (anonymous users, no long history); why this is a Big Data problem — one
+  month is a 5.67 GB CSV (5,668,612,855 bytes), 42,448,764 events, 3,022,290 users, 9,244,421 session IDs
+  `[AVAILABLE: data/raw_audit.csv]`; problem definition: given the item prefix of a `user_session`, return the top-20
+  products; target = next real item (A → B → C ⇒ predict D) (`docs/modeling/next_item_problem.md`).
+- Write: prior work in two or three sentences — GRU4Rec (Hidasi et al., ICLR 2016); Transformer-based sequential
+  recommendation: BERT4Rec (Sun et al., CIKM 2019), Transformers4Rec (de Souza Pereira Moreira et al., RecSys 2021).
+- Show: Figure 1.1 — one session as a sequence, prefix → target, with a top-20 list.
+- Avoid: claims about CTR/conversion or that pandas "cannot" handle the data (not measured).
+
+### 1.2. Objectives and Research Questions
+- Write: objective as the course states it — choose suitable data, build a processing pipeline, deploy and
+  experiment, analyse how data size and resources affect the system.
+- Show: RQ list — RQ1 (E1) which model ranks better and at what cost · RQ2 (E2) how each pipeline stage reacts to more
+  data · RQ3 (E3) how training batch size changes time, throughput and memory · RQ4 (E4) CSV or Parquet · RQ5 (E5)
+  runtime per million events and the bottleneck stage.
+
+### 1.3. Scope and Contributions
+- Write: data scope (`2019-Oct.csv`, 2019-10-01 00:00:00 – 2019-10-07 23:59:59 UTC; view, cart, purchase); models and
+  metrics; out of scope (feature ablation, extra models, online serving, cold start, rebalancing).
+- Write: reused — NVIDIA Merlin Transformers4Rec notebooks 01–03 at commit `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`
+  (Apache-2.0); added by the team — session-level stable-hash sampling at four sizes, a shared evaluation protocol and
+  catalog for three models, the Popularity baseline, a benchmark collector, E1–E5 on a cloud GPU VM, the demo.
+
+## CHAPTER 2. DATASET AND PREPROCESSING  (≈2 pages)
+
+### 2.1. Dataset Overview and Big Data Characteristics
+- Write: source (REES46 Open CDP via Kaggle), one row = one view / cart / purchase with time, product, category,
+  brand, price, user, session; data dictionary of the 9 columns `[AVAILABLE: docs/data_dictionary.md]`.
+- Write: October 2019 audit `[AVAILABLE: data/raw_audit.csv]` — 42,448,764 events; 166,794 products; 624 category IDs;
+  3,445 brands; 3,022,290 users; 9,244,421 sessions; view 96.07% / cart 2.18% / purchase 1.75%; missing
+  `category_code` 31.8%, `brand` 14.4%; 1.13–1.64 M events per day.
+- Show: Table 2.1 — 5V: Volume 5.67 GB, 42.4 M rows · Velocity daily event log (processed in batch) · Variety 3 event
+  types, 624 categories, 3,445 brands, price, time · Veracity missing category/brand, null sessions, consecutive repeats
+  · Value offline-measurable next-item quality and system cost.
+- Show: Figure 2.1 — events per day in October (the first week is a typical slice, not a peak).
+
+### 2.2. Subset Selection
+#### 2.2.1. Sampling Population and Sampling Rule
+- Write: population (lecturer point 2) = every event of 1–7 Oct 2019 (UTC) with a non-null `user_session`:
+  8,829,314 events, 1,877,365 sessions `[AVAILABLE: data/manifests/raw_subset_counts.csv]`.
+- Write: rule = SHA-256 stable hash of the original session ID (seed 42), nested 10 ⊂ 25 ⊂ 50 ⊂ 100%; all events of a
+  selected session kept; rows never sampled (`docs/session_sampling.md`). The percentage is a share of **sessions**;
+  "100%" = the whole eligible first week, not the month.
+- Write: why it fits — whole sessions keep the target; nested sizes give a growing load with one configuration; no
+  filtering on category, brand or user type.
+- Show: Figure 2.2 — month → week → hash → four nested subsets, with session counts.
+
+#### 2.2.2. Subset Statistics
+- Show: Table 2.2 (raw sample and after cleanup, `[AVAILABLE: data/manifests/raw_subset_counts.csv,
+  e2_preprocessing_verified.json]`):
+
+| Subset | Raw events | Events after cleanup | Sessions | Users | Products (= catalog) | Sequences (≥ 2 items) |
+| --- | --- | --- | --- | --- | --- | --- |
+| 10% | 882,808 | 638,089 | 187,563 | 163,846 | 63,398 | 96,433 |
+| 25% | 2,213,138 | 1,601,068 | 469,728 | 356,266 | 87,247 | 241,715 |
+| 50% | 4,421,037 | 3,197,007 | 938,071 | 601,598 | 103,940 | 482,239 |
+| 100% | 8,829,314 | 6,390,928 | 1,877,365 | 957,537 | 118,333 | 965,304 |
+
+- Write: session ratio vs event ratio are close (0.0999 vs 0.1000 at 10%) — "close", not "equal"; cleanup removes
+  ~28% of events at every size; the ≥ 2 rule keeps ~51% of sessions.
+- Dig into: the catalog grows +87% from 10% to 100% while sessions grow 10× (finding 2) — this is why E2 accuracy
+  must be read together with catalog size.
+
+#### 2.2.3. Diversity and Representativeness
+- Show: Table 2.3 — coverage vs the full week after cleanup: category IDs 557 / 560 / 562 / 565; category codes 123 at
+  all sizes; brands 2,277 / 2,455 / 2,572 / 2,640; products 54% / 74% / 88% / 100% of 118,333
+  `[AVAILABLE: e2_preprocessing_verified.json]`.
+- Show: Figure 2.3 — session-length histogram of the four subsets on one chart (median 2, p90 8, 1.67% ≥ 20 items at
+  every size).
+- Write: subsets keep the category/brand mix and the session-length shape; what grows is the product long tail. What
+  no subset represents: other weeks, months and seasonality.
+- Optional: missing `category_code` / `brand` share per subset (≈34% / 15% in the DuckDB comparison profiles,
+  `data/manifests/weekly_subset_profiles.json`) `[PENDING: TV1 for the cuDF run]`.
+
+### 2.3. Event-Type Distribution and Imbalance
+- Show: Table 2.4 — event mix raw week (view 96.21% / cart 2.07% / purchase 1.72%,
+  `[AVAILABLE: data/raw_audit.csv raw_week]`) vs after cleanup (100%: view 6,389,507 = 99.98%, cart 795, purchase 626;
+  same pattern at 10/25/50%) `[AVAILABLE: e2_preprocessing_verified.json]`.
+- Write: why the shares collapse — the notebook 01 rule removes consecutive repeats of the same product, and a cart
+  or purchase usually follows a view of that product; the model therefore learns almost only from view sequences.
+- Write: no rebalancing (allowed by the lecturer); the task is the next interaction of any type.
+- Dig into (lecturer point 4): with < 0.03% cart/purchase targets, a per-event-type metric is not meaningful; instead
+  report the target event mix of test D and discuss what the model can and cannot learn (purchase intent is mostly
+  invisible) `[PENDING: TV2 target mix of test D]`.
+
+### 2.4. Preprocessing Pipeline
+> Data processing steps only; code and run architecture are in 4.1.1.
+- Show: Figure 2.4 — `2019-Oct.csv` → week filter + stable-hash sampling → cuDF cleanup on the raw week (UTC timestamp,
+  null sessions dropped, sort, consecutive repeats removed, join of the monthly first-seen lookup) → NVTabular
+  workflow fitted on the whole week of the subset → group by session, `ListSlice(-20, pad=True)`, ≥ 2 interactions →
+  `day_index` → ~80/10/10 split per partition → Parquet + schema + mapping + catalog + manifest.
+- Write: the data decision of 21/11 — official experiment data = cuDF cleanup on the raw week; the earlier DuckDB
+  monthly cleanup is kept for comparison (8–23 events difference per subset, `docs/weekly_workflow.md`) and remains
+  the source of the monthly first-seen lookup (166,794 products, 1.516 s, reported once).
+- Write: workflow fitted before the split on the whole week of each subset (padding 0, null 1, OOV 2, known items from
+  3), fixed across partitions; models see encoded IDs, outputs are mapped back to original product IDs.
+- Show: Table 2.5 — rows in/out per step for the 10% and 100% subsets (raw → after cleanup → sessions → sequences).
+
+## CHAPTER 3. METHODS AND EVALUATION PROTOCOL  (≈1.5 pages)
+
+### 3.1. Recommendation Models
+> Each model opens with one or two sentences on the work it comes from (cited), then our configuration.
+#### 3.1.1. Popularity
+- Write: cumulative count of real interactions in train partitions 1…t (each counted once, not per epoch); unseen
+  catalog items score 0; ties by ascending encoded ID; same list for every session. Built by the team (not in
+  notebook 03).
+#### 3.1.2. GRU
+- Write: origin GRU4Rec; ours follows Transformers4Rec notebook 03 (embedding → MLP → GRU d_model 128, 1 layer →
+  next-item head; causal training; lr 0.00071) — do not call it "GRU4Rec".
+#### 3.1.3. XLNet
+- Write: XLNet block (Yang et al., NeurIPS 2019) in Transformers4Rec, trained with item-level masked language modelling
+  (as in BERT4Rec), not the paper's permutation objective; d_model 192, 2 layers, 4 heads; evaluated on the last item;
+  lr 0.000666.
+- Show: Table 3.1 — configuration of the three models: input, sequence length 20, train/eval batch 256/32, 3 epochs,
+  learning rate, seed, parameters `[DECIDE: TV2 confirms the values used]`.
+
+### 3.2. Data Splitting and Leakage Considerations
+> Final content waits for TV2 on the fixed validation/test question.
+- Write: sessions grouped first; `day_index` from the first event (source formula, not a calendar day); 7 partitions;
+  inside each, ~80/10/10 train/validation/test (GPU seed 1, sorted by `user_session`).
+- Show: Table 3.2 — sessions per split and per subset; test partition D. Comparison split (DuckDB set): test D =
+  1,337 / 3,266 / 6,427 / 13,052 sessions for 10/25/50/100% (`data/manifests/weekly_splits_verified.json`)
+  `[PENDING: TV1 counts of the official cuDF split]`.
+- Write (leakage, never "leakage-free"): weights and Popularity counts learn only from train partitions; test D used
+  once after the configuration is fixed; target hidden by causal shift / masking. Limitation: vocabulary and feature
+  statistics are fitted on the whole week before the split.
+- Dig into (lecturer point 6) `[DECIDE: TV2 before E2]`: today each subset has its own test D, its own catalog and its
+  own number of test sessions. Proposal: evaluate every E2 size on one frozen validation/test set (e.g. the
+  validation/test sessions of partition D of the 10% subset, which exist in all nested subsets) and vary only the
+  training sessions. Time and memory columns are unaffected.
+
+### 3.3. Training and Validation Procedure
+- Write: daily fine-tuning — train on partition t, validate on t+1, weights continue, LR scheduler reset per day;
+  configuration chosen on validation only; final test D with the checkpoint trained on 1…D−1; E3 compares on
+  validation D.
+- Show: Figure 3.1 — timeline of partitions 1…7 with train/validation pairs and the final test D.
+
+### 3.4. Evaluation Rules and Metrics
+- Write: target = last real item; shared catalog = real products in the subset's weekly vocabulary; seen items
+  allowed; technical tokens excluded; K = 20; one aggregation for three models.
+- Write: Recall@K = (1/|S|) Σ 1[rank ≤ K]; NDCG@K = (1/|S|) Σ 1/log2(rank + 1) if rank ≤ K else 0 (single target →
+  IDCG = 1); sum over valid sessions / number of valid sessions.
+- Dig into (finding 6): report `n_sessions` with every score; with ~1,300 test sessions at 10%, a 1–2 point gap may be
+  noise — add a 95% bootstrap interval if TV2 agrees `[DECIDE: TV2]`.
+
+## CHAPTER 4. SYSTEM SETUP AND EXPERIMENTAL DESIGN  (≈1.5 pages)
+
+### 4.1. System and Runtime Setup
+#### 4.1.1. System Implementation
+> Code and run architecture only — do not repeat the data steps of 2.4.
+- Write: what is reused from NVIDIA (notebooks 01–03 at the pinned commit) and what the team changed (sampling, split
+  protocol, shared catalog, Popularity, measurement) (`docs/references.md`, `docs/preprocessing_review.md`).
+- Show: Figure 4.1 — architecture: Git (code, configs, manifests) → AWS GPU VM → Docker (Merlin) → pipeline / models /
+  evaluation scripts → benchmark collector (`run.json`, `metrics.json`, logs) → tables, figures, report, demo.
+- Write: run flow — `configs/experiments.json` → `scripts/runs/run_experiments.py` → `benchmark/collect.py` →
+  `evaluation/run_neural.py`, `run_popularity.py`; Git keeps code, configs, manifests, metrics and small logs; raw
+  CSV, large Parquet and checkpoints stay on the VM and are referenced by manifests.
+#### 4.1.2. Deployment Environment
+- Show: Table 4.1 `[AVAILABLE: environment/README.md]` — AWS VM, Ubuntu 22.04.5 LTS; Tesla T4 15,360 MiB (compute
+  7.5); Intel Xeon Platinum 8259CL, 8 vCPU; 30.98 GiB RAM; driver 570.172.08; CUDA 12.1 in the container; Docker
+  28.4.0; image `nvcr.io/nvidia/merlin/merlin-pytorch:23.12` (digest pinned); Python 3.10.12; PyTorch 2.1.0a0;
+  Transformers4Rec 23.12.00; cuDF 23.04.00; NVTabular 23.08.00. Instance type and cost per hour `[PENDING: TV3]`.
+- Write: why a cloud GPU — NVTabular and GRU/XLNet need an NVIDIA GPU; one shared, reproducible image; allowed but not
+  required by the lecturer (point 8).
+
+### 4.2. Benchmark Measurement
+#### 4.2.1. Processing and Training Time
+- Write: stages measured separately — read, prepare (to GPU, timestamp, sort, repeat removal, lookup join, write),
+  workflow fit, split; shared first-seen reported once; training incl. input scan; inference =
+  `full_evaluation_wall_v1` (read, prepare, predict, rank, aggregate, write) and ms/session
+  (`docs/modeling/inference_timing.md`).
+#### 4.2.2. Memory Usage and Throughput
+- Write: peak process-tree RSS (collector, 0.05 s sampling, may double-count shared pages); peak CUDA reserved memory;
+  sessions/s; units MiB/GiB.
+#### 4.2.3. Measurement Conditions and Run Status
+- Write: same VM and image; one run per configuration; warm-up/cache policy `[PENDING: TV3]` (the preprocessing
+  timings of 21/11 are one sequential run per subset, cache not controlled); status pass / fail / OOM / timeout kept;
+  failed runs reported, not deleted.
+
+### 4.3. Experiment Designs
+- Show: Table 4.2 (`configs/experiments.json`, `docs/experiment_matrix.md`) — question, variable, fixed settings,
+  outputs: E1 Popularity / GRU / XLNet on 10%, test D · E2 GRU on 10/25/50/100%, test D (frozen test set if adopted) ·
+  E3 GRU 10%, train batch 32 vs 128, validation D · E4 CSV vs Parquet, raw 10% week subset, same content · E5 seconds
+  per million events from E2, no new runs.
+- Write: E2 and E5 are the core experiments (lecturer point 9); E3 and E4 optional (point 10); why batch size is the
+  resource variable (it directly sets GPU memory and throughput on one GPU; CPU/RAM limits not varied).
+
+## CHAPTER 5. RESULTS AND DISCUSSION  (≈3 pages, largest chapter)
+Every value from the official TV2 metrics package; every table/figure cites run IDs; failed/OOM runs shown with status.
+Pattern per experiment: setup (one line) → table → figure → analysis (what changed, how much, why, which limitation).
+
+### 5.1. Experimental Results
+#### 5.1.1. E1: Model Comparison
+- Show: Table 5.1 — Recall@20, NDCG@20, n_sessions, training time, inference ms/session, peak CPU and GPU memory for
+  Popularity, GRU, XLNet (runs e1-popularity-010, e1-gru-010, e1-xlnet-010) `[PENDING: TV2]`.
+- Show: Figure 5.1 — quality vs cost (Recall@20 against training time).
+- Dig into: gain over Popularity per second of training and per GiB of GPU memory; whether the GRU–XLNet gap is larger
+  than the uncertainty of ~1,300 test sessions.
+#### 5.1.2. E2: Dataset Size and System Performance
+- Show: Table 5.2 — per subset: events, sessions, catalog size, read / prepare / workflow / split / training /
+  inference time, peak memory, Recall@20 (frozen test set if adopted) `[PENDING: TV2/TV3]`.
+- Show: Figure 5.2 — stacked bars of stage times per subset. Preliminary preprocessing values (TV1 manifest, not yet
+  E2): total 30.45 / 34.09 / 37.86 / 45.41 s; workflow fit 20.57 / 22.14 / 23.24 / 25.89 s; split 8.51 / 10.01 /
+  11.87 / 14.84 s; prepare 1.37 / 1.94 / 2.75 / 4.69 s; read 0.17 / 0.37 / 0.74 / 1.36 s.
+- Dig into: which stages are fixed cost (workflow fit) and which grow with data (read, prepare, split, training);
+  Recall vs data size with the catalog-size caveat (finding 2).
+#### 5.1.3. E3: Training Batch Size
+> Optional — if not run in time, keep the heading and state the reason.
+- Show: Table 5.3 — batch 32 vs 128: training time, sessions/s, peak GPU memory, validation Recall@20 `[PENDING]`.
+- Dig into: speed–memory trade-off and whether quality changes with batch size at a fixed number of epochs.
+#### 5.1.4. E4: CSV versus Parquet
+> Optional — if not run in time, keep the heading and state the reason.
+- Show: Table 5.4 — file size, read time, preprocessing time, reader memory for the same 10% raw week subset
+  `[PENDING: TV3 official run]`. Smoke on 21/11 (one run, cache not controlled, `e4_preprocessing_smoke.json`):
+  118,113,591 B vs 25,945,758 B (4.55× smaller); read 0.166 s vs 0.103 s; preprocessing 31.9 s vs 31.5 s.
+- Dig into: storage gain vs end-to-end gain — reading is < 1% of preprocessing on the GPU pipeline.
+#### 5.1.5. E5: Scalability and Bottlenecks
+- Show: Figure 5.3 — seconds per million events and composed runtime vs events; Table 5.5 — per stage share of the
+  total `[PENDING: TV2 from E2]`.
+- Write: composed seconds = raw read + preprocessing + training + final evaluation; seconds per million events =
+  composed seconds × 10⁶ ÷ measured weekly events; shared first-seen once; `partial` if an E2 run is missing.
+- Dig into: bottleneck stage at 100% and the projected cost of the full month (42.4 M events), stated as an
+  extrapolation.
+
+### 5.2. Discussion
+#### 5.2.1. Effects of Dataset Size on Time and Memory
+- Write: growth of each stage and of peak memory with events (sub-linear, linear, or worse); fixed vs variable cost;
+  what to optimise first.
+#### 5.2.2. Recommendation Quality and Event-Type Imbalance
+- Write: model differences; effect of the view-only sequences (finding 3) and of the growing catalog (finding 2) on
+  Recall/NDCG; what the scores mean for an online store.
+#### 5.2.3. Interpretation Limits
+- Write: one run per configuration; small test set at 10%; preprocessing fitted before the split; 7 days only;
+  product ID only; batch size the only resource variable; cache not controlled in preprocessing timings; RSS
+  double-counting.
+
+### 5.3. Recommendation Demo
+- Show: Figure 5.4 — screenshot: one session's history with original product IDs, actual next item, top-20 of each
+  model with hit and rank; predictions computed offline `[PENDING: TV4 on real output]`.
+
+## CHAPTER 6. CONCLUSION  (≈0.75 page)
+### 6.1. Main Findings
+- Write: one sentence per research question with its key number; one paragraph on how data size and resources affect
+  the system and which stage to optimise first.
+### 6.2. Limitations
+- Write: short list referring to 5.2.3, plus failed/OOM runs and the fit-before-split vocabulary.
+### 6.3. Reproducibility
+- Write: commands from raw CSV to subsets, cuDF cleanup, workflow, split, training, evaluation and metrics; config
+  files; seeds (hash 42, split 1); pinned NVIDIA commit and Docker image digest; manifests and checksums; one re-run by
+  another member and its result `[PENDING: TV3 re-run log]`.
+### 6.4. Future Works
+- Write: side features (category, brand, price, recency); a cleanup rule that keeps cart/purchase signals; longer
+  periods and other months; more resource settings (CPU/RAM limits, workers, multi-GPU); past-only vocabulary and cold
+  start; online inference.
+
+## Back matter (group template)
+- LIST OF REFERENCES — IEEE, numbered in order of first citation (dataset, GRU4Rec, Cho et al. GRU, XLNet,
+  Transformers4Rec, BERT4Rec, Järvelin & Kekäläinen NDCG, NVIDIA repo commit, tool docs); verify every field.
+- REPORT REVIEW CONFIRMATION MINUTES.
+
+## Open items (owners)
+1. `[DECIDE: TV2]` Frozen validation/test set for E2 (3.2) — before E2 runs.
+2. `[DECIDE: TV2]` Bootstrap interval or not (3.4, 5.1.1).
+3. `[PENDING: TV2]` Target event mix of test D (2.3, 5.2.2); confirmed model configuration (3.1).
+4. `[PENDING: TV1]` Split counts and missing-value shares of the official cuDF run (2.2.3, 3.2).
+5. `[PENDING: TV3]` VM access for TV2, warm-up/cache policy, instance type and cost, re-run log (4.1.2, 4.2.3, 6.3).

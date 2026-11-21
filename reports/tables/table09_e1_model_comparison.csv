@@ -1,4 +1,0 @@
-run_id,status,data_kind,model,subset,split,eval_partition,n_sessions,recall_at_20,ndcg_at_20,train_with_input_scan_seconds,inference_seconds,inference_ms_per_session,inference_sessions_per_second,elapsed_seconds,peak_process_tree_rss_gib,peak_cuda_reserved_gib,source_metrics,source_run
-e1-popularity-010,pending,,popularity,10,test,D,,,,,,,,,,N/A,metrics/raw/e1-popularity-010/artifacts/metrics.json,metrics/raw/e1-popularity-010/run.json
-e1-gru-010,pending,,gru,10,test,D,,,,,,,,,,,metrics/raw/e1-gru-010/artifacts/metrics.json,metrics/raw/e1-gru-010/run.json
-e1-xlnet-010,pending,,xlnet,10,test,D,,,,,,,,,,,metrics/raw/e1-xlnet-010/artifacts/metrics.json,metrics/raw/e1-xlnet-010/run.json

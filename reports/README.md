@@ -1,17 +1,20 @@
 # Reports — TV5 Report & Results
 
-Status (20/11/2026): **skeleton only**. No experiment numbers are filled in.
+Status (21/11/2026): outline and table templates ready; no experiment numbers filled in (model runs not started).
 All results must come from the official TV2 metrics package (built from TV3 raw logs).
 
 ## Layout
 
 | Path | Content | Owner |
 | --- | --- | --- |
-| `reports/report_outline.md` | English report outline following the course sample report skeleton (I–VI), with data sources, figure/table checklist and writing order | TV5 |
-| `reports/report.md` (later) | Report draft; final version exported to the course template (PDF) | TV5 |
-| `reports/tables/` | E1–E5 tables (CSV/Markdown) + captions, filled only from the metrics package | TV5 |
+| Google Docs [report](https://docs.google.com/document/d/1RSZgWxnT7YAtpn2wKLst-MKWnkvyTfD9bsncIv5o50M/edit) | **The report itself**, on the group template (link in the team sheet); written here, exported to PDF at the end | TV5 |
+| `reports/report_outline.md` | Plan of the report: what each section writes and shows, sources of every number, team status, open items | TV5 |
+| `reports/tables/` | Templates of the Chapter 5 tables (E1–E5): one CSV per table with `run_id`, metric, unit and source columns, empty until the TV2 package arrives; `README.md` = where each field comes from; `format_check.md` = fields checked against the outputs (TV5 tasks 20–22/11) | TV5 |
 | `reports/figures/` | Figures + captions + source `run_id` | TV4 → TV5 |
-| `reports/slides/` | Slide outline (21 slides, 15:00 timing, backup slides, Q&A prep), later speaker script and final deck | TV5 (demo part: TV4) |
+| `reports/slides/` | Slide outline (18 slides, 15:00 timing, backup slides, Q&A prep), later speaker script and final deck | TV5 (demo part: TV4) |
+
+**Outline (updated 21/11/2026):** team chapter proposal after the lecturer's e-mail of 20/11, updated to the
+cuDF data decision of 21/11.
 
 Demo lives in `app/` (TV4). References and AI statement: `docs/references.md`, `docs/ai-use-statement.md`.
 
@@ -43,6 +46,7 @@ Demo lives in `app/` (TV4). References and AI statement: `docs/references.md`, `
 - [x] Report outline (`report_outline.md`)
 - [x] Slide outline (`slides/slide_outline.md`)
 - [x] E1–E5 metric/table structure: run_id, metric, unit, source field/log, open questions for TV2 (`tables/README.md`, task 20/11)
+- [x] Output format check vs report needs + list for TV2 (`tables/format_check.md`, task 21/11) — answers pending
 - [ ] Metrics package received from TV2
 - [ ] Results / limitations / reproducibility written
 - [ ] Report and slides final (English)

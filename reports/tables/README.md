@@ -32,7 +32,7 @@ path above.
 
 | Experiment | run_id | Model | Subset | Split evaluated | Changed variable | Fixed |
 | --- | --- | --- | --- | --- | --- | --- |
-| E1 | `e1-popularity-010` | Popularity | 10% | test (partition D) | model | seed 1, seq len 20, train 1…D−1 |
+| E1 | `e1-popularity-010` | Popularity | 10% | test (partition D) | model | train 1…D−1; no batch/epoch/seed (counting only); split seed 1 belongs to the membership, not the model |
 | E1 | `e1-gru-010` | GRU | 10% | test D | model | batch 256, 3 epochs |
 | E1 | `e1-xlnet-010` | XLNet | 10% | test D | model | batch 256, 3 epochs |
 | E2 | `e2-gru-010` / `-025` / `-050` / `-100` | GRU | 10/25/50/100% | test D | subset size | batch 256, 3 epochs |
@@ -46,29 +46,32 @@ accuracy table.
 ## 3. Metrics needed, with unit and source field
 
 Display unit = what the report shows; raw unit = what the file stores. **Unit convention:** memory and file sizes
-are shown in binary units and labelled **MiB / GiB** (1 GiB = 1024³ bytes), stated once in V.A. Always name which
+are shown in binary units and labelled **MiB / GiB** (1 GiB = 1024³ bytes), stated once in 4.2.2. Always name which
 memory is reported: *peak process-tree RSS* (CPU, sampled), *peak CUDA reserved* (GPU), or *peak reader RSS* (E4).
-Exception: the raw CSV size in III (5,668,612,855 bytes) is quoted as "5.67 GB" (decimal) — write "(10⁹ bytes)"
+Exception: the raw CSV size in 1.1 / 2.1 (5,668,612,855 bytes) is quoted as "5.67 GB" (decimal) — write "(10⁹ bytes)"
 once, or convert to 5.28 GiB for consistency.
 
-### Table ID map (same IDs in report, slides and this file)
+### Table ID map (same IDs as `reports/report_outline.md`)
 
 | Table | Content | Source type |
 | --- | --- | --- |
-| TABLE 1 | Team roles | `AGENTS.md` §9 |
-| TABLE 2 | 9 columns | `docs/data_dictionary.md` |
-| TABLE 3 | 5V | `data/raw_audit.csv`, `raw_audit_manifest.json`, cleanup manifest |
-| TABLE 4 | Subset counts + session/event ratios | `data/manifests/raw_subset_counts.csv` (manifest, no run_id) |
-| TABLE 5 | Representativeness | TV1 distribution output (manifest, no run_id) |
-| TABLE 6 | Hyper-parameters (appendix) | `metrics.json → config` of the E1 runs |
-| TABLE 7 | Environment | `environment/README.md`, `run.json → metadata.environment` |
-| TABLE 8 | Experiment matrix | `configs/experiments.json` |
-| TABLE 9–12 | E1–E4 results | `metrics/raw/<run_id>/` (run_id per row) |
-| TABLE 13 | E5 scalability | `reports/e5/summary.json`, rows cite the **E2** run_ids |
+| Assignment table (front matter) | Team roles | `AGENTS.md` §9 |
+| Data dictionary (2.1) | 9 columns | `docs/data_dictionary.md` |
+| Table 2.1 | 5V | `data/raw_audit.csv`, `raw_audit_manifest.json` |
+| Table 2.2 | Subset statistics (raw and after cleanup) | `data/manifests/raw_subset_counts.csv`, `data/manifests/e2_preprocessing_verified.json` (manifest, no run_id) |
+| Table 2.3 | Coverage / representativeness | `e2_preprocessing_verified.json` → `runs[].profile` (manifest, no run_id) |
+| Table 2.4 | Event mix raw vs after cleanup | `data/raw_audit.csv`, `e2_preprocessing_verified.json` → `profile.event_types` |
+| Table 2.5 | Rows in/out per preprocessing step | `e2_preprocessing_verified.json` |
+| Table 3.1 | Model configuration | `metrics.json → config` of the E1 runs |
+| Table 3.2 | Sessions per split | TV1 split manifest of the official cuDF run |
+| Table 4.1 | Environment | `environment/README.md`, `run.json → metadata.environment` |
+| Table 4.2 | Experiment matrix | `configs/experiments.json` |
+| Tables 5.1–5.4 | E1–E4 results | `metrics/raw/<run_id>/` (run_id per row) |
+| Table 5.5 | E5 scalability | `reports/e5/summary.json`, rows cite the **E2** run_ids |
 
-Dataset tables (1–5) cite their CSV/manifest directly; experiment tables (9–13) cite run_ids.
+Dataset tables (Chapter 2) cite their CSV/manifest directly; experiment tables (5.1–5.5) cite run_ids.
 
-### E1 — model comparison (TABLE 9, FIGURES 11–12)
+### E1 — model comparison (Table 5.1, Figure 5.1)
 
 | Report column | Source field | Raw unit | Display | Scope / note |
 | --- | --- | --- | --- | --- |
@@ -82,30 +85,34 @@ Dataset tables (1–5) cite their CSV/manifest directly; experiment tables (9–
 | Whole-run wall time | `run.json` → `elapsed_seconds` | s | s | whole launched command |
 | Peak CPU memory | `run.json` → `peak_process_tree_rss_bytes` | bytes | GiB | sampled parent+child RSS; may double-count shared pages |
 | Peak GPU memory | `metrics.json` → `peak_cuda_reserved_bytes` | bytes | GiB | neural runs only; Popularity = "N/A" |
-| Model size (optional) | `metrics.json` → `parameter_bytes` | bytes | MB | neural only |
+| Model size (optional) | `metrics.json` → `parameter_bytes` | bytes | MiB | neural only |
 | Status | `run.json` → `status`, `exit_code` | — | badge | failed/OOM runs listed, metrics suppressed |
 
 Do **not** compare `prediction_compute_seconds` across models (diagnostic only, per `inference_timing.md`).
 
-### E2 — data size (TABLE 10, FIGURE 13)
+### E2 — data size (Table 5.2, Figure 5.2)
 
 | Report column | Source field | Raw unit | Display | Note |
 | --- | --- | --- | --- | --- |
 | Subset | `run.json` → `metadata.run.subset` | % sessions | 10/25/50/100% | session ratio, not event ratio |
-| Events (measured) | `metadata.pipeline_metrics.n_events` | events | thousands sep. | x-axis of E2/E5 |
-| Sessions, users, items, categories, brands | TV1 subset manifest (`data/manifests/raw_subset_counts.csv` + ETL counts) | counts | integer | **not in run.json** — need TV1 |
-| Vocabulary / catalog size | TV1 mapping/catalog of the subset | items | integer | **need TV1/TV2** |
+| Events (measured) | `metadata.pipeline_metrics.n_events` | events | thousands sep. | raw weekly events of the subset; x-axis of E2/E5 |
+| Events after cleanup | `metadata.pipeline_metrics.events_after_repeat_removal` | events | thousands sep. | after cuDF repeat removal |
+| Sessions, users, items, categories, brands | `data/manifests/e2_preprocessing_verified.json` → `runs[].profile.distinct` | counts | integer | **available** (official cuDF run); not in run.json |
+| Sequences (≥ 2 interactions) | `e2_preprocessing_verified.json` → `runs[].sequence_count` | sessions | integer | **available** |
+| Vocabulary / catalog size | `e2_preprocessing_verified.json` → `runs[].vocabulary_size` | items | integer | **available**; grows with the subset — show next to accuracy |
 | Raw read time | `metadata.pipeline_metrics.read_seconds` | s | s | TV1 measured stage |
-| Preprocessing time | `metadata.pipeline_metrics.preprocessing_seconds` | s | s | excludes raw read and first-seen |
+| Preprocessing time | `metadata.pipeline_metrics.preprocessing_seconds` | s | s | = prepare + workflow + split; excludes raw read and first-seen |
+| Prepare / workflow fit / split time | `metadata.pipeline_metrics.prepare_seconds`, `workflow_seconds`, `split_seconds` | s | s | stage breakdown for Figure 5.2 (copied from TV1 `timings.json`) |
 | Shared first-seen cost | `metadata.pipeline_metrics.first_seen_seconds` | s | s | same value for all subsets — show once, separately |
 | Training time | `metrics.json` → `train_with_input_scan_seconds` | s | s | |
 | Inference time | `metrics.json` → `inference_seconds` | s | s | |
 | Peak CPU memory | `run.json` → `peak_process_tree_rss_bytes` | bytes | GiB | model process only |
 | Peak GPU memory | `metrics.json` → `peak_cuda_reserved_bytes` | bytes | GiB | |
-| Data size on disk | — | bytes | MB | **NEED TV1/TV2**: which artifact (raw CSV subset / session Parquet) |
+| Raw subset CSV size | `data/manifests/raw_subset_manifest.json` → `subsets[].output_bytes` | bytes | MiB | **available** (TV1 manifest) |
+| Session Parquet size | — | bytes | MiB | **NEED TV1/TV2**: which Parquet artifact to measure |
 | Recall@20, NDCG@20 (optional column) | `metrics.json` | ratio | 4 dec. | shows if accuracy changes with data |
 
-### E3 — resources (TABLE 11, FIGURE 14)
+### E3 — resources (Table 5.3)
 
 | Report column | Source field | Raw unit | Display | Note |
 | --- | --- | --- | --- | --- |
@@ -119,21 +126,21 @@ Do **not** compare `prediction_compute_seconds` across models (diagnostic only, 
 | Recall@20, NDCG@20 (validation) | `metrics.json` | ratio | 4 dec. | validation split, not test |
 | Cost | — | USD | | **NEED TV3/TV2**: price/hour × wall time, or "not measured" |
 
-### E4 — CSV vs Parquet (TABLE 12, FIGURE 15)
+### E4 — CSV vs Parquet (Table 5.4)
 
 | Report column | Source field (`artifacts/metrics.json` of `e4-010-*`) | Raw unit | Display | Note |
 | --- | --- | --- | --- | --- |
 | Format | `format` | — | CSV / Parquet | |
 | Rows (check) | `n_events` | events | integer | must be equal for both formats |
 | Same content check | `verification`, `verification_method` | — | ✓ | row count **and** multiplicity-sensitive multiset fingerprint of the 9 fields (probabilistic) |
-| File size | `bytes` | bytes | MB | + compression ratio CSV/Parquet |
+| File size | `bytes` | bytes | MiB | + compression ratio CSV/Parquet |
 | Read time | `read_seconds` | s | s | full streamed decode, all 9 fields read as strings (`schema_policy`); OS cache warm after the pair check (`cache_policy`) |
 | Peak reader memory | `peak_read_process_rss_bytes` | bytes | MiB | sampled at batch boundaries |
 | Preprocessing time | `preprocessing.elapsed_seconds` | s | s | TV1 command incl. its own input read |
 | Preprocessing peak memory | `preprocessing.peak_process_tree_rss_bytes` (collector record of the nested command, `benchmark/collect.py`) | bytes | GiB | same RSS scope as model runs |
 | Status | `status` | — | badge | `read_only_diagnostic` runs are not full E4 results |
 
-### E5 — scalability (TABLE 13, FIGURE 16)
+### E5 — scalability (Table 5.5, Figure 5.3)
 
 From `reports/e5/summary.json` / `scalability.csv` (one row per passed E2 run):
 
@@ -150,13 +157,13 @@ From `reports/e5/summary.json` / `scalability.csv` (one row per passed E2 run):
 | Train partitions used | `trained_partition_count`, `eval_day` | count, index | | write in caption |
 | Bottleneck | `bottleneck` | stage name | text | largest stage |
 | Shared first-seen | `first_seen_seconds_shared` | s | s | shown once |
-| Total incl. first-seen | `composed_seconds_with_first_seen` | s | s | end-to-end |
+| Total incl. first-seen | `composed_seconds_with_first_seen` | s | s | composed total incl. the shared first-seen, not an observed end-to-end time |
 | Observed process wall | `process_wall_seconds` | s | s | sanity check vs composed total |
 | Peak memory | `peak_model_process_tree_rss_bytes` | bytes | GiB | |
 | Completeness | `summary.json` → `status` | complete / partial | | partial ⇒ say which subset is missing |
 | Uncertainty | limitations text | — | | one run per subset; **NEED TV2** numeric uncertainty decision |
 
-### Environment (TABLE 7) — joined to every run
+### Environment (Table 4.1) — joined to every run
 
 `run.json` → `metadata.environment` (path + sha256) → GPU, CUDA, driver, Python, torch, package versions;
 neural `metrics.json` also records `gpu`, `cuda`, `packages`. CPU model, cores, RAM, OS, cloud instance and price:
@@ -165,21 +172,34 @@ neural `metrics.json` also records `gpu`, `cuda`, `packages`. CPU model, cores, 
 ## 3b. Empty table files (fill when the package arrives)
 
 One CSV per experiment table, with planned run_ids and source paths pre-filled, all values empty, `status = pending`:
-`table09_e1_model_comparison.csv`, `table10_e2_data_size.csv`, `table11_e3_batch_size.csv`,
-`table12_e4_storage_format.csv`, `table13_e5_scalability.csv`. Column names follow the source fields above
-(bytes already converted to the display unit named in the column). Copy values only from the TV2 package; set
+`table5_1_e1_model_comparison.csv`, `table5_2_e2_data_size.csv`, `table5_3_e3_batch_size.csv`,
+`table5_4_e4_storage_format.csv`, `table5_5_e5_scalability.csv`. Copy values only from the TV2 package; set
 `status` to `passed` / `failed` / `excluded` and `data_kind` to `real`.
+
+Traceability rules for the CSVs:
+- Every row has `row_type` (`run` = one experiment run; `shared` = a cost shared by several runs, e.g. the monthly
+  first-seen row in Table 5.2), `run_id` (Table 5.5: the E2 `source_run_id`), `status`, `data_kind`, and the paths it
+  was copied from: `source_run` (`run.json`), `source_metrics` (`artifacts/metrics.json`), `source_log`
+  (`stdout.txt`, or E5 `rows[].source_log`), `source_counts` (manifest) where relevant.
+- Column name = source field name. When a value is **converted or derived**, the name says so:
+  `*_gib` / `*_mib` = bytes ÷ 1024³ / 1024² of the field with the same stem; `content_verified` (Table 5.4) is derived
+  from the `verification` object (fingerprints equal → `true`), the raw object stays in `source_metrics`;
+  `train_throughput_sessions_per_second` (Table 5.3) is derived with the formula TV2 confirms
+  (`format_check.md` §3 #4).
 
 ## 4. Caption template
 
-`TABLE n: <what> on the <subset> subset, <split> partition D. Source runs: <run_id, …> (metrics/raw/<run_id>/).
+`Table n.m: <what> on the <subset> subset, <split> partition D. Source runs: <run_id, …> (metrics/raw/<run_id>/).
 Units: <…>. Scope: <timing scope / memory scope>. <Excluded or failed runs, if any>.`
 
-Example (structure only): `TABLE 9: E1 model comparison on the 10% subset, test partition D. Source runs:
+Example (structure only): `Table 5.1: E1 model comparison on the 10% subset, test partition D. Source runs:
 e1-popularity-010, e1-gru-010, e1-xlnet-010. Inference time = full evaluation wall incl. I/O
 (full_evaluation_wall_v1). Peak CPU memory = sampled process-tree RSS.`
 
 ## 5. Open points to send to TV2 (for the 21/11 format check)
+
+Superseded by the consolidated, prioritised list in [`format_check.md`](format_check.md) §3 (12 items with priority and owners);
+the list below is kept for history.
 
 1. E2: per-subset sessions/users/items/categories/brands and vocabulary size — which file is the official source?
 2. E2: which "data size in bytes" to report (raw subset CSV, cleaned Parquet, or session Parquet)?

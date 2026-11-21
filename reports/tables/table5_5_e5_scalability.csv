@@ -1,0 +1,5 @@
+row_type,source_run_id,status,data_kind,subset_pct_sessions,n_events,trained_partition_count,eval_day,raw_read,preprocessing_excluding_raw_read_and_first_seen,train_including_sequence_io,final_evaluation_including_io,composed_seconds_excluding_first_seen,seconds_per_million_events,bottleneck,first_seen_seconds_shared,composed_seconds_with_first_seen,process_wall_seconds,peak_model_process_tree_rss_gib,summary_status,source_summary,source_log
+run,e2-gru-010,pending,,10,,,,,,,,,,,,,,,,reports/e5/summary.json,(copy rows[].source_log of this run)
+run,e2-gru-025,pending,,25,,,,,,,,,,,,,,,,reports/e5/summary.json,(copy rows[].source_log of this run)
+run,e2-gru-050,pending,,50,,,,,,,,,,,,,,,,reports/e5/summary.json,(copy rows[].source_log of this run)
+run,e2-gru-100,pending,,100,,,,,,,,,,,,,,,,reports/e5/summary.json,(copy rows[].source_log of this run)

@@ -2,13 +2,29 @@
 
 ## Trạng thái hiện hành
 
+### TV5 — Cập nhật report/slide outline (sau mail cô 20/11 và dữ liệu cuDF 21/11) — 21/11/2026
+
+- Output: `reports/report_outline.md` — cấu trúc 6 chương theo đề xuất của nhóm, thêm 6.3 Reproducibility; mỗi mục ghi Write/Show/Dig into; bảng đối chiếu mail cô; số dataset theo bộ cuDF raw tuần đã chốt (`data/manifests/e2_preprocessing_verified.json`); trạng thái từng thành viên và các điểm cần TV1/TV2/TV3. `reports/slides/slide_outline.md` cập nhật cột chương. Report viết trên Google Docs (link trong sheet).
+- Cần TV2 quyết: giữ cố định validation/test cho E2; có dùng khoảng tin cậy bootstrap không. Cần TV1: counts split của bộ cuDF chính thức.
+- Bảng E1–E5 đổi tên `reports/tables/table09–13_*.csv` → `table5_1…table5_5_*.csv` theo số bảng của outline; bảng E2 thêm cột events sau cleanup, sequence, category, brand, thời gian prepare/workflow/split và nguồn `data/manifests/e2_preprocessing_verified.json`.
+- Branch: `feature/tv5-report-results`; commit output: `@@HASH@@`. Chưa đánh dấu Done.
+
+### TV5 — Kiểm tra format đầu ra cho report (mốc 21/11) — 20/11/2026
+
+- Output: `reports/tables/format_check.md` — đối chiếu từng nhu cầu của report (accuracy/protocol, cấu hình model, thời gian/throughput/memory, data size, E4, E5, môi trường, prediction cho demo) với field thực tế trong `metrics.json`, `run.json`, `predictions.jsonl`, `summary.json`; đánh dấu có sẵn / chỉ suy ra được / thiếu.
+- Nguồn kiểm tra: code TV2 trên `main` @ `86bc1c8` và toy record `metrics/tv2-config-collector-smoke/` (chỉ đọc tên field, không dùng giá trị), contract TV4 `app/output_contract.md` @ `5b2df90` trên nhánh TV4.
+- Phát hiện mới: `split_counts` đã có sessions/items theo (day, split); sequence length, masking, d_model/layers chỉ là hằng số trong `models/session_models.py`, không ghi theo run; throughput train chưa có field; chưa có bản ghi E4 mẫu nào.
+- Gửi TV2: 12 câu có ưu tiên A/B/C và người phụ trách (§3), thay cho 11 câu cũ; thêm câu E4 `preprocessing_argv` (TV1/TV2/TV3) và snapshot môi trường thật (TV3). Ô trả lời ở §5 của file.
+- Sửa sau review ngày 20/11: tách công thức E5 (composed seconds vs seconds per million events); thêm cột truy nguồn `row_type`, `source_run`, `source_metrics`, `source_log`, `source_counts` vào 5 CSV và quy tắc cột suy ra; bytes CSV raw lấy từ `raw_subset_manifest.json`; sửa trạng thái planned/effective cho sequence length, phạm vi `split_counts`, nguồn CUDA memory; outline không khẳng định độ phủ subset trước khi có bảng III.E.
+- Branch: `feature/tv5-report-results`; commit output: `@@HASH@@`. Chờ TV2 (và TV1/TV3/TV4 theo từng câu) trả lời; chưa đánh dấu Done.
+
 ### TV5 — Report/slide outline và cấu trúc bảng E1–E5 (mốc 19/11 và 20/11) — 20/11/2026
 
 - Output: `reports/README.md` (khung thư mục và quy tắc số liệu), `reports/report_outline.md` (outline tiếng Anh theo khung report mẫu của môn, I–VI, nguồn từng mục, ngân sách trang, lịch viết), `reports/slides/slide_outline.md` (18 slide, 15:00 + Q&A 5:00, backup, chuẩn bị Q&A), `reports/tables/README.md` (run_id, metric, đơn vị, field nguồn, phạm vi đo E1–E5, mẫu caption), `reports/tables/table09–13_*.csv` (bảng trống, đã điền sẵn run_id và đường dẫn nguồn).
 - Cách kiểm tra: đối chiếu outline với PDF report mẫu và `docs/course_requirements.txt` (bảng coverage cuối outline); field trong bảng lấy từ `configs/experiments.json`, `benchmark/collect.py`, `benchmark/format_io.py`, `benchmark/scalability.py`, `evaluation/run_neural.py`, `evaluation/run_popularity.py` và toy record `metrics/tv2-config-collector-smoke/` (chỉ để đọc tên field). Số liệu dataset đã điền trong outline đối chiếu với `data/raw_audit.csv`, `data/manifests/raw_audit_manifest.json`, `data/manifests/raw_subset_counts.csv`, các manifest cleanup/first-seen.
 - Chưa có số liệu benchmark; không dùng số toy hoặc tutorial. Bảng E1–E5 để trống tới khi có metrics package TV2.
 - Cần TV2 xác nhận: 11 điểm tại `reports/tables/README.md` mục 5, gồm nguồn counts E2, định nghĩa throughput E3, cost, uncertainty E5, và mâu thuẫn trong `benchmark/scalability.py` (`limitations` ghi inference compute-only trong khi stage cộng `final_evaluation_including_io`).
-- Branch: `feature/tv5-report-results`; commit output: `f762ca6`. Người nhận chưa xác nhận; chưa đánh dấu Done.
+- Branch: `feature/tv5-report-results`; commit output: `f762ca6`; bản cập nhật: `@@HASH@@`. Người nhận chưa xác nhận; chưa đánh dấu Done.
 
 ### TV2 — Config/collector và inference timing cho mốc 21/11 — kiểm tra 20/11/2026
 
