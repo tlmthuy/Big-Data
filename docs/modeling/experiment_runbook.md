@@ -37,6 +37,12 @@ Mặc định chạy tuần tự, process mới từng run để giải phóng V
 
 ## E2, E4 và E5: phần phụ thuộc TV1
 
+**Nguồn dữ liệu chính thức 21/11:** dùng sessions/schema/catalog/mapping và
+telemetry trong cùng run của [manifest E2 TV1](../../data/manifests/e2_preprocessing_verified.json),
+tại `data/clean/e2-weekly/<subset>/` trên VM. Không ghép telemetry cuDF mới với
+bộ `splits-v2` cũ. Để tạo `pipeline_metrics.json`, dùng
+`pipeline/export_pipeline_metrics.py` theo [lệnh bàn giao](../weekly_workflow.md#tạo-pipeline_metricsjson-cho-tv3).
+
 **E2:** mỗi subset fit workflow độc lập, dùng output tương ứng. TV1 bàn giao telemetry; chuyển các số đo thật sang `configs/pipeline_metrics.example.json` ở path ngoài Git hoặc manifest nhỏ đã review: `status=measured`, `n_events` là event tuần thực sau sampling trước tạo sequence; `read_seconds` là raw read; `preprocessing_seconds` gồm fit/features/groupby/split/write, **không gồm raw read hoặc first-seen tháng**. Ghi source log và artifact first-seen chung có thật. Runner thu train mới, gắn checksum/source của stage TV1 đã đo; đây là số đo ghép stage, không phải một process end-to-end được đo lại. Nếu chưa có telemetry, E2 từ chối chạy; TV3 không tự điền thời gian ước lượng.
 
 **E4:** subset 10%, cùng chín field raw và cùng schema string; Parquet Snappy. Tạo cặp trước benchmark nếu chưa có:
@@ -45,7 +51,7 @@ Mặc định chạy tuần tự, process mới từng run để giải phóng V
 python -m benchmark.format_io --prepare-pair --csv PATH_RAW_SUBSET_10 --parquet PATH_NEW_PARQUET
 ```
 
-Điền hai path vào `site.e4`; `preprocessing_argv` là **cùng một command TV1** hỗ trợ `{input_path}`, `{input_format}`, `{output_dir}`. TV1 cần bàn giao entrypoint đọc cả CSV/Parquet với cùng first-seen và logic nghiệp vụ, ghi artifact vào output_dir mới. Command này chưa có trong repo; E4 full đang chờ TV1, không dùng hàm đọc file làm giả full preprocessing. Có `--read-only` cho diagnostic riêng, không tính là E4 hoàn tất.
+Điền hai path vào `site.e4`; `preprocessing_argv` là **cùng một command TV1** hỗ trợ `{input_path}`, `{input_format}`, `{output_dir}`. TV1 cần bàn giao entrypoint đọc cả CSV/Parquet với cùng first-seen và logic nghiệp vụ, ghi artifact vào output_dir mới. Dùng entrypoint và argv mẫu trong [bàn giao preprocessing TV1](../weekly_workflow.md#đầu-vào-e2e4-và-chi-phí-preprocessing). TV3 đo hai format với cùng cấu hình và quy tắc cache/warm-up. Có `--read-only` cho diagnostic riêng, không tính là E4 hoàn tất.
 
 Pair được kiểm tra số event và multiset fingerprint SHA-256 có giữ multiplicity, schema string đồng nhất, ngoài timed read. Đây là kiểm tra xác suất, không phải chứng minh bitwise hai file. Timing đọc gồm decode toàn bộ dữ liệu; cache ấm sau verification cho cả hai phía, không flush cache hệ điều hành. Chi phí tạo Parquet báo riêng, không trộn vào read time. Preprocessing child ghi elapsed/RSS riêng (gồm lần đọc input của chính pipeline); không cộng thêm standalone read vào elapsed của child rồi gọi là end-to-end. Parent RSS gồm cả audit; `peak_read_process_rss_bytes` chỉ lấy mẫu tại batch boundary.
 

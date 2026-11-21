@@ -2,6 +2,26 @@
 
 ## Trạng thái hiện hành
 
+### TV1 — Tích hợp workflow/sequence/split/bốn subset — 21/11/2026
+
+- Người dùng chấp nhận bộ cuDF `data/clean/e2-weekly/<subset>/` làm dữ liệu
+  thực nghiệm chính thức; first-seen tháng DuckDB tiếp tục dùng chung.
+  Quyết định và đường dẫn artifact ghi trong AGENTS.md, weekly_workflow.md
+  và `data/manifests/e2_preprocessing_verified.json`. Bộ cũ giữ đối chiếu.
+- Commit nguồn: `3c5efa1` workflow/mapping; `debb6da` sequence;
+  `fc5a64c` split; `5bfb520` bốn subset/E2/E4; `e70fc2f` kiểm chứng sequence;
+  `48771d4` converter telemetry và đề xuất nguồn (nay đã được chấp nhận).
+- Review ba task đầu đạt; log sequence-recheck trong Git PASS bốn subset.
+  Converter xuất đủ trường TV2, kiểm checksum first-seen, log và từ chối ghi
+  đè; đã kiểm thử toy hợp lệ/sai checksum/ghi đè. Cú pháp và manifest counts,
+  lineage/timing sums đạt; không rerun GPU hoặc benchmark model trong merge này.
+- Kiểm tra tích hợp: `python -m unittest discover -s evaluation/tests -q`
+  đạt 29/29 test; `git diff --cached --check` sạch.
+- Lệnh preprocessing/verify/export telemetry tại `docs/weekly_workflow.md`.
+  Không yêu cầu receipt hoặc xác nhận đã đọc file; thành viên tự tra manifest.
+  Theo yêu cầu người dùng, merge TV1 vào main và xóa nhánh TV1 cũ.
+
+
 ### TV2 — Config/collector và inference timing cho mốc 21/11 — kiểm tra 20/11/2026
 
 - Theo phạm vi user xác nhận: tích hợp config/collector, kiểm tra bằng toy; **chưa xác minh trên dữ liệu thật**. Bộ công cụ dùng để chạy benchmark E1–E5 và toy logs dùng tham khảo vận hành/format; chưa dùng số toy làm kết luận eCommerce/scalability.

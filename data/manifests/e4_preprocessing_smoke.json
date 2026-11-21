@@ -1,0 +1,43 @@
+{
+  "input_rows_identical_in_order": true,
+  "split_membership_identical": true,
+  "smoke_scope": "One successful preprocessing run per format, cache not controlled",
+  "runs": [
+    {
+      "output_path": "data/clean/e4-csv-v3",
+      "input_bytes": 118113591,
+      "status": "measured",
+      "n_events": 882808,
+      "eligible_events": 882808,
+      "events_after_repeat_removal": 638089,
+      "input_format": "csv",
+      "input_sha256": "dcc9d6f886df06622c22cb940456a9596183f8fd627c5c94f12cb2c78ce46eb2",
+      "first_seen_artifact": "/workspace/data/clean/monthly_first_seen/product_first_seen.parquet",
+      "first_seen_sha256": "5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7",
+      "preprocessing_seconds": 31.911775314000806,
+      "read_seconds": 0.1661419259999093,
+      "prepare_seconds": 1.4072600400004376,
+      "workflow_seconds": 21.845000717999937,
+      "split_seconds": 8.659514556000431
+    },
+    {
+      "output_path": "data/clean/e4-parquet",
+      "input_bytes": 25945758,
+      "status": "measured",
+      "n_events": 882808,
+      "eligible_events": 882808,
+      "events_after_repeat_removal": 638089,
+      "input_format": "parquet",
+      "input_sha256": "f8cea81f4b925425005008e2046028036a208131778459fc36ec1741eb1a9f7d",
+      "first_seen_artifact": "/workspace/data/clean/monthly_first_seen/product_first_seen.parquet",
+      "first_seen_sha256": "5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7",
+      "preprocessing_seconds": 31.505676757999936,
+      "read_seconds": 0.10255469700041431,
+      "prepare_seconds": 1.4027673900000082,
+      "workflow_seconds": 21.618698912000582,
+      "split_seconds": 8.484210455999346
+    }
+  ],
+  "vm_workspace": "/home/ubuntu/tv1-weekly-20261121",
+  "common_first_seen_build_seconds": 1.5164737080049235
+}

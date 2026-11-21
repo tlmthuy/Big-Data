@@ -1,5 +1,13 @@
 # Task 2 — Review Notebook 01: Preliminary Preprocessing
 
+Bộ dữ liệu thực nghiệm đã chốt ngày 21/11/2026: dùng `data/clean/e2-weekly/<subset>/`
+trên VM TV1, cleanup raw tuần bằng cuDF, workflow/split theo NVIDIA. Các bộ
+`workflows/<subset>` và `splits-v2/<subset>` tạo từ cleanup DuckDB trước đó là
+bản đối chiếu. Lấy tất cả artifact và telemetry từ cùng run trong
+[manifest E2](../data/manifests/e2_preprocessing_verified.json); first-seen
+tháng vẫn dùng chung. Xem [hướng dẫn TV1](weekly_workflow.md).
+
+
 Ngày đọc: 19/11/2026. Người phụ trách: TV1.
 
 Nguồn chính: [NVIDIA Notebook 01](https://nvidia-merlin.github.io/Transformers4Rec/stable/examples/tutorial/01-preprocess.html).

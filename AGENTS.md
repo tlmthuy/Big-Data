@@ -53,7 +53,7 @@ Daily fine-tuning: tiếp tục cập nhật cùng model trên train partition t
 
 Năm điểm preprocessing đã chốt theo snapshot NVIDIA `f0ca2b5343dd1e40b5d2422b942f014b224f5c20` ngày 19/11/2026; quyết định này thay thế các đề xuất train-only và khóa phụ CSV trước đó:
 
-1. Sort theo `user_session`, `event_time_ts`; không thêm khóa phụ theo dòng CSV và không cam kết giữ thứ tự CSV. Cập nhật 20/11/2026: bước làm sạch event tháng dùng hành vi timestamp trùng của DuckDB theo quyết định công cụ bên dưới; bước Groupby/gom sequence vẫn theo runtime nguồn đã chốt.
+1. Sort theo `user_session`, `event_time_ts`; không thêm khóa phụ theo dòng CSV và không cam kết giữ thứ tự CSV. Cập nhật 21/11/2026: đầu vào thực nghiệm dùng cleanup raw tuần và Groupby theo cuDF/NVTabular; bản cleanup tháng DuckDB giữ làm lịch sử/nguồn first-seen, theo quyết định công cụ bên dưới.
 2. Giữ 20 item cuối bằng `ListSlice(-20, pad=True)`; lọc session có ít nhất 2 interaction sau loại lặp.
 3. Giữ session nguyên khối trong cửa sổ tuần, gom theo session trước khi gán `day_index`; không kiểm tra/loại theo event cuối vượt cutoff train. Event ngoài cửa sổ tuần vẫn bị lọc trước khi gom sequence.
 4. Fit toàn bộ workflow notebook 02, gồm mapping và thống kê feature, trên dữ liệu tuần của từng subset trước split; cố định mapping/schema qua các partition của subset đó. Theo mô tả nguồn: padding `0`, null `1`, OOV `2`, mã đã biết từ `3`; kiểm tra lại giá trị với runtime đã pin. Candidate catalog dùng các product ID thực có trong vocabulary đã fit của subset, không giới hạn item xuất hiện trong train; ba model dùng chung catalog, loại token kỹ thuật khi xuất Top-20. Popularity vẫn chỉ đếm tương tác train đã dùng để cập nhật model.
@@ -87,6 +87,17 @@ Public Cloud GPU VM
 ```
 
 Quyết định công cụ cập nhật 20/11/2026: dùng DuckDB CPU cho ba bước đã triển khai của TV1: chuyển timestamp UTC, bỏ session null/loại sản phẩm lặp liên tiếp và tạo first-seen toàn tháng. Đây là bản triển khai điều chỉnh từ notebook 01; thứ tự timestamp trùng ở bước cleanup theo DuckDB, không cam kết tương đương cuDF. Chi tiết chênh lệch và giới hạn tại `docs/timestamp_session_cleanup.md`. Không yêu cầu chạy lại ba bước này bằng cuDF để chấp nhận bản DuckDB. Các bước ETL tiếp theo phải tuân thủ mapping/schema/split đã chốt và được kiểm tra tương thích riêng. Train/inference GRU, XLNet vẫn dùng PyTorch/Transformers4Rec trong môi trường NVIDIA trên GPU.
+
+Quyết định cập nhật 21/11/2026: dùng bộ cuDF cleanup từ raw tuần tại
+`/home/ubuntu/tv1-weekly-20261121/data/clean/e2-weekly/<subset>/` cho thực nghiệm
+chính thức E1–E3 và dữ liệu E2/E5; E4 dùng cùng entrypoint cuDF cho cặp raw
+CSV/Parquet tương đương. Lấy sessions, workflow/schema, mapping, catalog và
+telemetry của cùng một run/subset trong `data/manifests/e2_preprocessing_verified.json`.
+Bộ DuckDB tháng và workflows/splits-v2 trước đó giữ để đối chiếu lịch sử.
+Lookup first-seen toàn tháng DuckDB vẫn là artifact chung đã pin checksum;
+chi phí tạo được báo riêng. Quyết định này thay lựa chọn engine cleanup
+DuckDB cho đầu vào thực nghiệm, giữ các kết quả DuckDB lịch sử và quy tắc
+sampling/day_index/split/catalog đã chốt. Train/inference vẫn dùng NVIDIA.
 
 TV3 chạy script thực nghiệm theo config TV2; khi đo preprocessing, ghi đúng engine, máy chạy và phạm vi đo của từng bước. Log local TV1 là bằng chứng xử lý dữ liệu, không tự trở thành số benchmark E2/E4/E5. TV3 phải ghi lại GPU, CPU, RAM, driver, CUDA, Docker image, Python và package versions trong `environment/README.md`.
 
