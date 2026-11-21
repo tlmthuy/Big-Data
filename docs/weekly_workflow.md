@@ -183,3 +183,47 @@ TV2 và có đường dẫn log nguồn. Workflows và split tương ứng nằm
 cùng thư mục. Đây là một lần đo tuần tự mỗi subset, cache chưa kiểm
 soát. TV3 ghi điều kiện đo và bổ sung train runtime/memory trước khi
 dùng kết quả E2 để tính E5.
+
+### Bộ dữ liệu đề xuất cho thực nghiệm
+
+Đề xuất dùng bộ **cuDF cleanup trên raw tuần** tại
+`~/tv1-weekly-20261121/data/clean/e2-weekly/<subset>/` cho các run model
+trên dữ liệu thật. Trạng thái hiện tại là **chờ nhóm xác nhận**. Bộ này
+đã có artifact và số đo preprocessing cho cả bốn mức. Bộ DuckDB cleanup
+toàn tháng dùng để đối chiếu. Lookup first-seen toàn tháng là artifact
+chung đã pin bằng SHA-256 và được dùng trong chính các run cuDF tuần.
+
+| Subset | Event sau cleanup DuckDB tháng | Event sau cleanup cuDF tuần |
+| --- | ---: | ---: |
+| 10% | 638097 | 638089 |
+| 25% | 1601084 | 1601068 |
+| 50% | 3197030 | 3197007 |
+| 100% | 6390944 | 6390928 |
+
+Lấy `sessions`, `schema`, `catalog`, workflow và `telemetry` từ cùng
+mục trong manifest E2. Mapping nằm ở `workflow/product_mapping.parquet`
+trong thư mục run đó. Nếu nhóm chọn nguồn khác, cần đo và bàn giao lại
+telemetry tương ứng với artifact của nguồn đó.
+
+### Tạo pipeline_metrics.json cho TV3
+
+Chạy từ workspace VM trong container với mount `/workspace` như lúc
+preprocessing. Đặt script và manifest first-seen của repo vào workspace.
+Với lần chạy đã bàn giao, ví dụ subset 10%:
+
+```bash
+run=data/clean/e2-weekly/10
+python pipeline/export_pipeline_metrics.py \
+  --timings "$run/timings.json" \
+  --first-seen-manifest data/manifests/monthly_first_seen.json \
+  --source-log e2-preprocess-retry-10.log \
+  --output "$run/pipeline_metrics.json"
+```
+
+Khi chạy mới, lưu stdout/stderr của `preprocess_weekly.py` vào file log
+rồi truyền đúng file đó vào `--source-log`. Converter lấy
+`first_seen_seconds` từ số đo tháng trong manifest, kiểm tra checksum
+lookup và giữ nguyên số event/read/preprocessing. Đường dẫn lookup/log
+được ghi theo mount nơi TV2 chạy. Script từ chối ghi đè. Nếu file đã
+tồn tại và cần đối chiếu, dùng tên output mới. Đặt
+`site.subsets[subset].pipeline_metrics` trỏ tới file vừa tạo.
