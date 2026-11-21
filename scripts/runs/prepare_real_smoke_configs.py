@@ -22,8 +22,12 @@ def digest(path):
 def prepare(manifest_path, data_root, cohort, environment_snapshot, output,
             e4_csv=None, e4_parquet=None):
     manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+    first_seen_manifest = json.loads((Path(manifest_path).parent / "monthly_first_seen.json").read_text(encoding="utf-8"))
     if manifest["dataset_decision"]["status"] != "selected_for_official_experiments":
         raise ValueError("The selected cuDF E2 handoff is not marked official")
+    pinned_first_seen = "5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7"
+    if first_seen_manifest.get("output_sha256") != pinned_first_seen:
+        raise ValueError("Monthly first-seen manifest checksum is not the pinned shared artifact")
     data_root, cohort = Path(data_root), Path(cohort)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
@@ -44,6 +48,8 @@ def prepare(manifest_path, data_root, cohort, environment_snapshot, output,
         telemetry_info = json.loads(telemetry.read_text(encoding="utf-8"))
         source_log = Path(telemetry_info["source_log"])
         first_seen = Path(telemetry_info["first_seen_artifact"])
+        expected_preprocessing = sum(telemetry_info.get(key, -1) for key in
+                                     ("prepare_seconds", "workflow_seconds", "split_seconds"))
         if (split_info.get("no_overlap_and_complete_coverage") is not True
                 or workflow_info.get("notebook_commit") != "f0ca2b5343dd1e40b5d2422b942f014b224f5c20"
                 or telemetry_info.get("status") != "measured"
@@ -51,7 +57,9 @@ def prepare(manifest_path, data_root, cohort, environment_snapshot, output,
                 or telemetry_info.get("n_events") != entry["n_events"]
                 or split_info.get("input_sessions") != entry["sequence_count"]
                 or workflow_info.get("product_vocabulary_size") != entry["vocabulary_size"]
-                or telemetry_info.get("first_seen_sha256") != "5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7"
+                or telemetry_info.get("first_seen_sha256") != pinned_first_seen
+                or telemetry_info.get("first_seen_seconds") != first_seen_manifest["shared_build_seconds"]
+                or abs(telemetry_info.get("preprocessing_seconds", -1) - expected_preprocessing) > 1e-6
                 or not source_log.is_file() or source_log.stat().st_size == 0
                 or not first_seen.is_file()
                 or digest(first_seen) != telemetry_info["first_seen_sha256"]):
