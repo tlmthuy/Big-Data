@@ -30,6 +30,8 @@ def prepare(manifest_path, data_root, cohort, environment_snapshot, output,
         raise ValueError("Monthly first-seen manifest checksum is not the pinned shared artifact")
     data_root, cohort = Path(data_root), Path(cohort)
     output = Path(output)
+    if not (cohort.parent / "cohort.json").is_file():
+        raise ValueError("Subset 10 cohort membership/provenance manifest is required")
     output.mkdir(parents=True, exist_ok=True)
     subsets = {}
     for entry in manifest["runs"]:
@@ -68,7 +70,7 @@ def prepare(manifest_path, data_root, cohort, environment_snapshot, output,
         subsets[subset] = {
             "sessions": str(cohort if subset == "10" else root / "splits"),
             "schema": str(schema), "catalog": str(catalog),
-            "preprocessing_manifest": str(split),
+            "preprocessing_manifest": str(cohort.parent / "cohort.json" if subset == "10" else split),
             "workflow_version": version(workflow, "tv1-cuDF-workflow"),
             "mapping_version": workflow_info["checksums"]["product_mapping.parquet"],
             "catalog_version": workflow_info["checksums"]["catalog.json"],
