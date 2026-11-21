@@ -45,7 +45,7 @@ Mặc định chạy tuần tự, process mới từng run để giải phóng V
 python -m benchmark.format_io --prepare-pair --csv PATH_RAW_SUBSET_10 --parquet PATH_NEW_PARQUET
 ```
 
-Điền hai path vào `site.e4`; `preprocessing_argv` là **cùng một command TV1** hỗ trợ `{input_path}`, `{input_format}`, `{output_dir}`. TV1 cần bàn giao entrypoint đọc cả CSV/Parquet với cùng first-seen và logic nghiệp vụ, ghi artifact vào output_dir mới. Command này chưa có trong repo; E4 full đang chờ TV1, không dùng hàm đọc file làm giả full preprocessing. Có `--read-only` cho diagnostic riêng, không tính là E4 hoàn tất.
+Điền hai path vào `site.e4`; `preprocessing_argv` là **cùng một command TV1** hỗ trợ `{input_path}`, `{input_format}`, `{output_dir}`. TV1 cần bàn giao entrypoint đọc cả CSV/Parquet với cùng first-seen và logic nghiệp vụ, ghi artifact vào output_dir mới. Dùng entrypoint và argv mẫu trong [bàn giao preprocessing TV1](../weekly_workflow.md#đầu-vào-e2e4-và-chi-phí-preprocessing). TV3 đo hai format với cùng cấu hình và quy tắc cache/warm-up. Có `--read-only` cho diagnostic riêng, không tính là E4 hoàn tất.
 
 Pair được kiểm tra số event và multiset fingerprint SHA-256 có giữ multiplicity, schema string đồng nhất, ngoài timed read. Đây là kiểm tra xác suất, không phải chứng minh bitwise hai file. Timing đọc gồm decode toàn bộ dữ liệu; cache ấm sau verification cho cả hai phía, không flush cache hệ điều hành. Chi phí tạo Parquet báo riêng, không trộn vào read time. Preprocessing child ghi elapsed/RSS riêng (gồm lần đọc input của chính pipeline); không cộng thêm standalone read vào elapsed của child rồi gọi là end-to-end. Parent RSS gồm cả audit; `peak_read_process_rss_bytes` chỉ lấy mẫu tại batch boundary.
 

@@ -104,3 +104,59 @@ ghi checksum sequence đầu vào đã bàn giao, checksum từng split, members
 counts từng partition và đường dẫn log trên VM. TV2 có thể truyền thư mục
 `data/clean/splits-v2/<subset>` làm `--sessions` và dùng catalog/schema
 của cùng subset trong `data/clean/workflows/<subset>`.
+
+## Đầu vào E2/E4 và chi phí preprocessing
+
+100% nghĩa là toàn bộ session đủ điều kiện trong tuần 01–07/10 UTC.
+[Thống kê các subset](../data/manifests/weekly_subset_profiles.json)
+tính trên event tuần sau loại lặp, trước lọc session ngắn và truncation.
+Báo số user/session/item/category/brand khác nhau, missing, phân bố
+event_type và histogram độ dài session. Số sequence cuối cùng nằm trong
+manifest workflow và counts split nằm trong manifest split.
+
+Chạy cùng entrypoint cho CSV và Parquet trong container Merlin trên VM.
+Input là raw subset tuần chín cột, toàn bộ cột kiểu string khi là Parquet.
+Dùng `benchmark.format_io --prepare-pair` để tạo bản Parquet tương đương
+cho E4, ngoài phạm vi đo. Mẫu argv cho `site.e4.preprocessing_argv`:
+
+```json
+["python", "pipeline/preprocess_weekly.py",
+ "--input", "{input_path}", "--input-format", "{input_format}",
+ "--output-dir", "{output_dir}", "--subset", "10",
+ "--first-seen", "/workspace/data/clean/monthly_first_seen/product_first_seen.parquet"]
+```
+
+Đọc bằng PyArrow cho cả hai định dạng, sau đó dùng cuDF/NVTabular cho
+cùng logic xử lý. `timings.json` ghi read, prepare, workflow và split.
+Prepare gồm đưa input sang GPU, timestamp, sort, loại lặp, ghép lookup và
+ghi bảng event. Workflow và split là thời gian chạy toàn bộ subprocess
+tương ứng, gồm kiểm tra và ghi artifact. `preprocessing_seconds` là tổng
+ba bước sau read. Fit và split xuất workflow/schema/mapping/catalog,
+Parquet sequence, membership và manifest tương ứng của từng lần chạy.
+
+Chi phí xây lookup first-seen tháng là 1,516 giây theo manifest tháng.
+Ghi riêng chi phí này, dùng lại cùng lookup cho mọi subset và cả hai
+định dạng. Thời gian đọc/ghép lookup có sẵn được tính trong prepare.
+
+Entrypoint bắt đầu từ raw tuần và loại lặp bằng cuDF. Bộ bàn giao trước
+đó bắt đầu từ kết quả loại lặp toàn tháng trên DuckDB. Vì phạm vi và
+runtime khác nhau, khi dùng telemetry mới cho E2 cần dùng artifact split,
+workflow, schema và catalog từ cùng lần chạy. E4 dùng cùng dữ liệu raw
+tuần và lookup ở hai định dạng để so sánh trong cùng phạm vi.
+
+Lần smoke E4 trên subset 10% xác minh hai input có cùng nội dung và
+thứ tự hàng, cùng checksum first-seen và cùng split membership. Cả
+hai chạy đủ workflow và split trên Tesla T4. Số đo smoke nằm trong
+[manifest E4](../data/manifests/e4_preprocessing_smoke.json).
+TV3 dùng cùng quy tắc cache/warm-up ở các lượt benchmark chính thức.
+
+E2 đã có số đo preprocessing cho bốn mức. Xem
+[manifest E2](../data/manifests/e2_preprocessing_verified.json) để lấy
+counts, histogram và đường dẫn cho mỗi run. Khi mount workspace VM vào
+`/workspace`, đặt cấu hình TV2 trỏ đến `sessions`, `catalog`, `schema` và
+`telemetry` của cùng một mục trong manifest. File telemetry
+`data/clean/e2-weekly/<subset>/pipeline_metrics.json` đáp ứng contract
+TV2 và có đường dẫn log nguồn. Workflows và split tương ứng nằm trong
+cùng thư mục. Đây là một lần đo tuần tự mỗi subset, cache chưa kiểm
+soát. TV3 ghi điều kiện đo và bổ sung train runtime/memory trước khi
+dùng kết quả E2 để tính E5.
