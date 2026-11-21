@@ -19,7 +19,8 @@ def digest(path):
     return hasher.hexdigest()
 
 
-def prepare(manifest_path, data_root, cohort, environment_snapshot, output):
+def prepare(manifest_path, data_root, cohort, environment_snapshot, output,
+            e4_csv=None, e4_parquet=None):
     manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
     if manifest["dataset_decision"]["status"] != "selected_for_official_experiments":
         raise ValueError("The selected cuDF E2 handoff is not marked official")
@@ -67,9 +68,19 @@ def prepare(manifest_path, data_root, cohort, environment_snapshot, output):
             "final_day": 2 if subset == "10" else max(day_indices),
             "pipeline_metrics": str(telemetry),
         }
+    if bool(e4_csv) != bool(e4_parquet):
+        raise ValueError("Provide both E4 CSV and Parquet paths, or neither")
+    if e4_csv and (not Path(e4_csv).is_file() or not Path(e4_parquet).is_file()):
+        raise ValueError("Both E4 pair files must exist before building the smoke site")
+    preprocessing_argv = ["python", "pipeline/preprocess_weekly.py", "--input", "{input_path}",
+                          "--input-format", "{input_format}", "--output-dir", "{output_dir}",
+                          "--subset", "10", "--first-seen",
+                          "/workspace/data/clean/monthly_first_seen/product_first_seen.parquet"]
     site = {"data_kind": "real", "device": "cuda", "configuration_frozen": False,
             "environment_snapshot": str(environment_snapshot), "subsets": subsets,
-            "e4": {"csv": None, "parquet": None, "preprocessing_argv": None}}
+            "e4": {"csv": str(e4_csv) if e4_csv else None,
+                  "parquet": str(e4_parquet) if e4_parquet else None,
+                  "preprocessing_argv": preprocessing_argv if e4_csv else None}}
     runs = []
     for run_id, experiment, model, batch_size in [
             ("real-smoke-popularity-cohort-v1", "E1", "popularity", None),
@@ -84,6 +95,15 @@ def prepare(manifest_path, data_root, cohort, environment_snapshot, output):
                      "resource_config": {"device": "cuda", "change_only": "train_batch_size" if experiment == "E3" else None},
                      "train_partitions": "1", "eval_partition": "2",
                      "purpose": "real_data_smoke_cohort_v1"})
+    if e4_csv:
+        for format_name in ("csv", "parquet"):
+            runs.append({"run_id": f"real-smoke-e4-cohort-v1-{format_name}",
+                         "experiment": "E4", "kind": "io", "model": None, "subset": "10",
+                         "batch_size": None, "split": None, "input_format": format_name,
+                         "seed": 1, "epochs": 1, "sequence_length": 20,
+                         "resource_config": {"device": "cuda", "change_only": None},
+                         "train_partitions": None, "eval_partition": None,
+                         "purpose": "real_data_smoke_cohort_v1"})
     (output / "site.json").write_text(json.dumps(site, indent=2) + "\n", encoding="utf-8")
     (output / "matrix.json").write_text(json.dumps({"schema_version": 1, "runs": runs}, indent=2) + "\n", encoding="utf-8")
     return {"site": str(output / "site.json"), "matrix": str(output / "matrix.json"),
@@ -96,11 +116,14 @@ def main():
     parser.add_argument("--data-root", type=Path, required=True)
     parser.add_argument("--cohort", type=Path, required=True)
     parser.add_argument("--environment-snapshot", type=Path, required=True)
+    parser.add_argument("--e4-csv", type=Path)
+    parser.add_argument("--e4-parquet", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     try:
         print(json.dumps(prepare(args.manifest, args.data_root, args.cohort,
-                                 args.environment_snapshot, args.output), indent=2))
+                                 args.environment_snapshot, args.output,
+                                 args.e4_csv, args.e4_parquet), indent=2))
     except (ValueError, KeyError, OSError) as error:
         parser.exit(1, f"Smoke config preparation failed: {error}\n")
 
