@@ -44,8 +44,8 @@ class RealSmokeCohortTests(unittest.TestCase):
         counts = []
         for (day, split), path in self.paths.items():
             counts.append({"day_index": day, "split": "valid" if split == "validation" else split,
-                           "sessions": 3, "distinct_items": len({item for seq in rows[(day, split)] for item in seq}),
-                           "item_interactions": sum(len(seq) for seq in rows[(day, split)]),
+                           "sessions": 3, "distinct_items": len({item for _, seq in rows[(day, split)] for item in seq}),
+                           "item_interactions": sum(len(seq) for _, seq in rows[(day, split)]),
                            "path": path.relative_to(self.sessions).as_posix(),
                            "sha256": sha256(path)})
         mapping = self.root / "workflow/product_mapping.parquet"
