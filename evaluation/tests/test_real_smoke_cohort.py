@@ -23,7 +23,7 @@ class RealSmokeCohortTests(unittest.TestCase):
         self.sessions = self.root / "source"
         rows = {
             (1, "train"): [("tr-c", [3, 4]), ("tr-a", [4, 5]), ("tr-b", [5, 6])],
-            (2, "valid"): [("va-c", [3, 5]), ("va-a", [4, 6]), ("va-b", [3, 6])],
+            (2, "validation"): [("va-c", [3, 5]), ("va-a", [4, 6]), ("va-b", [3, 6])],
         }
         self.paths = {}
         for (day, split), members in rows.items():
