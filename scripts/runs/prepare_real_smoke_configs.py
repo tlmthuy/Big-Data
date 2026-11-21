@@ -1,0 +1,95 @@
+"""Build isolated E1/E3 real-data cohort smoke configs, never official runs."""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+
+def version(path, label):
+    digest = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    return f"{label}:sha256:{digest}"
+
+
+def prepare(manifest_path, data_root, cohort, environment_snapshot, output):
+    manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+    if manifest["dataset_decision"]["status"] != "selected_for_official_experiments":
+        raise ValueError("The selected cuDF E2 handoff is not marked official")
+    data_root, cohort = Path(data_root), Path(cohort)
+    output = Path(output)
+    output.mkdir(parents=True, exist_ok=True)
+    subsets = {}
+    for entry in manifest["runs"]:
+        subset = str(entry["subset"])
+        root = data_root / subset
+        workflow = root / "workflow/manifest.json"
+        split = root / "splits/manifest.json"
+        catalog = root / "workflow/catalog.json"
+        schema = root / "workflow/processed_nvt/schema.pbtxt"
+        telemetry = root / "pipeline_metrics.json"
+        paths = [workflow, split, catalog, schema, telemetry]
+        if not all(path.is_file() for path in paths):
+            raise ValueError(f"Incomplete selected TV1 artifacts for subset {subset}")
+        workflow_info = json.loads(workflow.read_text(encoding="utf-8"))
+        split_info = json.loads(split.read_text(encoding="utf-8"))
+        telemetry_info = json.loads(telemetry.read_text(encoding="utf-8"))
+        if (split_info.get("no_overlap_and_complete_coverage") is not True
+                or workflow_info.get("notebook_commit") != "f0ca2b5343dd1e40b5d2422b942f014b224f5c20"
+                or telemetry_info.get("status") != "measured"
+                or telemetry_info.get("input_sha256") != entry["input_sha256"]
+                or split_info.get("input_sessions") != entry["sequence_count"]
+                or workflow_info.get("product_vocabulary_size") != entry["vocabulary_size"]
+                or telemetry_info.get("first_seen_sha256") != "5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7"):
+            raise ValueError(f"Lineage/split/telemetry mismatch for subset {subset}")
+        day_indices = [row["day_index"] for row in split_info["counts"]]
+        subsets[subset] = {
+            "sessions": str(cohort if subset == "10" else root / "splits"),
+            "schema": str(schema), "catalog": str(catalog),
+            "preprocessing_manifest": str(split),
+            "workflow_version": version(workflow, "tv1-cuDF-workflow"),
+            "mapping_version": workflow_info["checksums"]["product_mapping.parquet"],
+            "catalog_version": workflow_info["checksums"]["catalog.json"],
+            "accepted_by_tv2": True,
+            "final_day": 2 if subset == "10" else max(day_indices),
+            "pipeline_metrics": str(telemetry),
+        }
+    site = {"data_kind": "real", "device": "cuda", "configuration_frozen": False,
+            "environment_snapshot": str(environment_snapshot), "subsets": subsets,
+            "e4": {"csv": None, "parquet": None, "preprocessing_argv": None}}
+    runs = []
+    for run_id, experiment, model, batch_size in [
+            ("real-smoke-popularity-cohort-v1", "E1", "popularity", None),
+            ("real-smoke-gru-cohort-v1", "E1", "gru", 256),
+            ("real-smoke-xlnet-cohort-v1", "E1", "xlnet", 256),
+            ("real-smoke-gru-cohort-v1-b32", "E3", "gru", 32),
+            ("real-smoke-gru-cohort-v1-b128", "E3", "gru", 128)]:
+        runs.append({"run_id": run_id, "experiment": experiment, "kind": "model",
+                     "model": model, "subset": "10", "batch_size": batch_size,
+                     "split": "validation", "input_format": "session Parquet",
+                     "seed": 1, "epochs": 3, "sequence_length": 20,
+                     "resource_config": {"device": "cuda", "change_only": "train_batch_size" if experiment == "E3" else None},
+                     "train_partitions": "1", "eval_partition": "2",
+                     "purpose": "real_data_smoke_cohort_v1"})
+    (output / "site.json").write_text(json.dumps(site, indent=2) + "\n", encoding="utf-8")
+    (output / "matrix.json").write_text(json.dumps({"schema_version": 1, "runs": runs}, indent=2) + "\n", encoding="utf-8")
+    return {"site": str(output / "site.json"), "matrix": str(output / "matrix.json"),
+            "subset_bindings": len(subsets), "runs": [run["run_id"] for run in runs]}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--data-root", type=Path, required=True)
+    parser.add_argument("--cohort", type=Path, required=True)
+    parser.add_argument("--environment-snapshot", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    try:
+        print(json.dumps(prepare(args.manifest, args.data_root, args.cohort,
+                                 args.environment_snapshot, args.output), indent=2))
+    except (ValueError, KeyError, OSError) as error:
+        parser.exit(1, f"Smoke config preparation failed: {error}\n")
+
+
+if __name__ == "__main__":
+    main()
