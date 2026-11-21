@@ -54,3 +54,22 @@ chia. Kết quả fit được đo riêng với chi phí first-seen tháng.
 Đã nạp lại cả bốn workflow, kiểm tra checksum, đối chiếu hai trường
 mapping/catalog và đọc toàn bộ sequence để xác nhận ID hợp lệ, padding
 phải và độ dài các feature list. Xem [manifest đã xác minh](../data/manifests/weekly_workflows_verified.json).
+
+## Bàn giao Parquet sequence
+
+Cùng lần chạy fit, graph Notebook 02 gom event theo `user_session` và
+sort theo `event_time_ts` ở cell 37. Cell 42 giữ 20 vị trí cuối đồng bộ
+trên các feature list bằng `ListSlice(-20, pad=True)`. Cell 48 chỉ giữ
+session có từ 2 interaction. Sequence dài hơn 20 giữ item mới nhất làm
+vị trí cuối, tính cả target. Sequence ngắn hơn 20 dùng padding phải.
+Đây là sequence trước split.
+
+Parquet nằm trên VM ở `~/tv1-weekly-20261121/data/clean/workflows/<subset>/processed_nvt/part_0.parquet`.
+Dùng schema, mapping và catalog trong cùng thư mục subset. Với timestamp
+trùng, graph dùng thứ tự nguồn cuDF/NVTabular theo Notebook 02.
+
+Đối chiếu độc lập với input tuần xác nhận membership và số interaction
+của toàn bộ session. Các session có timestamp phân biệt khớp chính xác
+dãy tối đa 20 product ID cuối theo timestamp. Các session có timestamp
+trùng được đếm riêng và không áp đặt thứ tự phụ. SHA-256 từng Parquet,
+số session kiểm tra và đường dẫn log VM có trong manifest xác minh.
