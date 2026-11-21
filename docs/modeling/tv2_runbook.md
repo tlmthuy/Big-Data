@@ -1,5 +1,11 @@
 # TV2 — Chạy metric và Popularity
 
+Cập nhật 21/11/2026: bộ dữ liệu thực nghiệm chính thức là cuDF raw tuần
+`data/clean/e2-weekly/<subset>/`; dùng artifact và telemetry cùng run.
+First-seen tháng vẫn dùng chung; bộ DuckDB/splits-v2 cũ giữ để đối chiếu.
+Xem [quyết định và hướng dẫn TV1](../weekly_workflow.md).
+
+
 TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); metric/Popularity đã kiểm tra toy, [script GRU/XLNet](neural_runbook.md) đã đạt toy GPU smoke. [Config/collector E1–E5](experiment_runbook.md) đã tích hợp và kiểm tra bằng toy; chưa xác minh trên dữ liệu thật.
 
 ## File bàn giao theo task ngày 20/11

@@ -1,5 +1,11 @@
 # TV1 — Bàn giao ba bước timestamp, cleanup và first-seen
 
+Cập nhật 21/11/2026: bộ dữ liệu thực nghiệm chính thức là cuDF raw tuần
+`data/clean/e2-weekly/<subset>/`; dùng artifact và telemetry cùng run.
+First-seen tháng vẫn dùng chung; bộ DuckDB/splits-v2 cũ giữ để đối chiếu.
+Xem [quyết định và hướng dẫn TV1](weekly_workflow.md).
+
+
 Manifest chung: [tv1_data_handoff.json](../data/manifests/tv1_data_handoff.json).
 Đây là dữ liệu trung gian theo tháng, chưa phải Parquet sequence để train.
 

@@ -15,6 +15,11 @@ Preprocessing đã chốt theo tutorial NVIDIA ngày 19/11/2026: source sort kh�
 
 Toàn bộ mã nguồn NVIDIA được giữ nguyên trên nhánh `reference/nvidia-transformers4rec` tại commit nguồn đã pin. Khi dựng code đồ án, đọc nguồn bằng `git show` hoặc worktree riêng theo [hướng dẫn tra cứu NVIDIA](docs/references.md#đọc-nguồn-khi-đang-làm-code-đồ-án).
 
+Dữ liệu thực nghiệm chính thức cập nhật 21/11: bộ cuDF raw tuần
+`data/clean/e2-weekly/<subset>/` trên VM. [Manifest artifact/telemetry](data/manifests/e2_preprocessing_verified.json)
+và [hướng dẫn TV1](docs/weekly_workflow.md) ghi đường dẫn và lệnh chạy;
+bộ DuckDB trước đó giữ để đối chiếu, first-seen tháng tiếp tục dùng chung.
+
 ## Bắt đầu
 
 1. Đọc [AGENTS.md](AGENTS.md) trước khi sửa code hoặc chốt thiết kế.

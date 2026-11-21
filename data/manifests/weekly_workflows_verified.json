@@ -1,0 +1,153 @@
+{
+  "verified_on": "2026-11-21",
+  "ssh_alias": "bigdata-ec2",
+  "vm_root": "/home/ubuntu/tv1-weekly-20261121/data/clean/workflows",
+  "verification_log": "/home/ubuntu/tv1-weekly-20261121/verify.log",
+  "gpu": "Tesla T4",
+  "image": "big-data-recsys:smoke",
+  "python": "3.10.12",
+  "upstream_cleanup": "DuckDB CPU",
+  "runs": [
+    {
+      "subset": 10,
+      "input_path": "/workspace/data/clean/workflow_inputs/week_010.parquet",
+      "input_sha256": "b58f0bc7f154d46603671afd2e5589737a198eb30ab0d8b0b218598c61f41abe",
+      "notebook_commit": "f0ca2b5343dd1e40b5d2422b942f014b224f5c20",
+      "input_events": 638097,
+      "product_vocabulary_size": 63398,
+      "fit_seconds": 14.126606057000117,
+      "cudf_version": "23.04.00",
+      "nvtabular_version": "23.08.00",
+      "technical_ids": {
+        "padding": 0,
+        "null": 1,
+        "oov": 2
+      },
+      "artifacts": {
+        "workflow": "workflow/",
+        "schema": "processed_nvt/schema.pbtxt",
+        "vocabulary": "product_mapping.parquet",
+        "catalog": "catalog.json"
+      },
+      "checksums": {
+        "processed_nvt/schema.pbtxt": "854c56d11731067bdeed20f2efb126f129a24c8e46ef11dea72af30f8e21cf8b",
+        "catalog.json": "0ca36c493863ec1a8919fa15d899f4b5ac95ecb99a93b118ae703baaf0d5175c",
+        "product_mapping.parquet": "391d6a280a1f2b07e52a4068f18b1d112594145016f0f983e7de95e88eab75b0"
+      },
+      "sequence_count": 96433,
+      "sequence_verification": {
+        "path": "processed_nvt/part_0.parquet",
+        "sha256": "5d96898b5bcd652236cd4e43e037afedfe2def0f142e6eb5cedf52d096cf86bf",
+        "exact_suffix_sessions_without_timestamp_ties": 96393,
+        "sessions_with_timestamp_ties": 40,
+        "eligible_membership_and_interaction_counts_match": true
+      }
+    },
+    {
+      "subset": 25,
+      "input_path": "/workspace/data/clean/workflow_inputs/week_025.parquet",
+      "input_sha256": "e77b5a10514e4733efe945595f2a00903d036b3abdfdcbbe236cdf3510b8907b",
+      "notebook_commit": "f0ca2b5343dd1e40b5d2422b942f014b224f5c20",
+      "input_events": 1601084,
+      "product_vocabulary_size": 87247,
+      "fit_seconds": 14.146134117000202,
+      "cudf_version": "23.04.00",
+      "nvtabular_version": "23.08.00",
+      "technical_ids": {
+        "padding": 0,
+        "null": 1,
+        "oov": 2
+      },
+      "artifacts": {
+        "workflow": "workflow/",
+        "schema": "processed_nvt/schema.pbtxt",
+        "vocabulary": "product_mapping.parquet",
+        "catalog": "catalog.json"
+      },
+      "checksums": {
+        "processed_nvt/schema.pbtxt": "be9d87931317cc59a1a62873a7341596f48e458463bc6b60a1e9b3375d053dd9",
+        "catalog.json": "aa031d9ae769b3bd0c53d2300e751d9213572a6eae7c83fdef15ab013a1c8abc",
+        "product_mapping.parquet": "47e830d05730ae291a2f70f3801eeed652dfe759c76d2a491820bef9ae743e01"
+      },
+      "sequence_count": 241715,
+      "sequence_verification": {
+        "path": "processed_nvt/part_0.parquet",
+        "sha256": "167129da7a49a9d86be4a7f63b3e9d9fb5249e92c59500674c7378180da8ac8d",
+        "exact_suffix_sessions_without_timestamp_ties": 241615,
+        "sessions_with_timestamp_ties": 100,
+        "eligible_membership_and_interaction_counts_match": true
+      }
+    },
+    {
+      "subset": 50,
+      "input_path": "/workspace/data/clean/workflow_inputs/week_050.parquet",
+      "input_sha256": "b0a06da14ab317bfe8e3f380063bc4441f2ae59f0bd7a6d9edd01deb98bd454e",
+      "notebook_commit": "f0ca2b5343dd1e40b5d2422b942f014b224f5c20",
+      "input_events": 3197030,
+      "product_vocabulary_size": 103940,
+      "fit_seconds": 14.737625001999731,
+      "cudf_version": "23.04.00",
+      "nvtabular_version": "23.08.00",
+      "technical_ids": {
+        "padding": 0,
+        "null": 1,
+        "oov": 2
+      },
+      "artifacts": {
+        "workflow": "workflow/",
+        "schema": "processed_nvt/schema.pbtxt",
+        "vocabulary": "product_mapping.parquet",
+        "catalog": "catalog.json"
+      },
+      "checksums": {
+        "processed_nvt/schema.pbtxt": "6aac72a1327ef8b4ab9cfe94f834a7e970e3a89be959f39bfcf9975d98ba4401",
+        "catalog.json": "5297706746d44b9c84003bc409f232bbcba0377b0dbc68dff63fa7a08e9d0950",
+        "product_mapping.parquet": "4c0282b2ba4459f28a7c86f1ad62f3f0b6c7c4da43a2ff7be7dac5e6e2c496aa"
+      },
+      "sequence_count": 482239,
+      "sequence_verification": {
+        "path": "processed_nvt/part_0.parquet",
+        "sha256": "0267a997d5246a40d75f619b80408f02506274a6d5cedc29ff8dfa01c48adc54",
+        "exact_suffix_sessions_without_timestamp_ties": 482028,
+        "sessions_with_timestamp_ties": 211,
+        "eligible_membership_and_interaction_counts_match": true
+      }
+    },
+    {
+      "subset": 100,
+      "input_path": "/workspace/data/clean/workflow_inputs/week_100.parquet",
+      "input_sha256": "d20f2dc4505ace8712893ec8a8221f192e982158e28a1c63cded9e4f1e6384f6",
+      "notebook_commit": "f0ca2b5343dd1e40b5d2422b942f014b224f5c20",
+      "input_events": 6390944,
+      "product_vocabulary_size": 118333,
+      "fit_seconds": 15.643140063999908,
+      "cudf_version": "23.04.00",
+      "nvtabular_version": "23.08.00",
+      "technical_ids": {
+        "padding": 0,
+        "null": 1,
+        "oov": 2
+      },
+      "artifacts": {
+        "workflow": "workflow/",
+        "schema": "processed_nvt/schema.pbtxt",
+        "vocabulary": "product_mapping.parquet",
+        "catalog": "catalog.json"
+      },
+      "checksums": {
+        "processed_nvt/schema.pbtxt": "4f5c19c86ea33ff4ca602b781630c5fee6665a6e396d72a3b2c7e385a8aff527",
+        "catalog.json": "404ba258d8bd7f2b531416efc2e352489fa85bbac8d11ca6318da69a42db1ac2",
+        "product_mapping.parquet": "75008d51e39b3a56937cbaea3350c87a9b4bc7395dcaff3cb9391d1aaa573210"
+      },
+      "sequence_count": 965304,
+      "sequence_verification": {
+        "path": "processed_nvt/part_0.parquet",
+        "sha256": "90a9b790dbb61de6db3a1278ee1d2fa8deb280ac6918e994fcf04b7faac8742f",
+        "exact_suffix_sessions_without_timestamp_ties": 964860,
+        "sessions_with_timestamp_ties": 444,
+        "eligible_membership_and_interaction_counts_match": true
+      }
+    }
+  ],
+  "sequence_order_verification_log": "/home/ubuntu/tv1-weekly-20261121/sequence-order.log"
+}

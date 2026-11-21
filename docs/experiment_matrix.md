@@ -1,5 +1,13 @@
 # Experiment matrix
 
+Bộ dữ liệu thực nghiệm đã chốt ngày 21/11/2026: dùng `data/clean/e2-weekly/<subset>/`
+trên VM TV1, cleanup raw tuần bằng cuDF, workflow/split theo NVIDIA. Các bộ
+`workflows/<subset>` và `splits-v2/<subset>` tạo từ cleanup DuckDB trước đó là
+bản đối chiếu. Lấy tất cả artifact và telemetry từ cùng run trong
+[manifest E2](../data/manifests/e2_preprocessing_verified.json); first-seen
+tháng vẫn dùng chung. Xem [hướng dẫn TV1](weekly_workflow.md).
+
+
 **Đã tích hợp config/collector; kiểm tra bằng toy, chưa xác minh trên dữ liệu thật.** [Matrix 11 run](../configs/experiments.json), [site template](../configs/site.example.json), [runner E1–E4](../scripts/runs/run_experiments.py), [collector](../benchmark/collect.py), [E5](../benchmark/scalability.py) và [hướng dẫn TV3](modeling/experiment_runbook.md) sẵn dùng để chạy benchmark E1–E5 khi bind đủ đầu vào.
 
 | ID | Câu hỏi | Biến thay đổi | Kết quả bắt buộc |

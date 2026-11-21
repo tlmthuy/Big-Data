@@ -80,3 +80,12 @@ Dockerfile chỉ bọc image ứng viên, không tự cài dependencies hoặc �
 ## Trước khi chạy experiment thật
 
 TV1 bàn giao sequence/split/schema/mapping/catalog và manifest, TV2 kiểm tra tiếp nhận; TV2 cung cấp command/config và partition train/eval cho từng run; TV3 chuẩn bị collector và environment snapshot. Chỉ chạy E1–E4 khi các đầu vào này có thật và được bàn giao. E5 tổng hợp log E2, không tạo lần chạy model riêng. Ghi kết quả bàn giao tại [handoff](../docs/handoff.md); TV3 không đổi protocol, model hoặc metric.
+
+## Dữ liệu TV1 chính thức — 21/11/2026
+
+Dùng [manifest E2](../data/manifests/e2_preprocessing_verified.json) để bind
+sessions/schema/catalog/telemetry cùng run tại `data/clean/e2-weekly/<subset>/`.
+First-seen tháng dùng chung; bộ DuckDB/workflows/splits-v2 cũ chỉ để đối chiếu.
+Lệnh preprocessing CSV/Parquet và xuất telemetry:
+[hướng dẫn TV1](../docs/weekly_workflow.md). Chưa có kết quả benchmark model
+chính thức chỉ từ việc chấp nhận bộ preprocessing này.

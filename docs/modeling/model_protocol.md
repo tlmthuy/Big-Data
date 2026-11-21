@@ -1,5 +1,11 @@
 # Model protocol
 
+Cập nhật 21/11/2026: bộ dữ liệu thực nghiệm chính thức là cuDF raw tuần
+`data/clean/e2-weekly/<subset>/`; dùng artifact và telemetry cùng run.
+First-seen tháng vẫn dùng chung; bộ DuckDB/splits-v2 cũ giữ để đối chiếu.
+Xem [quyết định và hướng dẫn TV1](../weekly_workflow.md).
+
+
 ## Quyết định ngày 19/11/2026
 
 Theo yêu cầu của Thúy, năm điểm preprocessing áp dụng tutorial NVIDIA tại snapshot `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`. Quyết định này thay thế mapping/catalog train-only và khóa phụ theo dòng CSV trước đó. Xem [preprocessing_review.md](../preprocessing_review.md), [references.md](../references.md).
