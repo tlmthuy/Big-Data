@@ -1,5 +1,13 @@
 # Task 2 — Review Notebook 01: Preliminary Preprocessing
 
+Bộ dữ liệu thực nghiệm đã chốt ngày 21/11/2026: dùng `data/clean/e2-weekly/<subset>/`
+trên VM TV1, cleanup raw tuần bằng cuDF, workflow/split theo NVIDIA. Các bộ
+`workflows/<subset>` và `splits-v2/<subset>` tạo từ cleanup DuckDB trước đó là
+bản đối chiếu. Lấy tất cả artifact và telemetry từ cùng run trong
+[manifest E2](../data/manifests/e2_preprocessing_verified.json); first-seen
+tháng vẫn dùng chung. Xem [hướng dẫn TV1](weekly_workflow.md).
+
+
 Ngày đọc: 19/11/2026. Người phụ trách: TV1.
 
 Nguồn chính: [NVIDIA Notebook 01](https://nvidia-merlin.github.io/Transformers4Rec/stable/examples/tutorial/01-preprocess.html).
@@ -62,6 +70,14 @@ brand, price, user_id, event_time_ts, prod_first_event_time_ts
 ```
 
 ## Năm điểm đã chốt theo tutorial NVIDIA — 19/11/2026
+
+Cập nhật công cụ ngày 20/11/2026: ba bước timestamp, cleanup event và
+first-seen tháng được triển khai bằng DuckDB CPU theo [AGENTS.md](../AGENTS.md).
+Riêng timestamp trùng ở cleanup dùng hành vi DuckDB thay cho cuDF; không
+thêm khóa phụ CSV. Bảng dưới giữ căn cứ phương pháp NVIDIA; ngoại lệ công cụ
+này thay thế yêu cầu runtime nguồn ở bước cleanup. Groupby/gom sequence,
+mapping và split vẫn theo quy định đã chốt. Xem kết quả và giới hạn tại
+[timestamp_session_cleanup.md](timestamp_session_cleanup.md).
 
 Theo quyết định mới nhất của Thúy, cả năm điểm áp dụng cách làm trong snapshot NVIDIA `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`. Bảng này thay thế các đề xuất trước đó về khóa phụ theo dòng CSV, mapping/catalog train-only và first-seen chỉ từ train. Đây là quyết định phương pháp; chưa phải kết quả chạy preprocessing.
 

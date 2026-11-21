@@ -5,21 +5,26 @@
 - Metric/Popularity đã qua toy test trên Windows, Python 3.13.12; chưa chạy dataset thật hoặc GPU. Code dùng API Python >= 3.10.
 - `environment.yml` là môi trường CPU/toy Python 3.10, không cài Merlin/cuDF/NVTabular/PyTorch. Chưa chạy lại trên Python 3.10.
 - Dockerfile nhận image Merlin qua build argument, chưa có image/digest GPU được nhóm xác minh. Không có môi trường GPU sẵn dùng chỉ bằng build mặc định.
-- Đã có script GRU/XLNet, 11 config E1–E4, collector và E5; GRU/XLNet chưa smoke runtime, E2/E4 còn chờ đầu vào TV1. Xem docs/modeling/neural_runbook.md. Manifest dưới đây ghi trạng thái, không phải kết quả benchmark.
+- GRU/XLNet đã có CLI trên main và đạt [toy GPU smoke WSL RTX 3050](../metrics/tv2-model-smoke/README.md). Local model runtime chiếm 4,04 GB, [requirements](smoke-models.requirements.txt); runtime này không gồm cuDF/NVTabular và không thay image Docker/cloud chính thức. Config/collector E1–E4 và công cụ E5 đã tích hợp, có [hướng dẫn và lệnh toy](../docs/modeling/experiment_runbook.md), **chưa xác minh trên dữ liệu thật**.
 
 ## Nhận bàn giao TV2
+
+TV3 nhận hai artifact trung gian TV1 theo
+[hướng dẫn bàn giao dữ liệu](../docs/tv1_data_handoff.md) và tra cứu
+[manifest chung](../data/manifests/tv1_data_handoff.json), không cần ký nhận.
+Đây là event tháng
+và lookup first-seen, chưa phải sequence/split cuối để chạy model.
 
 Từ gốc repo:
 
 ```bash
-git fetch origin
-git switch feature/tv2-model-evaluation
-git pull --ff-only origin feature/tv2-model-evaluation
+git switch main
+git pull --ff-only origin main
 git rev-parse HEAD
 python -m json.tool configs/tv2_handoff.json
 ```
 
-Nhánh trên chứa gói script mới, chưa tự merge vào main; khi được tích hợp, dùng ref/commit trong manifest bàn giao cập nhật. Đọc [manifest TV2](../configs/tv2_handoff.json), [lệnh chạy và input/output](../docs/modeling/tv2_runbook.md), [GRU/XLNet và E1–E5](../docs/modeling/neural_runbook.md), [protocol](../docs/modeling/model_protocol.md), rồi [experiment matrix](../docs/experiment_matrix.md). Lưu commit thực tế khi chạy. Command trong manifest là mảng argv chạy từ root; `{run_id}` và `{output_dir}` phải được thay bằng giá trị riêng của run, không chạy nguyên placeholder.
+Đọc [manifest TV2](../configs/tv2_handoff.json), [lệnh chạy và input/output](../docs/modeling/tv2_runbook.md), [protocol](../docs/modeling/model_protocol.md), rồi [experiment matrix](../docs/experiment_matrix.md). Lưu commit thực tế khi chạy. Command trong manifest là mảng argv chạy từ root; `{run_id}` và `{output_dir}` phải được thay bằng giá trị riêng của run, không chạy nguyên placeholder.
 
 Checksum trong manifest dành cho các file code/fixture đã bàn giao, chuẩn hóa CRLF thành LF trước SHA-256 để checkout Windows/Linux không lệch. Kiểm tra từ root:
 
@@ -63,8 +68,6 @@ Dockerfile chỉ bọc image ứng viên, không tự cài dependencies hoặc �
 
 ## Bản ghi runtime chính thức
 
-TV2 đã chạy GRU/XLNet trên GPU laptop trong môi trường WSL riêng (~4,04 GB, ngân sách 7 GB); [bằng chứng và command](../metrics/tv2-model-smoke/README.md), [requirements](smoke-models.requirements.txt). Đây là kiểm tra model với dữ liệu toy; bảng dưới vẫn dành cho runtime Docker/cloud/ETL chính thức của TV3.
-
 | Thông tin | Giá trị xác minh |
 | --- | --- |
 | GPU, VRAM / CPU / RAM / Ubuntu | Chưa xác minh |
@@ -77,3 +80,12 @@ TV2 đã chạy GRU/XLNet trên GPU laptop trong môi trường WSL riêng (~4,0
 ## Trước khi chạy experiment thật
 
 TV1 bàn giao sequence/split/schema/mapping/catalog và manifest, TV2 kiểm tra tiếp nhận; TV2 cung cấp command/config và partition train/eval cho từng run; TV3 chuẩn bị collector và environment snapshot. Chỉ chạy E1–E4 khi các đầu vào này có thật và được bàn giao. E5 tổng hợp log E2, không tạo lần chạy model riêng. Ghi kết quả bàn giao tại [handoff](../docs/handoff.md); TV3 không đổi protocol, model hoặc metric.
+
+## Dữ liệu TV1 chính thức — 21/11/2026
+
+Dùng [manifest E2](../data/manifests/e2_preprocessing_verified.json) để bind
+sessions/schema/catalog/telemetry cùng run tại `data/clean/e2-weekly/<subset>/`.
+First-seen tháng dùng chung; bộ DuckDB/workflows/splits-v2 cũ chỉ để đối chiếu.
+Lệnh preprocessing CSV/Parquet và xuất telemetry:
+[hướng dẫn TV1](../docs/weekly_workflow.md). Chưa có kết quả benchmark model
+chính thức chỉ từ việc chấp nhận bộ preprocessing này.

@@ -247,5 +247,7 @@
       "command": "python -m scripts.runs.run_experiments --run-id e4-010-parquet --site configs/site.local.json --execute"
     }
   ],
-  "E5_command": "python -m benchmark.scalability --logs metrics/raw --output reports/e5"
+  "E5_command": "python -m benchmark.scalability --logs metrics/raw --output reports/e5",
+  "inference_timing_protocol": "full_evaluation_wall_v1",
+  "inference_comparison": "Full evaluation wall per valid session; prediction compute diagnostics are not cross-model latency"
 }

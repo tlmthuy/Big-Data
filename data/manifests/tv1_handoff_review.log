@@ -1,0 +1,5 @@
+Checked at 2026-11-19T17:54:54.057433+00:00
+PASS: handoff artifact paths/checksums/counts match producer manifests
+PASS: source JSON parses, producer scripts compile, guide links resolve
+PASS: recipient receipt gate removed per user instruction; artifact metadata retained
+NOT RUN: actual Parquet reads/checksums, raw reproduction, GPU or model experiments.

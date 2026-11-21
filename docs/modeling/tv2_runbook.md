@@ -1,6 +1,12 @@
 # TV2 — Chạy metric và Popularity
 
-TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); metric/Popularity đã kiểm tra toy; [GRU/XLNet](neural_runbook.md) đã đạt toy GPU smoke trên WSL laptop. E1–E5 còn chờ runtime chính thức TV3 và artifact TV1.
+Cập nhật 21/11/2026: bộ dữ liệu thực nghiệm chính thức là cuDF raw tuần
+`data/clean/e2-weekly/<subset>/`; dùng artifact và telemetry cùng run.
+First-seen tháng vẫn dùng chung; bộ DuckDB/splits-v2 cũ giữ để đối chiếu.
+Xem [quyết định và hướng dẫn TV1](../weekly_workflow.md).
+
+
+TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Manifest bàn giao hiện tại: [tv2_handoff.json](../../configs/tv2_handoff.json); metric/Popularity đã kiểm tra toy, [script GRU/XLNet](neural_runbook.md) đã đạt toy GPU smoke. [Config/collector E1–E5](experiment_runbook.md) đã tích hợp và kiểm tra bằng toy; chưa xác minh trên dữ liệu thật.
 
 ## File bàn giao theo task ngày 20/11
 
@@ -12,9 +18,11 @@ TV3 bắt đầu tại [environment/README.md](../../environment/README.md). Man
 | NDCG@20 | [ranking.py](../../evaluation/ranking.py) | Cùng toy test: hạng 1/20/ngoài Top-20 và tổng hợp theo session |
 | Popularity | [popularity.py](../../models/popularity.py), [CLI](../../evaluation/run_popularity.py) | [Toy output](../../metrics/tv2-toy-day1/metrics.json), test cumulative/train-only/tie-break |
 
+Hai task ngày 21/11: [model builder](../../models/session_models.py), [CLI GRU/XLNet](../../evaluation/run_neural.py), [test neural](../../evaluation/tests/test_neural.py), [GPU smoke](../../metrics/tv2-model-smoke/README.md). Lệnh chạy và yêu cầu bộ nhớ tại [neural_runbook.md](neural_runbook.md).
+
 ## Kiểm tra nhanh trên dữ liệu toy
 
-Từ root repo, code dùng Python >= 3.10; offline tests trên Python 3.13.12, GPU smoke model trên WSL Python 3.10.12. Runtime Docker chính thức chưa xác minh. Hash file đọc theo chunk, không cần API Python 3.11.
+Từ root repo, code dùng Python >= 3.10; kiểm tra local thực tế trên Python 3.13.12. Chưa xác minh runtime GPU. Hash file đọc theo chunk, không cần API Python 3.11.
 
 ```powershell
 python -m unittest discover -s evaluation/tests -v
@@ -26,6 +34,12 @@ Thư mục output phải chưa tồn tại; khi chạy lại đổi cả run_id 
 Expected: 3 validation session partition 2; Recall@20 = `2/3`; NDCG@20 = `(1 + 1/log2(21))/3` ≈ `0.4092234162323177`. Train counts = `{3: 2, 4: 1, 5: 1}`; Top-20 là ID 3…22. Target 3 hạng 1, target 22 hạng 20, target 23 ngoài Top-20. Session có target 25 ở holdout và train tương lai không làm tăng popularity tại bước 1.
 
 ## Đầu vào thật từ TV1
+
+Ba task notebook 01 hiện giao hai file trung gian: event tháng đã cleanup và
+lookup first-seen. Danh sách file và checksum/schema/counts tại
+[tv1_data_handoff.md](../tv1_data_handoff.md) và
+[manifest chung](../../data/manifests/tv1_data_handoff.json) để TV2/TV3 tự tra
+cứu, không yêu cầu ký nhận. Bộ trung gian này chưa thay thế đầu vào model dưới đây.
 
 TV1 bàn giao Parquet sequence, không dùng raw subset CSV làm đầu vào model. CLI nhận đường dẫn root layout nguồn:
 
@@ -70,6 +84,6 @@ python -m evaluation.run_popularity --sessions data/clean/10/sessions_by_day --c
 - `popularity.json`: counts train thực, train_days và top20.
 - `metrics.json`: Recall/NDCG, tổng điểm, số session, session/distinct-item counts theo split, config, subset, run_id, input/catalog checksums, Python/platform, Git commit và output path.
 
-`train_with_input_scan_seconds` gồm scan dữ liệu; `ranking_once_seconds` chỉ đo tạo danh sách chung một lần. Đây chưa phải phép đo inference throughput/memory E1–E5. Audit giữ session membership và distinct-item sets trong RAM; checksum quét thêm file. Cần benchmark collector/runtime của TV3 và chuẩn đo TV2 trước chạy experiment chính thức. CLI không chứng minh preprocessing/RNG đúng nguồn chỉ bằng đọc output; vẫn cần manifest GPU của TV1.
+`train_with_input_scan_seconds` gồm scan dữ liệu; `ranking_once_seconds` chỉ là diagnostic tạo ranking chung một lần. `inference_seconds` hiện đo toàn bộ evaluation theo [protocol chung](inference_timing.md), có ms/session và session/s; collector báo wall/RSS toàn process riêng. Audit giữ membership và distinct-item sets trong RAM; checksum quét thêm file ngoài inference. CLI không chứng minh preprocessing/RNG đúng nguồn chỉ bằng đọc output; vẫn cần manifest/runtime TV1.
 
-Protocol: [model_protocol.md](model_protocol.md). Chưa chạy dataset thật; kiểm tra tiếp nhận dữ liệu TV1 là task riêng ngày 21/11. Không coi toy GPU smoke là kết quả E1 hoặc xác nhận split thật.
+Protocol: [model_protocol.md](model_protocol.md). Đã chạy toy trên GPU, chưa chạy dữ liệu thật; kiểm tra tiếp nhận dữ liệu TV1 là task riêng ngày 21/11. Toy giúp kiểm tra công cụ benchmark, không xác nhận split thật.

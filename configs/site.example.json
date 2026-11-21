@@ -1,4 +1,5 @@
 {
+  "data_kind": "real",
   "device": "cuda",
   "configuration_frozen": false,
   "environment_snapshot": null,

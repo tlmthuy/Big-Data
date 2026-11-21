@@ -1,0 +1,67 @@
+{
+  "scope": "toy validation/reference for E1-E5 tooling; not real-data benchmark evidence",
+  "real_data_verified": false,
+  "timing_protocol": "full_evaluation_wall_v1",
+  "runs": [
+    {
+      "run_id": "smoke-e1-gru-010",
+      "status": "passed",
+      "data_kind": "toy",
+      "model": "gru",
+      "n_sessions": 1,
+      "inference_seconds": 0.058386458000001085,
+      "inference_ms_per_session": 58.386458000001085,
+      "prediction_compute_seconds": 0.006295800000000185,
+      "process_wall_seconds": 22.369808124,
+      "peak_process_tree_rss_bytes": 3573665792
+    },
+    {
+      "run_id": "smoke-e1-popularity-010",
+      "status": "passed",
+      "data_kind": "toy",
+      "model": "Popularity",
+      "n_sessions": 1,
+      "inference_seconds": 0.06677201499999974,
+      "inference_ms_per_session": 66.77201499999974,
+      "prediction_compute_seconds": 1.645699999919259e-05,
+      "process_wall_seconds": 1.925948452000001,
+      "peak_process_tree_rss_bytes": 74473472
+    },
+    {
+      "run_id": "smoke-e1-xlnet-010",
+      "status": "passed",
+      "data_kind": "toy",
+      "model": "xlnet",
+      "n_sessions": 1,
+      "inference_seconds": 0.055789052000001504,
+      "inference_ms_per_session": 55.789052000001504,
+      "prediction_compute_seconds": 0.0067944580000016686,
+      "process_wall_seconds": 14.491194788000001,
+      "peak_process_tree_rss_bytes": 3081986048
+    },
+    {
+      "run_id": "smoke-e3-gru-010-b128",
+      "status": "passed",
+      "data_kind": "toy",
+      "model": "gru",
+      "n_sessions": 1,
+      "inference_seconds": 0.051855281000001696,
+      "inference_ms_per_session": 51.855281000001696,
+      "prediction_compute_seconds": 0.007350494000007757,
+      "process_wall_seconds": 16.500157759999993,
+      "peak_process_tree_rss_bytes": 3504336896
+    },
+    {
+      "run_id": "smoke-e3-gru-010-b32",
+      "status": "passed",
+      "data_kind": "toy",
+      "model": "gru",
+      "n_sessions": 1,
+      "inference_seconds": 0.06513563699999736,
+      "inference_ms_per_session": 65.13563699999736,
+      "prediction_compute_seconds": 0.004042022999996675,
+      "process_wall_seconds": 20.54995362199999,
+      "peak_process_tree_rss_bytes": 3561836544
+    }
+  ]
+}

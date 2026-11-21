@@ -53,7 +53,7 @@ Daily fine-tuning: tiếp tục cập nhật cùng model trên train partition t
 
 Năm điểm preprocessing đã chốt theo snapshot NVIDIA `f0ca2b5343dd1e40b5d2422b942f014b224f5c20` ngày 19/11/2026; quyết định này thay thế các đề xuất train-only và khóa phụ CSV trước đó:
 
-1. Sort theo `user_session`, `event_time_ts`; khi timestamp trùng, dùng hành vi sort/Groupby của runtime nguồn, không thêm khóa phụ theo dòng CSV và không cam kết giữ thứ tự CSV.
+1. Sort theo `user_session`, `event_time_ts`; không thêm khóa phụ theo dòng CSV và không cam kết giữ thứ tự CSV. Cập nhật 21/11/2026: đầu vào thực nghiệm dùng cleanup raw tuần và Groupby theo cuDF/NVTabular; bản cleanup tháng DuckDB giữ làm lịch sử/nguồn first-seen, theo quyết định công cụ bên dưới.
 2. Giữ 20 item cuối bằng `ListSlice(-20, pad=True)`; lọc session có ít nhất 2 interaction sau loại lặp.
 3. Giữ session nguyên khối trong cửa sổ tuần, gom theo session trước khi gán `day_index`; không kiểm tra/loại theo event cuối vượt cutoff train. Event ngoài cửa sổ tuần vẫn bị lọc trước khi gom sequence.
 4. Fit toàn bộ workflow notebook 02, gồm mapping và thống kê feature, trên dữ liệu tuần của từng subset trước split; cố định mapping/schema qua các partition của subset đó. Theo mô tả nguồn: padding `0`, null `1`, OOV `2`, mã đã biết từ `3`; kiểm tra lại giá trị với runtime đã pin. Candidate catalog dùng các product ID thực có trong vocabulary đã fit của subset, không giới hạn item xuất hiện trong train; ba model dùng chung catalog, loại token kỹ thuật khi xuất Top-20. Popularity vẫn chỉ đếm tương tác train đã dùng để cập nhật model.
@@ -86,7 +86,20 @@ Public Cloud GPU VM
 → PyTorch / Transformers4Rec
 ```
 
-TV3 phải ghi lại GPU, CPU, RAM, driver, CUDA, Docker image, Python và package versions trong `environment/README.md`.
+Quyết định công cụ cập nhật 20/11/2026: dùng DuckDB CPU cho ba bước đã triển khai của TV1: chuyển timestamp UTC, bỏ session null/loại sản phẩm lặp liên tiếp và tạo first-seen toàn tháng. Đây là bản triển khai điều chỉnh từ notebook 01; thứ tự timestamp trùng ở bước cleanup theo DuckDB, không cam kết tương đương cuDF. Chi tiết chênh lệch và giới hạn tại `docs/timestamp_session_cleanup.md`. Không yêu cầu chạy lại ba bước này bằng cuDF để chấp nhận bản DuckDB. Các bước ETL tiếp theo phải tuân thủ mapping/schema/split đã chốt và được kiểm tra tương thích riêng. Train/inference GRU, XLNet vẫn dùng PyTorch/Transformers4Rec trong môi trường NVIDIA trên GPU.
+
+Quyết định cập nhật 21/11/2026: dùng bộ cuDF cleanup từ raw tuần tại
+`/home/ubuntu/tv1-weekly-20261121/data/clean/e2-weekly/<subset>/` cho thực nghiệm
+chính thức E1–E3 và dữ liệu E2/E5; E4 dùng cùng entrypoint cuDF cho cặp raw
+CSV/Parquet tương đương. Lấy sessions, workflow/schema, mapping, catalog và
+telemetry của cùng một run/subset trong `data/manifests/e2_preprocessing_verified.json`.
+Bộ DuckDB tháng và workflows/splits-v2 trước đó giữ để đối chiếu lịch sử.
+Lookup first-seen toàn tháng DuckDB vẫn là artifact chung đã pin checksum;
+chi phí tạo được báo riêng. Quyết định này thay lựa chọn engine cleanup
+DuckDB cho đầu vào thực nghiệm, giữ các kết quả DuckDB lịch sử và quy tắc
+sampling/day_index/split/catalog đã chốt. Train/inference vẫn dùng NVIDIA.
+
+TV3 chạy script thực nghiệm theo config TV2; khi đo preprocessing, ghi đúng engine, máy chạy và phạm vi đo của từng bước. Log local TV1 là bằng chứng xử lý dữ liệu, không tự trở thành số benchmark E2/E4/E5. TV3 phải ghi lại GPU, CPU, RAM, driver, CUDA, Docker image, Python và package versions trong `environment/README.md`.
 
 Raw CSV, Parquet lớn, checkpoint và GPU cache không commit trực tiếp vào Git. Git chỉ lưu code, config, schema, manifest, mapping nhỏ, metrics, logs cần thiết và đường dẫn artifact.
 
@@ -186,11 +199,15 @@ TV3 phụ trách VM, Docker, runtime, benchmark collector, chạy script, thu ru
 
 TV3 không tự đổi model, split, metric hoặc experiment protocol.
 
-### TV4 — Demo và tài liệu
+### TV4 — Demo & hỗ trợ report
 
-TV4 phụ trách demo, README, bảng/hình, report, slide, references, license, AI-use statement và rehearsal.
+TV4 phụ trách demo, README demo, prediction contract với TV2, script/template và figures chính thức, caption kỹ thuật, demo fallback và Q&A kỹ thuật. TV4 chuẩn hóa references, dataset/repo/license, AI-use statement và thiết kế hình minh họa cho slides.
 
-TV4 dùng metrics đã TV2 xác nhận, không tự thay số liệu hoặc cách tính.
+### TV5 — Report & Results
+
+TV5 phụ trách report/slide outline, cấu trúc metric và bảng E1–E5, table captions, truy vết nguồn log, đối chiếu logs với TV2, kiểm tra metrics package, viết results/limitations/reproducibility, hoàn thiện report tiếng Anh và nội dung slides, thuyết trình kết quả và Q&A học thuật.
+
+TV2 bàn giao metrics package chính thức cho cả TV4 và TV5. TV4 tạo figures; TV5 tạo bảng và nội dung report/slides từ cùng package đã TV2 xác nhận. Cả hai không tự thay số liệu hoặc cách tính; số liệu bổ sung phải được TV2 xác nhận. TV4 bàn giao figures/caption/references/license/AI statement cho TV5 tích hợp. Lịch chi tiết theo ảnh phân công cập nhật ngày 20/11/2026: `docs/team_tasks.md`.
 
 ## 10\. Cấu trúc repo
 
@@ -208,6 +225,7 @@ big-data-recsys/
 ├── pipeline/
 ├── reports/figures/
 ├── reports/tables/
+├── reports/slides/
 ├── scripts/runs/
 ├── .gitignore
 ├── README.md
@@ -223,7 +241,8 @@ main
 ├── feature/tv1-data
 ├── feature/tv2-model-evaluation
 ├── feature/tv3-environment-benchmark
-└── feature/tv4-demo-documentation
+├── feature/tv4-demo-documentation
+└── feature/tv5-report-results
 ```
 
 Một task chỉ được đánh dấu Done khi:
@@ -234,6 +253,13 @@ Một task chỉ được đánh dấu Done khi:
 4. Đã commit và push lên branch phụ trách.  
 5. Commit hash được ghi trong `docs/handoff.md` hoặc experiment registry.  
 6. Người nhận đã kiểm tra output.
+
+Ngoại lệ theo quyết định người dùng ngày 20/11/2026 cho ba task TV1
+timestamp, cleanup event và first-seen tháng: review code/docs/manifest và
+merge được chấp nhận để đóng task; không yêu cầu receipt hoặc xác nhận người
+nhận đã đọc file. TV2/TV3 tự tra cứu artifact/checksum/schema/counts tại
+`data/manifests/tv1_data_handoff.json`. Ngoại lệ này không xác nhận benchmark
+model hay hoàn tất bộ sequence/split cuối cùng.
 
 Artifact lớn dùng manifest và output path. Không commit raw CSV, Parquet lớn, checkpoint lớn, `.env`, credentials hoặc Docker cache.
 
@@ -246,9 +272,9 @@ Artifact lớn dùng manifest và output path. Không commit raw CSV, Parquet l�
 - 23/11: chạy E2.  
 - 24/11: chạy E3 và tính E5 từ E2.  
 - 25/11: chạy E4, rerun lỗi, bàn giao logs.  
-- 26/11: TV2 phân tích E1–E5, TV4 đối chiếu logs.  
-- 27/11: giao metrics chính thức, tích hợp demo.  
-- 28/11: hoàn thiện report/slide, rehearsal và cleanup.
+- 26/11: TV2 phân tích E1–E5; TV5 đối chiếu logs với TV2, TV4 hỗ trợ kiểm tra run_id và đầu vào figures.
+- 27/11: TV2 giao metrics chính thức cho TV4/TV5; TV4 tích hợp inference/UI và kiểm thử demo, TV5 kiểm tra E1–E5.
+- 28/11: TV4 tạo figures chính thức, chuẩn hóa references/license/AI statement, chuẩn bị và tập demo/fallback; TV5 viết results/limitations/reproducibility, hoàn thiện report tiếng Anh và nội dung slides, tập thuyết trình kết quả/Q&A; cả nhóm rehearsal và cleanup.
 
 ## 13\. Sản phẩm cuối
 

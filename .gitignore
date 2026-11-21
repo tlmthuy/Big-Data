@@ -13,6 +13,8 @@ data/**/*.parquet
 /metrics/local/
 /configs/site.local.json
 /logs/
+/app/node_modules/
+/app/dist/
 *.log
 .agents/
 

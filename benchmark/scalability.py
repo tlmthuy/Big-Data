@@ -6,6 +6,8 @@ import json
 import math
 from pathlib import Path
 
+from evaluation.timing import INFERENCE_PROTOCOL
+
 
 def summarize(root):
     rows = []
@@ -17,8 +19,12 @@ def summarize(root):
         config = meta.get("run", {})
         if config.get("experiment") != "E2" or run.get("status") != "passed":
             continue
+        if meta.get("data_kind") == "toy" or meta.get("purpose") == "toy_smoke":
+            continue
         metrics_path = path.parent / "artifacts" / "metrics.json"
         model = json.loads(metrics_path.read_text(encoding="utf-8"))
+        if model.get("inference_timing_protocol") != INFERENCE_PROTOCOL:
+            raise ValueError("E2 inference timing protocol missing/obsolete; rerun instead of mixing old timings")
         effective = model["training_config"]
         for key in ["model", "batch_size", "epochs", "seed"]:
             if effective[key] != config[key]:
@@ -51,7 +57,7 @@ def summarize(root):
         elif common_first_seen != first_seen:
             raise ValueError("E2 subsets must identify the same measured first-seen artifact/cost")
         stages = {"raw_read": values[0], "preprocessing_excluding_raw_read_and_first_seen": values[1],
-                  "train_including_sequence_io": values[3], "final_inference_compute": values[4]}
+                     "train_including_sequence_io": values[3], "final_evaluation_including_io": values[4]}
         total = sum(stages.values())
         rows.append({"run_id": config["run_id"], "subset": config["subset"], "n_events": n,
                      "trained_partition_count": len(model["train_days"]), "eval_day": model["eval_day"],

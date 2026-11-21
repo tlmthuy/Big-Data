@@ -1,0 +1,24 @@
+{
+  "input_path": "/Users/nguyenbaochau/Documents/ChatGPT/BigData/Big-Data/data/clean/month_cpu/events_clean.parquet",
+  "input_sha256": "c441efad3e94e318d84bb9075dee2f0b79eab1475e1bd371eec4685c05ed9016",
+  "cleanup_report": "data/manifests/timestamp_session_cleanup.json",
+  "upstream_engine": "DuckDB CPU",
+  "output_path": "/Users/nguyenbaochau/Documents/ChatGPT/BigData/Big-Data/data/clean/monthly_first_seen/product_first_seen.parquet",
+  "output_sha256": "5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7",
+  "input_events": 30733288,
+  "product_count": 166794,
+  "invalid_lookup_rows": 0,
+  "min_first_seen_ts": 1569888000,
+  "max_first_seen_ts": 1572565889,
+  "timestamp_unit": "unix_seconds_utc",
+  "shared_for_subset_percentages": [
+    10,
+    25,
+    50,
+    100
+  ],
+  "shared_build_seconds": 1.5164737080049235,
+  "timing_scope": "Monthly Parquet scan, group-by minimum and Parquet write; excludes upstream cleanup, verification and checksums",
+  "engine": "DuckDB CPU",
+  "engine_version": "2.0.0"
+}

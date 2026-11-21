@@ -1,34 +1,134 @@
 # Handoff
 
-## TV2 — GRU/XLNet GPU smoke đạt — 20/11/2026
-
-- Thay trạng thái blocker local bên dưới: dựng môi trường model riêng trong WSL, chiếm **4.040.455.500 byte** trong ngân sách **7 GB để dựng môi trường**. Không phải mức ổ C cần chừa trống. RTX 3050, Python 3.10.12, PyTorch 1.13.1/CUDA 11.7, Merlin 23.8, source NVIDIA giữ nguyên pin.
-- Cả hai CLI train partition 1 và validation partition 2 thành công, mỗi model có prediction/metrics/checkpoint thật. Verifier đọc checkpoint, kiểm tra last-item label, che target và batch independence: **GRU PASS, XLNet PASS**. Lệnh/output/runtime tại [GPU smoke](../metrics/tv2-model-smoke/README.md). Offline tests vẫn **25/25 PASS**.
-- Pin npy-append-array 0.9.16 để tương thích NumPy 1.24.4; giữ log lỗi import attempt 1. Không đổi architecture, masking, metric hoặc experiment protocol. Checkpoint lớn không commit.
-- Hai task script GRU/XLNet đã đủ code, command và output GPU để TV3 nghiệm thu; chờ xác nhận người nhận theo quy định Done. E1–E5 vẫn cần dữ liệu/artifact TV1 và runtime chính thức TV3. Local toy smoke không thay benchmark hoặc xác nhận split thật.
-- Nhánh bàn giao: `feature/tv2-model-evaluation`. Commit thực thi model `06ba66e899f400720b44cb1b9b2feacac0590795`; commit chứng cứ/verifier `b2cbb39bcc9deb3d865139a6635ff676f04e197f`.
-
-## TV2 — Kiểm tra môi trường smoke GRU/XLNet — 20/11/2026
-
-- User yêu cầu chạy smoke hai model bằng toy, không cần chờ TV1. Kiểm tra thật: laptop có RTX 3050 4096 MiB, driver 610.78; GPU nhìn thấy trong WSL Ubuntu 22.04, Python 3.10.12.
-- Đã khởi động Docker Desktop ở chế độ ẩn theo task; Linux engine 29.6.1 chạy được. Chưa có image `nvcr.io/nvidia/merlin/*` trong cache. WSL chưa có torch/merlin/transformers4rec; Torch Windows hiện chỉ CPU.
-- Ổ C còn 1.135.235.072 byte tại lần kiểm tra; chưa tải/extract image Merlin. Image ứng viên NVIDIA Merlin PyTorch 23.08 được NGC ghi compressed size 6.77 GB (https://catalog.ngc.nvidia.com/orgs/nvidia/merlin/containers/merlin-pytorch/-/tags); chưa chọn đây là runtime chính thức hoặc xác nhận tương thích.
-- Log lệnh/exit code/stdout: `metrics/tv2-model-scripts/local-gpu-preflight.json`. Chờ chọn runtime VM GPU TV3 hoặc giải phóng/chuyển storage local trước khi tiếp tục; chưa có smoke model thành công, không đổi model/metric hoặc đánh dấu Done.
-
 ## Trạng thái hiện hành
 
-Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã chốt trong [model_protocol.md](modeling/model_protocol.md). Kiểm chứng dữ liệu thật từ TV1 là task riêng ngày 21/11, trước E1. TV3 nhận script và trạng thái sẵn sàng qua [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn môi trường](../environment/README.md). GRU/XLNet đã đạt toy GPU smoke trên laptop; code/config E1–E4 và E5 có trên nhánh TV2, runtime chính thức TV3 chưa xác minh. Xem docs/modeling/neural_runbook.md.
+### TV1 — Tích hợp workflow/sequence/split/bốn subset — 21/11/2026
 
-## TV2 — Script model và gói experiment tiếp theo — 19/11/2026
+- Người dùng chấp nhận bộ cuDF `data/clean/e2-weekly/<subset>/` làm dữ liệu
+  thực nghiệm chính thức; first-seen tháng DuckDB tiếp tục dùng chung.
+  Quyết định và đường dẫn artifact ghi trong AGENTS.md, weekly_workflow.md
+  và `data/manifests/e2_preprocessing_verified.json`. Bộ cũ giữ đối chiếu.
+- Commit nguồn: `3c5efa1` workflow/mapping; `debb6da` sequence;
+  `fc5a64c` split; `5bfb520` bốn subset/E2/E4; `e70fc2f` kiểm chứng sequence;
+  `48771d4` converter telemetry và đề xuất nguồn (nay đã được chấp nhận).
+- Review ba task đầu đạt; log sequence-recheck trong Git PASS bốn subset.
+  Converter xuất đủ trường TV2, kiểm checksum first-seen, log và từ chối ghi
+  đè; đã kiểm thử toy hợp lệ/sai checksum/ghi đè. Cú pháp và manifest counts,
+  lineage/timing sums đạt; không rerun GPU hoặc benchmark model trong merge này.
+- Kiểm tra tích hợp: `python -m unittest discover -s evaluation/tests -q`
+  đạt 29/29 test; `git diff --cached --check` sạch.
+- Lệnh preprocessing/verify/export telemetry tại `docs/weekly_workflow.md`.
+  Không yêu cầu receipt hoặc xác nhận đã đọc file; thành viên tự tra manifest.
+  Theo yêu cầu người dùng, merge TV1 vào main và xóa nhánh TV1 cũ.
 
-- Nhánh `feature/tv2-model-evaluation` tạo lại từ main `3eda377`. Thúy xác nhận E1=10%, E2/E5=GRU, E3=GRU 10% batch train 32/128. Seed 1, length 20, epoch 3/partition, LR theo notebook 03. Final test D sau train 1…D−1 và cố định cấu hình; E3 dùng validation D.
-- Output: `models/session_models.py`, `evaluation/run_neural.py`, `configs/{experiments,site.example,pipeline_metrics.example}.json`, `scripts/runs/run_experiments.py`, `benchmark/{collect,format_io,scalability}.py`; hướng dẫn tại `docs/modeling/neural_runbook.md`, manifest `configs/tv2_handoff.json` cập nhật checksum/ref/trạng thái.
-- Đối chiếu nguồn NVIDIA tại `f0ca2b5343dd1e40b5d2422b942f014b224f5c20` (tree `0cd72aa1d3abd17cd65d46b9c1314b4ea26db9a6`, Apache-2.0): notebook 03 và thư viện/schema/test được liệt kê trong runbook. Giữ LICENSE, attribution ở model builder. Nhóm điều chỉnh GRU batch_first, PyArrow/JSONL streaming và explicit PyTorch loop thay Trainer; giữ causal/MLM, weight tying, daily continuation/LR reset, kiểm tra last labels và real catalog trước Top-20. Không tuyên bố bitwise tương đương notebook.
-- Command kiểm tra: `python -m unittest discover -s evaluation/tests -v` → **25/25 PASS**; log `metrics/tv2-model-scripts/tests.txt`. Kiểm tra orchestration bằng model nhỏ riêng, masking nguồn trong isolation, checkpoint replay, matrix invariants, collector pass/fail, cặp CSV/Parquet và E5 synthetic logs. Các test này không chứng minh GRU/XLNet đầy đủ chạy được.
-- Runtime smoke thật của cả hai CLI: input contract đạt; khi build model trên CPU local thì exit 1 vì `No module named transformers4rec`. Giữ command/traceback tại `metrics/tv2-model-scripts/{gru,xlnet}-runtime.txt` và thư mục `*-runtime/failure.json`; phiên bản tại `environment.json`. Torch local là bản CPU, chưa có Merlin runtime; chưa có train/inference model NVIDIA hoặc eCommerce metrics.
-- Matrix 11 run có command, input format, subset/model/resource, train/eval partition, output và version bindings. TV3 điền site local bằng artifact thật, không sửa Python. E2 cần telemetry đọc/preprocessing đo từ TV1 (shared first-seen báo riêng); E4 full cần command TV1 đọc chung CSV/Parquet và ghi artifact. E4 read-only chỉ diagnostic. E5 đọc successful E2 logs, xuất CSV/SVG/summary và báo partial khi thiếu mức; không chạy model mới.
-- Review hai trục đã sửa hai lỗi provenance: checkpoint lưu/kiểm tra originating training config và code SHA; E5 so cấu hình hiệu lực/LR/code, không gộp checkpoint replay hoặc lịch train/eval sai. Có regression test thay config và checksum.
-- Bốn task có code/config và bằng chứng offline/log lỗi; chưa đánh Done chính thức trước GPU smoke, artifact/command TV1 còn thiếu và TV3 nghiệm thu. Commit code/config/log: `ea717d91b28f252e845aeb1bf97c3cda6baa7ec0`; đã chuẩn bị push nhánh TV2, chưa merge main hoặc có TV3 nghiệm thu.
+
+### TV2 — Config/collector và inference timing cho mốc 21/11 — kiểm tra 20/11/2026
+
+- Theo phạm vi user xác nhận: tích hợp config/collector, kiểm tra bằng toy; **chưa xác minh trên dữ liệu thật**. Bộ công cụ dùng để chạy benchmark E1–E5 và toy logs dùng tham khảo vận hành/format; chưa dùng số toy làm kết luận eCommerce/scalability.
+- Tích hợp `configs/{experiments,site.example,pipeline_metrics.example}.json`, `scripts/runs/run_experiments.py`, `benchmark/{collect,format_io,scalability}.py`, kèm `prepare_toy_site.py`. Matrix 11 run giữ lựa chọn đã chốt: E1=10%, E2/E5=GRU, E3=batch 32/128, E4=CSV/Parquet raw 10%. [Runbook TV3](modeling/experiment_runbook.md), [manifest](../configs/tv2_handoff.json).
+- Chốt `full_evaluation_wall_v1`: cả ba model báo wall toàn evaluation làm `inference_seconds`, có ms/session và session/s; sort một lần Popularity và compute neural chỉ là diagnostic. [Phạm vi đo](modeling/inference_timing.md). Regression clock test tái hiện lệch cũ và đạt sau sửa; giữ nguyên log smoke lịch sử. E5 từ chối timing thiếu/khác protocol và không gộp toy logs vào dữ liệu thật.
+- **29/29 test PASS**, gồm collector pass/fail, config invariants, toy/real guard, E4 multiset/command binding, E5 tổng hợp log/kiểm tra provenance. **5 run GPU/runtime toy qua collector PASS**: E1 ba model, E3 hai batch. [Command/summary/raw log bản sao](../metrics/tv2-config-collector-smoke/README.md), [test result + checksum](../metrics/tv2-config-collector-smoke/checks.json). Đây không phải full E2/E4 preprocessing run; chưa chạy model trên dữ liệu TV1.
+- Bắt đầu benchmark thật sau khi có sequence/split/schema/catalog/version/manifest, TV2 kiểm tra đầu vào và TV3 có runtime chính thức. E2 cần telemetry đo preprocessing; E4 full cần shared CSV/Parquet preprocessing command từ TV1. Code/config không còn chờ để bàn giao; số liệu thật vẫn chưa có.
+- Commit tích hợp config/collector và timing: `3bfbd31950b69fcff7b214eddc35b6f87397f599`.
+
+### TV2 — Tích hợp riêng GRU/XLNet vào main — 20/11/2026
+
+- Theo yêu cầu của Thúy, chỉ đưa hai task script GRU/XLNet cùng dependency, test, hướng dẫn và bằng chứng GPU lên main. Matrix/config/runner experiment E1–E5 tiếp tục ở nhánh `feature/tv2-model-evaluation`; giữ nguyên dữ liệu/tài liệu TV1 và demo TV4 trên main.
+- Nguồn code: `ea717d91b28f252e845aeb1bf97c3cda6baa7ec0`; bằng chứng GPU/verifier: `b2cbb39` trên nhánh TV2. Các file model/runner giữ nguyên byte so với source đã chạy GPU; test neural được tách khỏi test experiment để main chạy độc lập. Loader hỗ trợ lọc partition; fingerprint chung kiểm tra artifact thiếu/rỗng và băm toàn bộ file trong thư mục.
+- Output: `models/session_models.py`, `evaluation/run_neural.py`, `evaluation/tests/test_neural.py`, `scripts/runs/verify_neural_smoke.py`, schema toy, requirements local smoke. [Hướng dẫn](modeling/neural_runbook.md), [manifest TV2](../configs/tv2_handoff.json), [metrics/predictions/verification GPU](../metrics/tv2-model-smoke/README.md).
+- GPU smoke WSL RTX 3050: GRU/XLNet train/eval và last-item label, target hiding, batch independence đều PASS; môi trường khoảng 4,04 GB trong ngân sách 7 GB. Đây là dữ liệu toy; chưa có benchmark E1–E5, nghiệm thu artifact sequence/split thật hoặc runtime chính thức TV3. Kiểm tra sau tích hợp: `python -m unittest discover -s evaluation/tests -v` → **19/19 PASS**, checksum manifest và link tài liệu đạt; code model/runner khớp byte với source đã smoke GPU.
+- User đã yêu cầu tích hợp sau khi xem trạng thái/bằng chứng smoke. TV3 vẫn cần chạy kiểm tra trên runtime của mình trước benchmark. Commit tích hợp hai task: `835a09eb023bfa9451d906b95f5b35f1454e20cf`.
+
+### TV1 — Timestamp, cleanup và first-seen tháng — review 20/11/2026
+
+- Commit sửa tài liệu sau review: `c4391e3`; đã đồng bộ `origin/main` vào
+  nhánh TV1 không conflict, giữ cập nhật phân công năm thành viên.
+- Commit triển khai đã push trên `feature/tv1-data`: timestamp `064eb4e`,
+  cleanup `c0d8afa`, first-seen `1afd27c`. Nguồn: NVIDIA Transformers4Rec
+  `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`, notebook 01 cell 12, 14, 25,
+  28–29 (chỉ số từ 0), Apache-2.0; LICENSE giữ tại
+  `docs/vendor/nvidia-transformers4rec/upstream/LICENSE`.
+- Điều chỉnh: triển khai ba bước bằng DuckDB CPU, giữ session ID gốc;
+  cleanup dùng `lag(product_id)` theo session/timestamp và thứ tự timestamp
+  trùng của DuckDB. Quyết định công cụ được người dùng chấp nhận trong chat,
+  đã ghi tại `AGENTS.md`; model train/inference vẫn dùng NVIDIA runtime.
+- Timestamp: bàn giao code `pipeline/event_timestamp.py` và
+  `data/manifests/event_timestamp.json`; cột `event_time_ts` là BIGINT giây
+  Unix UTC trong Parquet cleanup. 42.448.764 dòng trước/sau, 0 lỗi parse.
+  Người dùng đã yêu cầu ghi nhận bàn giao timestamp sau review code/manifest;
+  không yêu cầu xác nhận người nhận đã đọc file thật.
+- Cleanup: `pipeline/preprocess_raw_events.py`,
+  `data/manifests/timestamp_session_cleanup.json`; bỏ 2 dòng session null,
+  11.715.474 event lặp, còn 30.733.288 event tháng. Chênh tổng 13 dòng so
+  với output lưu sẵn NVIDIA. Ghi nhận nguyên nhân theo TV1 được người dùng
+  chuyển lại ngày 20/11: chênh lệch do thứ tự timestamp trùng. Nguồn là giải
+  thích của TV1; chưa có log đối chiếu từng event/session trong repo.
+- First-seen: `pipeline/build_monthly_first_seen.py`,
+  `data/manifests/monthly_first_seen.json`; 166.794 product, không null,
+  chi phí tạo artifact chung 1,516 giây. Đã thu hẹp mô tả kiểm tra về đúng
+  counts/khóa/null/bounds trong script; chưa có kiểm tra minimum độc lập từng
+  product. Không thay code tính MIN hay kết quả manifest đã ghi.
+- Command chạy lại và artifact path/checksum: xem `docs/event_timestamp.md`,
+  `docs/timestamp_session_cleanup.md`, `docs/monthly_first_seen.md` và ba
+  manifest tương ứng. Danh sách hai artifact cụ thể, schema/counts/checksum,
+  đã ghi tại `docs/tv1_data_handoff.md` và
+  `data/manifests/tv1_data_handoff.json` để TV2/TV3 tự tra cứu; không yêu cầu
+  receipt, log ký nhận hoặc xác nhận đã đọc file.
+- Review local: cú pháp ba script và JSON manifest hợp lệ; số dòng cleanup
+  nhất quán và checksum liên kết cleanup → first-seen khớp trong manifest;
+  `git diff --check` đạt. Không chạy lại CSV/Parquet thật hoặc GPU trong lần
+  review này; không phát sinh số benchmark mới.
+- Kiểm tra manifest bàn giao và liên kết hướng dẫn sau cập nhật: log
+  `data/manifests/tv1_handoff_review.log`; đây là review metadata local,
+  không phải kết quả chạy dữ liệu thật của TV2/TV3.
+- Commit cập nhật nguyên nhân và manifest bàn giao: `ec26bee`; sau đó theo
+  yêu cầu người dùng ngày 20/11/2026, bỏ receipt/gate xác nhận người nhận.
+  Ba task được chấp nhận qua review code/docs/manifest, tích hợp vào main
+  và xóa nhánh TV1 cũ. Manifest đủ thông tin để thành viên tự tra cứu.
+  Không còn yêu cầu đối chiếu cuDF bắt buộc cho bản DuckDB đã chốt; chưa có
+  benchmark model hoặc sequence/split cuối trong ba task này.
+
+Năm task TV2 ngày 20/11 đã tích hợp vào main; lịch test cuối đã chốt trong [model_protocol.md](modeling/model_protocol.md). Kiểm chứng dữ liệu thật từ TV1 là task riêng ngày 21/11, trước E1. TV3 nhận script và trạng thái sẵn sàng qua [manifest TV2](../configs/tv2_handoff.json) và [hướng dẫn môi trường](../environment/README.md). Chưa có GPU runtime hoặc gói GRU/XLNet/E1–E4 được xác minh.
+
+## Cập nhật phân công 5 thành viên — 20/11/2026
+
+- Theo ảnh phân công người dùng cung cấp: TV4 phụ trách Demo & hỗ trợ report; TV5 phụ trách Report & Results. Vai trò TV1–TV3 và protocol giữ nguyên.
+- Đã đồng bộ `AGENTS.md`, `README.md`, `docs/team_tasks.md`, `docs/experiment_matrix.md` và mục bàn giao này. Lịch TV4/TV5 gồm đủ các mốc trong ảnh; đường dẫn quy về cấu trúc repo: `app/`, `reports/`, `reports/figures/`, `reports/tables/`, `reports/slides/`.
+- TV2 gửi metrics package chính thức cho TV4/TV5; TV4 giao figures/caption/references/license/AI statement cho TV5; TV5 đối chiếu logs với TV2 và hoàn thiện nội dung report/slides. Nhánh TV4 giữ `feature/tv4-demo-documentation`; nhánh phụ trách TV5 là `feature/tv5-report-results`.
+- Kiểm tra: `git diff --check`; rà tham chiếu TV4/TV5 và số thành viên; đối chiếu đủ 10 dòng deadline trong ảnh cho mỗi vai trò; kiểm tra liên kết Markdown local của các file đã sửa. Đây là cập nhật kế hoạch, chưa tạo demo/report/slides hoặc kết quả experiment.
+- Branch tích hợp: `main`; commit cập nhật phân công: `4bc361c`. Kiểm tra phạm vi bằng `git show 4bc361c --stat`. Người nhận TV4/TV5 chờ xác nhận; chưa đánh dấu Done theo quy tắc dự án.
+
+## Bàn giao demo React/Vite — 20/11/2026
+
+**Cập nhật sau review:** Người dùng duyệt tích hợp phần đã làm, giữ UI ở
+trạng thái bản nháp. Các mô tả behavior bên dưới là mục tiêu; lỗi ID gốc,
+catalog thiếu item, ẩn context khi chọn model chưa có output và xử lý data
+rỗng được theo dõi tại [app/TODO.md](../app/TODO.md), không chặn lần tích hợp
+này. Chưa nghiệm thu UI hoàn chỉnh hoặc inference thật. Report/slide outline
+thuộc TV5 theo phân công cập nhật trên main.
+
+- Commit implementation: `e90b0eb`; commit TODO và phạm vi duyệt bản nháp: `bcc0150` trên `tv4-demo`.
+- Người dùng duyệt tích hợp ngày 20/11/2026; giữ tên nhánh thực tế `tv4-demo` cho lần bàn giao này. Kiểm tra độc lập `npm ci` và `npm run build` PASS; `git diff --check` sạch. Chưa kiểm tra tương tác trên trình duyệt; UI tiếp tục theo checklist, không đánh dấu UI hoàn chỉnh.
+- Files created/updated:
+  - `app/package.json`, `app/package-lock.json`, `app/index.html`
+  - `app/src/main.jsx`, `app/src/styles.css`
+  - `app/public/demo-data.json`
+  - `app/README.md`, `README.md`, `.gitignore`
+- Behavior:
+  - History là prefix sau khi tách target; actual next item luôn hiển thị riêng kể cả khi ngoài Top-20.
+  - Đổi model giữ session, subset, split và catalog; không lọc item đã xuất hiện trong history.
+  - Product ID hiển thị dưới dạng ID gốc. GRU/XLNet không tạo ranking giả; UI báo chưa có prediction output.
+  - Data bundled là toy TV2 từ `metrics/tv2-toy-day1/predictions.jsonl`, không phải kết quả dataset thật hoặc E1.
+- Cách kiểm tra:
+
+```bash
+cd app
+npm install
+npm run dev
+npm run build
+```
+
+Kết quả kiểm tra đã có: `npm install` PASS, `npm run build` PASS, Vite production bundle được tạo trong `app/dist/` và thư mục này bị ignore. Các output thật cho GRU/XLNet hoặc FastAPI inference vẫn pending cho TV2/TV3; demo không tự thay thế bằng prediction giả.
 
 ## Nhật ký bàn giao lịch sử
 
@@ -180,3 +280,21 @@ Phương án bàn giao là tái tạo từ CSV nguồn cùng SHA-256. Xem [lện
 - Cập nhật README, data/README và team_tasks để phân biệt membership, raw event subset và sequence; liên kết hướng dẫn tái tạo và trạng thái nghiệm thu.
 - Chưa chạy lại toàn bộ raw hoặc truy cập bốn CSV thật trên máy TV1. Hướng dẫn tái tạo và kiểm tra nội bộ của TV1 đã có; xác nhận độc lập của người nhận vẫn để trống. Merge/review code không thay thế bước này; ba task chưa Done chính thức.
 - Kiểm tra lại tài liệu: `git diff --check`, cú pháp ba script và các liên kết Markdown local trong tài liệu vừa sửa; trạng thái đồng bộ main kiểm tra qua Git sau khi push.
+
+## TV4 — Review model output contract — 20/11/2026
+
+- Tài liệu [output contract](../app/output_contract.md), commit `dd22733`, nhánh `feature/tv4-demo-documentation`. Đối chiếu main `b40cd76`, code TV2 `7277b65` và cây nguồn NVIDIA đã pin.
+- Kiểm tra từ root: chạy khối `Read-only toy verification` trong tài liệu, `python3 -m unittest discover -s evaluation/tests -v` và `git diff --check`. Xác minh 31 link Markdown local trong tài liệu. Toy có 3 dòng với target hạng 1, hạng 20 và miss. Mapping khớp catalog 23 item, còn fixture UI lưu 21 item dưới dạng chuỗi encoded ID. Unittest đạt 12, skip 1 vì thiếu pyarrow.
+- Trạng thái: chờ TV2 duyệt format bàn giao, score/rank, mapping/session key và run package dùng cho demo. Hai log runtime trên nhánh TV2 báo thiếu Transformers4Rec. Chưa nghiệm thu với artifact thật và chưa đánh dấu Done.
+
+### TV4 — Tái tạo fixture demo bằng prediction toy
+
+- Commit `1ff916b` trên `feature/tv4-demo-documentation`. [README demo](../app/README.md#prediction-data) ghi lệnh chạy Popularity và export sang JSON React. [Contract](../app/output_contract.md) có ví dụ một dòng prediction toy và đề xuất target rank `null` khi miss.
+- Chạy lại CLI Popularity và exporter cho file khớp từng byte với fixture đã commit. Verify trả về 3 session, target hạng 1, hạng 20 và miss, catalog nguồn/demo đều có 23 ID gốc. Build Vite đạt, unittest đạt 12 và skip 1 do thiếu pyarrow. TV2 vẫn cần duyệt contract production.
+
+## Duyệt task đọc output contract TV4 — 21/11/2026
+
+- Người dùng đã review và yêu cầu merge phần đề xuất contract của TV4 tại `5b2df90c099bdafcba9389dab0b09102fef1c28e` vào main. Task đọc hiểu/lập danh sách field và dependency được chấp nhận; không coi đây là nghiệm thu UI hoàn chỉnh hoặc contract production đã được TV2 duyệt.
+- File đích: [app/output_contract.md](../app/output_contract.md); các việc chờ bàn giao tại [Dependencies](../app/output_contract.md#dependencies). Bản này chia session predictions và run results E1–E5, ghi rõ cấu hình dự kiến/thực tế, batch/tài nguyên, nguồn metric và người phụ trách dependency.
+- Tích hợp cùng exporter toy, fixture ID gốc đủ 23 item, README và cập nhật TODO đã review. Không thay model, metric hoặc benchmark protocol. Các việc UI còn lại tiếp tục theo app/TODO.md; score/artifact thật và metrics package chờ đầu mối tương ứng trong Dependencies.
+- Kiểm tra trước merge: hai ví dụ JSON hợp lệ, 23 link local tồn tại, verification toy đạt (target hạng 1/20/miss; catalog 23 item), export từ run toy mới khớp fixture về nội dung, git diff --check sạch. Nhánh TV4 được xóa sau khi main push thành công theo yêu cầu người dùng; commit merge tra bằng lịch sử Git của mục này.

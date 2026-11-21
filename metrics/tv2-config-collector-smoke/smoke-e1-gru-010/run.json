@@ -1,0 +1,139 @@
+{
+  "argv": [
+    "/root/.local/share/big-data-recsys/model-smoke-20261120/bin/python",
+    "-m",
+    "evaluation.run_neural",
+    "--model",
+    "gru",
+    "--data",
+    "/mnt/c/\u1ed4 D/Big Data Project/metrics/local/config-smoke-inputs/sessions",
+    "--schema",
+    "/mnt/c/\u1ed4 D/Big Data Project/evaluation/tests/fixtures/schema.pbtxt",
+    "--catalog",
+    "/mnt/c/\u1ed4 D/Big Data Project/evaluation/tests/fixtures/catalog.json",
+    "--train-through",
+    "2",
+    "--split",
+    "test",
+    "--subset",
+    "toy",
+    "--batch-size",
+    "256",
+    "--eval-batch-size",
+    "32",
+    "--epochs",
+    "3",
+    "--seed",
+    "1",
+    "--device",
+    "cuda",
+    "--run-id",
+    "smoke-e1-gru-010",
+    "--output",
+    "metrics/local/tv2-config-smoke/smoke-e1-gru-010/artifacts",
+    "--config-frozen"
+  ],
+  "metadata": {
+    "run": {
+      "run_id": "smoke-e1-gru-010",
+      "experiment": "E1",
+      "kind": "model",
+      "model": "gru",
+      "subset": "10",
+      "batch_size": 256,
+      "split": "test",
+      "input_format": "session Parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": "1..D-1",
+      "eval_partition": "D",
+      "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e1-gru-010",
+      "command": "python -m scripts.runs.run_experiments --run-id e1-gru-010 --site configs/site.local.json --execute"
+    },
+    "versions": {
+      "workflow_version": "toy-no-workflow-fit",
+      "mapping_version": "toy-fixture-v1",
+      "catalog_version": "toy-fixture-v1"
+    },
+    "artifacts": {
+      "sessions": {
+        "path": "/mnt/c/\u1ed4 D/Big Data Project/metrics/local/config-smoke-inputs/sessions",
+        "files": [
+          {
+            "path": "1/test.parquet",
+            "sha256": "1bcf5d314779d9119272e826840728902a02ae9449fe42e65b2cdd15c4e99d62"
+          },
+          {
+            "path": "1/train.parquet",
+            "sha256": "a07e8207ae8fd9a055792f37cf4d229597443f799814e58ea39a997cb2f65e92"
+          },
+          {
+            "path": "1/valid.parquet",
+            "sha256": "a500af02cf1e935eb48211fcba392c493069c6daaa28c845af2eb1324870d082"
+          },
+          {
+            "path": "2/test.parquet",
+            "sha256": "62980a137e079f154c7734d5ade1d435c12a2f16507fe7d223e3b77a65f66288"
+          },
+          {
+            "path": "2/train.parquet",
+            "sha256": "e8242d9504b10aa24520b1ad5aa43d725f6353e6650b3280d79f15d6684edcce"
+          },
+          {
+            "path": "2/valid.parquet",
+            "sha256": "c8f73580183f14ca13747e063a9003e92ae17e9c994292f235024fb671e5a9a0"
+          },
+          {
+            "path": "3/test.parquet",
+            "sha256": "3a89affe1a26b9ff341cd53e765220f4bc82d4b7bcb5b6326cc3a2222609f710"
+          },
+          {
+            "path": "3/valid.parquet",
+            "sha256": "8b7889e6bc422ab8109ac0712f203e6362cdce1deee5ce87be556c1a4564ab57"
+          }
+        ]
+      },
+      "schema": {
+        "path": "/mnt/c/\u1ed4 D/Big Data Project/evaluation/tests/fixtures/schema.pbtxt",
+        "sha256": "85b1038cdf140d591da7a60398449f32dd101d63a6ee9190551d011337274b6b"
+      },
+      "catalog": {
+        "path": "/mnt/c/\u1ed4 D/Big Data Project/evaluation/tests/fixtures/catalog.json",
+        "sha256": "cabb3075529b72fc3a075e73e1edd07f9e846858063b0972f730ecf17de894fe"
+      },
+      "preprocessing_manifest": {
+        "path": "/mnt/c/\u1ed4 D/Big Data Project/metrics/local/config-smoke-inputs/preprocessing.json",
+        "sha256": "2fd8be5bbbcea3aefec8fb35fc110ddb2e5441fddd0f454b8d35ab20898cab5a"
+      }
+    },
+    "site_config": {
+      "path": "metrics/local/config-smoke-inputs/site.json",
+      "sha256": "f037affad9cf6189da753e662fb2cd1988f042a0843ccdf922125b13a69ae370"
+    },
+    "data_kind": "toy",
+    "purpose": "toy_smoke",
+    "environment": {
+      "path": "/mnt/c/\u1ed4 D/Big Data Project/metrics/local/config-smoke-inputs/environment.json",
+      "sha256": "9dabb0739ba9b09fdb15d372c1cce5d0ba6aafb59f98901134e195582dd7e496"
+    },
+    "pipeline_metrics": null,
+    "pipeline_timing_scope": "TV1 measured stages reused; model process timed fresh",
+    "git_commit": "17b454be96ca879b78b3030e9d7e0e15fea53a5c"
+  },
+  "started_at": "2026-11-19T20:00:59.218633+00:00",
+  "peak_process_tree_rss_bytes": 3573665792,
+  "rss_sampling_seconds": 0.05,
+  "rss_scope": "sum of sampled parent/child RSS; shared pages may be counted twice",
+  "stdout": "metrics/local/tv2-config-smoke/smoke-e1-gru-010/stdout.txt",
+  "stderr": "metrics/local/tv2-config-smoke/smoke-e1-gru-010/stderr.txt",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 22.369808124,
+  "finished_at": "2026-11-19T20:01:21.588510+00:00"
+}

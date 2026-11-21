@@ -8,6 +8,8 @@ import subprocess
 import time
 from pathlib import Path
 
+from evaluation.timing import evaluation_timing
+
 from evaluation.data import Catalog, audit_sessions, read_sessions
 from evaluation.ranking import K, RankingMetrics
 from models.popularity import Popularity
@@ -55,35 +57,34 @@ def run(args):
         model.update_partition(day, (row for row in read_sessions(args.sessions)
                                     if row["split"] == "train" and row["day_index"] == day))
     train_seconds = time.perf_counter() - start
+    evaluation_started = time.perf_counter()
     start = time.perf_counter()
-    evaluation_started = start
     predictions = model.recommend()
     rank_seconds = time.perf_counter() - start
     metrics = RankingMetrics()
     with (args.output / "predictions.jsonl").open("w", encoding="utf-8") as handle:
-        for row in read_sessions(args.sessions):
-            if row["day_index"] != eval_day or row["split"] != args.eval_split:
-                continue
+        for row in read_sessions(args.sessions, day=eval_day, split=args.eval_split):
             sequence = catalog.sequence(row["product_ids"])
             metrics.update(sequence[-1], predictions)
             handle.write(json.dumps({"user_session": row["user_session"],
                                      "prefix": sequence[:-1], "target": sequence[-1],
                                      "top20": predictions,
                                      "product_ids": [catalog.products[i] for i in predictions]}) + "\n")
+    summary = metrics.compute()
+    timing = evaluation_timing(evaluation_started, summary["n_sessions"], rank_seconds,
+                               "one cached shared catalog ranking; not comparable to neural compute")
     result = {"run_id": args.run_id, "model": "Popularity", "subset": args.subset,
               "K": K, "train_days": sorted(model.trained_days), "eval_day": eval_day,
-              "eval_split": args.eval_split, **metrics.compute(),
+              "eval_split": args.eval_split, **summary, **timing,
               "train_with_input_scan_seconds": train_seconds,
               "ranking_once_seconds": rank_seconds,
-              "inference_seconds": rank_seconds,
-              "inference_scope": "one shared catalog ranking, reused for all evaluation sessions",
-              "evaluation_with_io_seconds": time.perf_counter() - evaluation_started,
               "output_path": str(args.output.resolve()), "python": platform.python_version(),
               "platform": platform.platform(),
               "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
               "source_sha256": {str(path): sha256(path) for path in [
                   Path("evaluation/data.py"), Path("evaluation/ranking.py"),
-                  Path("evaluation/run_popularity.py"), Path("models/popularity.py")]},
+                  Path("evaluation/run_popularity.py"), Path("models/popularity.py"),
+                  Path("evaluation/timing.py")]},
               "config": vars(args) | {"sessions": str(args.sessions), "catalog": str(args.catalog),
                                       "output": str(args.output)},
               "artifacts": {"sessions": fingerprint(args.sessions),

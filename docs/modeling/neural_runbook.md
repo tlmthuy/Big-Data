@@ -1,8 +1,8 @@
-# TV2 — GRU/XLNet và bàn giao experiment cho TV3
+# TV2 — Script GRU/XLNet
 
 ## Trạng thái
 
-Code/config đã tạo trên nhánh `feature/tv2-model-evaluation`; kiểm tra offline và log trong `metrics/tv2-model-scripts/`. Chưa chạy model NVIDIA đầy đủ: local có PyTorch CPU nhưng thiếu Merlin/Transformers4Rec. Không dùng test với model nhỏ hoặc schema tổng hợp làm kết quả GRU/XLNet/eCommerce. GPU smoke, dữ liệu thật và nghiệm thu TV3 còn chờ.
+Hai task script GRU/XLNet được tích hợp riêng vào main từ nhánh TV2. Cả hai đã train/eval và đạt kiểm tra checkpoint trên GPU laptop; [bằng chứng](../../metrics/tv2-model-smoke/README.md). Đây là dữ liệu toy; chưa có kết quả eCommerce, benchmark E1–E5 hay xác nhận runtime chính thức TV3.
 
 ## Script model
 
@@ -55,46 +55,12 @@ Sau mỗi run, kiểm tra checkpoint thật bằng `python -m scripts.runs.verif
 
 XLNet cần bộ nhớ cho activation theo batch × sequence² × layer/head và logits theo số vị trí train × vocabulary; GRU cũng có full-vocabulary logits. Không có số VRAM bảo đảm trước khi chạy. Runner ghi parameter bytes và peak CUDA allocated/reserved; collector ghi sampled process-tree RSS. Nếu batch chuẩn OOM, giữ log, trao đổi TV2 về config mới; không tự thay batch giữa E2 subsets.
 
-## TV3 chạy E1–E4
+## Config và collector
 
-1. Checkout đúng commit nhánh TV2 và [kiểm tra môi trường](../../environment/README.md). Copy `configs/site.example.json` → `configs/site.local.json` (Git ignore).
-2. Điền path thật, D, phiên bản workflow/mapping/catalog, preprocessing manifest và environment snapshot; TV2 kiểm tra dữ liệu rồi đặt `accepted_by_tv2=true`. Sau validation/fix cấu hình, đặt `configuration_frozen=true` cho final test. Không dùng template null như dữ liệu thật.
-3. Xem plan và chạy theo matrix:
-
-```bash
-python -m scripts.runs.run_experiments --experiment E1
-python -m scripts.runs.run_experiments --experiment E1 --site configs/site.local.json --execute
-python -m scripts.runs.run_experiments --experiment E2 --site configs/site.local.json --execute
-python -m scripts.runs.run_experiments --experiment E3 --site configs/site.local.json --execute
-python -m scripts.runs.run_experiments --experiment E4 --site configs/site.local.json --execute
-```
-
-Mặc định chạy tuần tự, process mới từng run để giải phóng VRAM. Chạy một run bằng `--run-id` thay `--experiment`. Output `metrics/raw/<run_id>/`: `run.json`, stdout/stderr và `artifacts/`. Output cũ bị từ chối; rerun dùng output-root mới và ghi lý do, không xóa log lỗi. Collector không tự áp CPU/RAM limit; E3 chỉ thay batch đã chốt. Snapshot môi trường phải ghi image/digest, GPU/CPU/RAM, driver/CUDA và package versions thật.
-
-## E2, E4 và E5: phần phụ thuộc TV1
-
-**E2:** mỗi subset fit workflow độc lập, dùng output tương ứng. TV1 bàn giao telemetry; chuyển các số đo thật sang `configs/pipeline_metrics.example.json` ở path ngoài Git hoặc manifest nhỏ đã review: `status=measured`, `n_events` là event tuần thực sau sampling trước tạo sequence; `read_seconds` là raw read; `preprocessing_seconds` gồm fit/features/groupby/split/write, **không gồm raw read hoặc first-seen tháng**. Ghi source log và artifact first-seen chung có thật. Runner thu train mới, gắn checksum/source của stage TV1 đã đo; đây là số đo ghép stage, không phải một process end-to-end được đo lại. Nếu chưa có telemetry, E2 từ chối chạy; TV3 không tự điền thời gian ước lượng.
-
-**E4:** subset 10%, cùng chín field raw và cùng schema string; Parquet Snappy. Tạo cặp trước benchmark nếu chưa có:
-
-```bash
-python -m benchmark.format_io --prepare-pair --csv PATH_RAW_SUBSET_10 --parquet PATH_NEW_PARQUET
-```
-
-Điền hai path vào `site.e4`; `preprocessing_argv` là **cùng một command TV1** hỗ trợ `{input_path}`, `{input_format}`, `{output_dir}`. TV1 cần bàn giao entrypoint đọc cả CSV/Parquet với cùng first-seen và logic nghiệp vụ, ghi artifact vào output_dir mới. Command này chưa có trong repo; E4 full đang chờ TV1, không dùng hàm đọc file làm giả full preprocessing. Có `--read-only` cho diagnostic riêng, không tính là E4 hoàn tất.
-
-Pair được kiểm tra số event và multiset fingerprint SHA-256 có giữ multiplicity, schema string đồng nhất, ngoài timed read. Đây là kiểm tra xác suất, không phải chứng minh bitwise hai file. Timing đọc gồm decode toàn bộ dữ liệu; cache ấm sau verification cho cả hai phía, không flush cache hệ điều hành. Chi phí tạo Parquet báo riêng, không trộn vào read time. Preprocessing child ghi elapsed/RSS riêng (gồm lần đọc input của chính pipeline); không cộng thêm standalone read vào elapsed của child rồi gọi là end-to-end. Parent RSS gồm cả audit; `peak_read_process_rss_bytes` chỉ lấy mẫu tại batch boundary.
-
-**E5:** không chạy model; lấy successful E2 `run.json` và `artifacts/metrics.json`:
-
-```bash
-python -m benchmark.scalability --logs metrics/raw --output reports/e5
-```
-
-Xuất CSV, SVG đường tăng trưởng theo **event thực**, summary JSON có bottleneck và giới hạn. Runtime/1M event dùng tổng các stage không chồng lặp đã nêu; first-seen chung báo riêng và thêm vào mỗi kịch bản end-to-end nếu cần. Bỏ run fail, báo `partial` nếu thiếu subset; từ chối cấu hình hiệu lực (gồm LR), checksum code hoặc môi trường khác; từ chối checkpoint replay, lịch train/eval sai và trùng subset chưa chọn run. Báo số partition train thực tế của từng subset. Một run/mức chưa có độ lệch chuẩn/confidence interval.
+Config/collector/runner E1–E4 và công cụ E5 đã tích hợp cùng [hướng dẫn TV3](experiment_runbook.md). Đã kiểm tra bằng toy data, chưa xác minh trên dữ liệu thật. [Phép đo inference](inference_timing.md) thống nhất thời gian toàn bộ evaluation; `prediction_compute_seconds` là diagnostic riêng mỗi model.
 
 ## Nguồn và phần nhóm điều chỉnh
 
 NVIDIA `f0ca2b5343dd1e40b5d2422b942f014b224f5c20`, Apache-2.0; [LICENSE giữ nguyên](../vendor/nvidia-transformers4rec/upstream/LICENSE). Đọc notebook 03 cells 20/22/26/33/39 và 62/64/67/73; `torch/features/sequence.py`, `torch/masking.py`, `torch/model/{base,prediction_task}.py`, `torch/block/{base,transformer}.py`, `torch/trainer.py::reset_lr_scheduler`, `merlin_standard_lib/schema/schema.py`; tests nguồn `tests/unit/torch/{test_masking.py,model/test_head.py,model/test_model.py}`.
 
-Tái sử dụng architecture/masking/head và API schema; giữ attribution trong `session_models.py`. Nhóm bổ sung CLI, batch-first GRU, streaming PyArrow/JSONL thay MerlinDataLoader, vòng train PyTorch tường minh thay Trainer, daily LR reset, schema/catalog guard, Top-20 real catalog/metric chung, final-test protocol, checkpoint, collector và experiment bindings. Không tuyên bố loop mới bitwise tương đương Trainer. Snapshot pin nguồn không thay việc xác minh package/runtime thật.
+Tái sử dụng architecture/masking/head và API schema; giữ attribution trong `session_models.py`. Nhóm bổ sung CLI, batch-first GRU, streaming PyArrow/JSONL thay MerlinDataLoader, vòng train PyTorch tường minh thay Trainer, daily LR reset, schema/catalog guard, Top-20 real catalog/metric chung, final-test protocol và checkpoint. Không tuyên bố loop mới bitwise tương đương Trainer. Snapshot pin nguồn không thay việc xác minh package/runtime thật.
