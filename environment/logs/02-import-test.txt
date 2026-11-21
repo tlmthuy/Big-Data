@@ -1,0 +1,22 @@
+
+==================================
+== Triton Inference Server Base ==
+==================================
+
+NVIDIA Release 23.06 (build 62878575)
+
+Copyright (c) 2018-2023, NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+/usr/local/lib/python3.10/dist-packages/merlin/dtypes/mappings/tf.py:52: UserWarning: Tensorflow dtype mappings did not load successfully due to an error: No module named 'tensorflow'
+  warn(f"Tensorflow dtype mappings did not load successfully due to an error: {exc.msg}")
+3.10.12 (main, Nov 20 2023, 15:14:05) [GCC 11.4.0]
+2.1.0a0+4136153 12.1
+True
+[0 1 2]
+6
