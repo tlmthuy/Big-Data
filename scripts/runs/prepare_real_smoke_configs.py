@@ -11,6 +11,14 @@ def version(path, label):
     return f"{label}:sha256:{digest}"
 
 
+def digest(path):
+    hasher = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
 def prepare(manifest_path, data_root, cohort, environment_snapshot, output):
     manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
     if manifest["dataset_decision"]["status"] != "selected_for_official_experiments":
@@ -33,13 +41,19 @@ def prepare(manifest_path, data_root, cohort, environment_snapshot, output):
         workflow_info = json.loads(workflow.read_text(encoding="utf-8"))
         split_info = json.loads(split.read_text(encoding="utf-8"))
         telemetry_info = json.loads(telemetry.read_text(encoding="utf-8"))
+        source_log = Path(telemetry_info["source_log"])
+        first_seen = Path(telemetry_info["first_seen_artifact"])
         if (split_info.get("no_overlap_and_complete_coverage") is not True
                 or workflow_info.get("notebook_commit") != "f0ca2b5343dd1e40b5d2422b942f014b224f5c20"
                 or telemetry_info.get("status") != "measured"
                 or telemetry_info.get("input_sha256") != entry["input_sha256"]
+                or telemetry_info.get("n_events") != entry["n_events"]
                 or split_info.get("input_sessions") != entry["sequence_count"]
                 or workflow_info.get("product_vocabulary_size") != entry["vocabulary_size"]
-                or telemetry_info.get("first_seen_sha256") != "5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7"):
+                or telemetry_info.get("first_seen_sha256") != "5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7"
+                or not source_log.is_file() or source_log.stat().st_size == 0
+                or not first_seen.is_file()
+                or digest(first_seen) != telemetry_info["first_seen_sha256"]):
             raise ValueError(f"Lineage/split/telemetry mismatch for subset {subset}")
         day_indices = [row["day_index"] for row in split_info["counts"]]
         subsets[subset] = {
