@@ -1,0 +1,49 @@
+
+==================================
+== Triton Inference Server Base ==
+==================================
+
+NVIDIA Release 23.06 (build 62878575)
+
+Copyright (c) 2018-2023, NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+test_collector_preserves_success_and_failure (test_experiments.ExperimentContracts) ... ok
+test_only_batch_changes_in_E3_and_E2_model_fixed (test_experiments.ExperimentContracts) ... ok
+test_template_cannot_be_executed_as_real_data (test_experiments.ExperimentContracts) ... ok
+test_toy_site_cannot_execute_as_real_data (test_experiments.ExperimentContracts) ... ok
+test_pair_preserves_duplicate_events_and_rejects_changed_content (test_experiments.FormatTests) ... ok
+test_shared_preprocessing_command_binds_both_formats_and_writes_artifacts (test_experiments.FormatTests) ... ok
+test_e5_uses_actual_events_separates_first_seen_and_ignores_failures (test_experiments.ScalabilityTests) ... ok
+test_toy_smoke_is_excluded_from_official_E5 (test_experiments.ScalabilityTests) ... ok
+test_neural_uses_the_same_boundary_and_session_denominator (test_inference_timing.InferenceTimingTests) ... ok
+test_popularity_includes_reads_and_one_time_catalog_ranking (test_inference_timing.InferenceTimingTests) ... ok
+test_catalog_filter_ties_and_small_catalog (test_neural.NeuralOrchestration) ... ok
+test_daily_weights_continue_and_checkpoint_reproduces_final (test_neural.NeuralOrchestration) ... ok
+test_pinned_masking_hides_target_and_gru_keeps_sessions_independent (test_neural.NeuralOrchestration) ... skipped 'Pinned reference branch unavailable'
+test_test_requires_frozen_config_and_correct_partition (test_neural.NeuralOrchestration) ... ok
+test_wrong_runtime_label_is_an_error (test_neural.NeuralOrchestration) ... ok
+test_streaming_partition_filter_and_tail_batch (test_neural.StreamingPartitionTests) ... ok
+test_catalog_cannot_include_technical_tokens (test_tv2.BaselineTests) ... ok
+test_cumulative_partition_once_and_train_only (test_tv2.BaselineTests) ... ok
+test_duplicate_membership_rejected (test_tv2.BaselineTests) ... ok
+test_empty_final_test_does_not_fall_back (test_tv2.BaselineTests) ... ok
+test_end_to_end_ignores_future_train_and_all_holdout (test_tv2.BaselineTests) ... ok
+test_final_test_uses_train_through_previous_partition (test_tv2.BaselineTests) ... ok
+test_invalid_sequences (test_tv2.BaselineTests) ... ok
+test_nvidia_parquet_layout_matches_jsonl (test_tv2.BaselineTests) ... ok
+test_padding_seen_items_zero_scores_and_ties (test_tv2.BaselineTests) ... ok
+test_test_split_rejects_nonfinal_partition (test_tv2.BaselineTests) ... ok
+test_empty_and_duplicate_predictions (test_tv2.MetricTests) ... ok
+test_hand_calculated_ranks (test_tv2.MetricTests) ... ok
+test_session_weighting_not_batch_means (test_tv2.MetricTests) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 2.459s
+
+OK (skipped=1)
