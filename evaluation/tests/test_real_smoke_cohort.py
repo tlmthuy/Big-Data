@@ -37,7 +37,7 @@ class RealSmokeCohortTests(unittest.TestCase):
         for key, path in list(self.paths.items()):
             canonical = path.parent.parent / ("valid.parquet" if key[1] == "validation" else "train.parquet")
             path.replace(canonical)
-            canonical.parent.rmdir()
+            path.parent.rmdir()
             self.paths[key] = canonical
         self.catalog = ROOT / "evaluation/tests/fixtures/catalog.json"
         self.schema = ROOT / "evaluation/tests/fixtures/schema.pbtxt"
