@@ -1,0 +1,40 @@
+{
+  "cleanup_sha256": "c441efad3e94e318d84bb9075dee2f0b79eab1475e1bd371eec4685c05ed9016",
+  "first_seen_sha256": "5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7",
+  "sampling_manifest_sha256": "da72607111d584289aa7a4ade3a4593c1ca1b11e1353438f5b5b400739942826",
+  "session_mapping_sha256": "4c91d4acbdbb254f899e7d7ff2fbd0fb72379cd45e82339d146d4628935c3bfc",
+  "outputs": [
+    {
+      "percent": 10,
+      "path": "week_010.parquet",
+      "sha256": "b58f0bc7f154d46603671afd2e5589737a198eb30ab0d8b0b218598c61f41abe",
+      "events": 638097,
+      "sessions": 187563,
+      "products": 63398
+    },
+    {
+      "percent": 25,
+      "path": "week_025.parquet",
+      "sha256": "e77b5a10514e4733efe945595f2a00903d036b3abdfdcbbe236cdf3510b8907b",
+      "events": 1601084,
+      "sessions": 469728,
+      "products": 87247
+    },
+    {
+      "percent": 50,
+      "path": "week_050.parquet",
+      "sha256": "b0a06da14ab317bfe8e3f380063bc4441f2ae59f0bd7a6d9edd01deb98bd454e",
+      "events": 3197030,
+      "sessions": 938071,
+      "products": 103940
+    },
+    {
+      "percent": 100,
+      "path": "week_100.parquet",
+      "sha256": "d20f2dc4505ace8712893ec8a8221f192e982158e28a1c63cded9e4f1e6384f6",
+      "events": 6390944,
+      "sessions": 1877365,
+      "products": 118333
+    }
+  ]
+}
