@@ -73,3 +73,34 @@ của toàn bộ session. Các session có timestamp phân biệt khớp chính 
 dãy tối đa 20 product ID cuối theo timestamp. Các session có timestamp
 trùng được đếm riêng và không áp đặt thứ tự phụ. SHA-256 từng Parquet,
 số session kiểm tra và đường dẫn log VM có trong manifest xác minh.
+
+## Chia train, validation và test theo day_index
+
+Chạy sau khi fit và xuất sequence. Runner đọc `day_index` đã tính tại
+cell 44 và gọi hàm GPU trong snapshot NVIDIA đã pin, như cell 63.
+Hàm sort theo `user_session` rồi đặt lại CuPy seed 1 trong mỗi partition
+để chia khoảng 80/10/10. Session được giữ nguyên theo partition đã gán,
+kể cả khi có event qua ngày. Workflow, schema và catalog dùng chung trong
+từng subset. Khi fine-tune, dùng train của partition t và validation của
+partition t+1. Xem protocol TV2 để chọn bước đánh giá test cuối.
+
+```bash
+for percent in 10 25 50 100; do
+  python pipeline/split_weekly_sequences.py \
+    --workflow "data/clean/workflows/$percent" \
+    --output-dir "data/clean/splits-v2/$percent" || exit 1
+done
+```
+
+Trên VM, chạy trong container Merlin tại workspace `~/tv1-weekly-20261121`.
+Mỗi thư mục split theo mức có `<day_index>/{train,valid,test}.parquet`,
+`membership.parquet` và manifest. Counts phân biệt product ID duy nhất
+và số interaction sau truncation, đều loại padding. Script kiểm tra mọi
+session thuộc đúng day_index, xuất hiện đúng một lần và đủ so với input.
+
+Đã chạy trên Tesla T4 cho đủ bốn subset. Mỗi subset có 7 day_index và
+21 Parquet split. [Manifest xác minh](../data/manifests/weekly_splits_verified.json)
+ghi checksum sequence đầu vào đã bàn giao, checksum từng split, membership,
+counts từng partition và đường dẫn log trên VM. TV2 có thể truyền thư mục
+`data/clean/splits-v2/<subset>` làm `--sessions` và dùng catalog/schema
+của cùng subset trong `data/clean/workflows/<subset>`.
