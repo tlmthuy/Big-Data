@@ -10,11 +10,11 @@
 
 ## TV3 — E5 real E2 scalability aggregation — 22/11/2026
 
-- E5 completed with status `complete` from successful real E2 logs for 10/25/50/100%, using `benchmark.scalability` and no separate model run.
-- Composed stages exclude shared first-seen: 10% 58.914481238s, 25% 125.932370666s, 50% 246.832022469s, 100% 491.238606855s.
-- Including shared first-seen `1.5164737080049235s` once: 60.430954946s, 127.448844374s, 248.348496177s, 492.755080563s respectively.
+- E5 completed with status `complete` after recomputing `benchmark.scalability` directly from the original successful E2 `run.json` and `artifacts/metrics.json`; no separate model run was created.
+- The reconciled source fields are `train_with_input_scan_seconds` and `inference_seconds`. Composed stages exclude shared first-seen: 10% `58.91448123800001s`, 25% `125.93237066599977s`, 50% `246.83202246900055s`, 100% `491.2386068550031s`.
+- Including shared first-seen `1.5164737080049235s` once: `60.43095494600493s`, `127.4488443740047s`, `248.34849617700547s`, `492.75508056300805s`.
 - Bottleneck: 10% preprocessing; 25/50/100% training including sequence I/O. One run per subset; no variance or confidence interval.
-- Outputs: `reports/e5/scalability.csv`, `reports/e5/scalability.svg`, `reports/e5/summary.json`. Limitation: composed stage timing is not an observed end-to-end process wall time.
+- Reconciled VM output: `reports/e5-reconciled-20261122/{scalability.csv,scalability.svg,summary.json}`. Limitation: composed stage timing is not one observed end-to-end process wall time.
 
 ## TV3 — E4 official real-data CSV/Parquet 10% pair — 22/11/2026
 
@@ -34,11 +34,13 @@
 
 ## TV3 — E2 official real-data 10/25/50/100% — 22/11/2026
 
-- GRU E2 passed for all four subsets using TV2 batch 256/eval 32/epochs 3/seed 1 and `full_evaluation_wall_v1`.
-- 10%: 882,808 events, vocabulary 63,398, 1,337 predictions, Recall@20 `0.08825729244577413`, NDCG@20 `0.03804320278602695`, read `0.172556934s`, preprocessing `30.449049161s`, training `55.181851470s`, peak process RSS `1,492,635,648 bytes`, peak GPU memory `7,977,566,208 bytes`.
-- 25%: 2,213,138 events, vocabulary 87,247, 3,266 predictions, Recall@20 `0.15737905695039803`, NDCG@20 `0.07156953474506007`, read `0.366867471s`, preprocessing `34.093408106s`, training `178.456597162s`, peak process RSS `1,548,365,824 bytes`, peak GPU memory `14,327,742,464 bytes`.
-- 50%: 4,421,037 events, vocabulary 103,940, 6,427 predictions, Recall@20 `0.27477827913489966`, NDCG@20 `0.12148368074443924`, read `0.735025497s`, preprocessing `37.860843321s`, training `406.215798496s`, peak process RSS `1,587,884,032 bytes`, peak GPU memory `13,755,219,968 bytes`.
-- 100%: 8,829,314 events, vocabulary 118,333, 13,052 predictions, Recall@20 `0.38990193073858420`, NDCG@20 `0.1803755829750735`, read `1.359735334s`, preprocessing `45.411392957s`, training `865.158472368s`, peak process RSS `1,635,422,208 bytes`, peak GPU memory `14,904,459,264 bytes`.
+- GRU E2 passed for all four subsets using TV2 batch 256/eval 32/epochs 3/seed 1 and `full_evaluation_wall_v1`. Warm-up policy: `none`; cache policy: `no cache flush; inherited OS cache state`.
+- Machine: Tesla T4 15,360 MiB, NVIDIA driver `570.172.08`, 8 vCPU, 31 GiB RAM, Ubuntu 22.04.5 LTS kernel `6.8.0-1036-aws`, Docker `28.4.0`, container `big-data-recsys:smoke`.
+- 10%: 882,808 events, 96,433 session coverage across partitions, 1,337 final-test sessions, vocabulary 63,398, Recall@20 `0.08825729244577413`, NDCG@20 `0.03804320278602695`, read `0.172556934s`, preprocessing `30.449049161s`, source training `27.590925735000383s`, source final evaluation `0.7019494080004733s`, process wall `41.77022658900023s`, peak process RSS `1,492,635,648 bytes`, peak GPU memory `7,977,566,208 bytes`.
+- 25%: 2,213,138 events, 241,715 session coverage across partitions, 3,266 final-test sessions, vocabulary 87,247, Recall@20 `0.15737905695039803`, NDCG@20 `0.07156953474506007`, read `0.366867471s`, preprocessing `34.093408106s`, source training `89.22829858099885s`, source final evaluation `2.243796507999832s`, process wall `118.18261974399957s`, peak process RSS `1,548,365,824 bytes`, peak GPU memory `14,327,742,464 bytes`.
+- 50%: 4,421,037 events, 482,239 session coverage across partitions, 6,427 final-test sessions, vocabulary 103,940, Recall@20 `0.27477827913489966`, NDCG@20 `0.12148368074443924`, read `0.735025497s`, preprocessing `37.860843321s`, source training `203.10789924799974s`, source final evaluation `5.128254403000028s`, process wall `258.71616461900066s`, peak process RSS `1,587,884,032 bytes`, peak GPU memory `13,755,219,968 bytes`.
+- 100%: 8,829,314 events, 965,304 session coverage across partitions, 13,052 final-test sessions, vocabulary 118,333, Recall@20 `0.38990193073858420`, NDCG@20 `0.1803755829750735`, read `1.359735334s`, preprocessing `45.411392957s`, source training `432.5792361840022s`, source final evaluation `11.88824238000052s`, process wall `546.3950088989995s`, peak process RSS `1,635,422,208 bytes`, peak GPU memory `14,904,459,264 bytes`.
+- The previously recorded 55.181/178.457/406.216/865.158 training figures were not present in the source `run.json`/`metrics.json` pair and have been replaced by the source fields above. Source training values are below process wall time for every subset.
 - Shared first-seen month cost is `1.5164737080049235s` per subset and must not be counted repeatedly. TV2 end-to-end stage for each subset is shared first-seen cost plus TV1 subset read plus TV1 preprocessing plus GRU training/evaluation, with no standalone read double-counted inside preprocessing elapsed.
 - All four runs passed, valid JSONL had exactly 20 unique IDs per prediction, and logs/artifacts are in `metrics/raw/e2-gru-{010,025,050,100}/`.
 
