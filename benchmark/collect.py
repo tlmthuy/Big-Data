@@ -5,6 +5,7 @@ import json
 import shutil
 import subprocess
 import time
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 import sys
@@ -95,10 +96,14 @@ def run_command(argv, output, metadata=None):
               "gpu_memory_scope": "nvidia-smi compute-app used_memory matched to sampled parent/child PIDs",
               "gpu_memory_sampling_seconds": 0.05,
               "gpu_memory_observation_available": False,
+              "gpu_memory_bytes_status": "missing",
+              "gpu_memory_missing_reason": "nvidia-smi or matching compute-app GPU memory was unavailable",
               "gpu_memory_total_used_bytes_peak": 0,
               "gpu_memory_total_scope": "sum of nvidia-smi memory.used across visible GPUs",
+              "gpu_memory_total_used_bytes_status": "missing",
+              "gpu_memory_total_missing_reason": "nvidia-smi total GPU memory was unavailable",
               "elapsed_seconds_unit": "seconds",
-              "measurement_scope": "entire child process wall time and sampled process-tree RSS; excludes run.json write",
+              "measurement_scope": "child process wall time; sampled process-tree RSS/GPU memory; excludes run.json write",
               "warm_up_policy": warm_up_policy,
               "cache_policy": cache_policy,
               "stdout": str((output / "stdout.txt").resolve()),
@@ -112,7 +117,19 @@ def run_command(argv, output, metadata=None):
                 parent = psutil.Process(process.pid)
             except psutil.NoSuchProcess:
                 parent = None
-            while process.poll() is None:
+            exit_state = threading.Event()
+            completion = {}
+
+            def wait_for_child():
+                try:
+                    completion["exit_code"] = process.wait()
+                    completion["finished_perf_counter"] = time.perf_counter()
+                finally:
+                    exit_state.set()
+
+            waiter = threading.Thread(target=wait_for_child, daemon=True)
+            waiter.start()
+            while not exit_state.wait(0.05):
                 try:
                     members = [parent, *parent.children(recursive=True)] if parent else []
                     rss = 0
@@ -127,19 +144,26 @@ def run_command(argv, output, metadata=None):
                     gpu_bytes, gpu_available = _gpu_memory_for_processes(pids)
                     record["gpu_memory_observation_available"] = record["gpu_memory_observation_available"] or gpu_available
                     record["gpu_memory_bytes_peak"] = max(record["gpu_memory_bytes_peak"], gpu_bytes)
+                    if gpu_available:
+                        record["gpu_memory_bytes_status"] = "observed"
                     gpu_total, gpu_total_available = _gpu_total_memory()
                     if gpu_total_available:
                         record["gpu_memory_total_used_bytes_peak"] = max(
                             record["gpu_memory_total_used_bytes_peak"], gpu_total)
+                        record["gpu_memory_total_used_bytes_status"] = "observed"
                 except psutil.NoSuchProcess:
                     pass
-                time.sleep(0.05)
-            record["exit_code"] = process.wait()
+            waiter.join()
+            record["exit_code"] = completion["exit_code"]
             record["status"] = "passed" if record["exit_code"] == 0 else "failed"
     except OSError as error:
         record.update(status="failed", exit_code=None, error=str(error))
     finally:
-        record["elapsed_seconds"] = time.perf_counter() - tick
+        record["elapsed_seconds"] = (
+            completion["finished_perf_counter"] - tick
+            if "completion" in locals() and "finished_perf_counter" in completion
+            else time.perf_counter() - tick
+        )
         record["finished_at"] = datetime.now(timezone.utc).isoformat()
         (output / "run.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
     return record

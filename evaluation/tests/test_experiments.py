@@ -63,6 +63,11 @@ class ExperimentContracts(unittest.TestCase):
             self.assertEqual(good["run_id"], "good")
             self.assertEqual(good["cpu_memory_unit"], "bytes")
             self.assertEqual(good["gpu_memory_unit"], "bytes")
+            self.assertIn(good["gpu_memory_bytes_status"], ("missing", "observed"))
+            self.assertIn(good["gpu_memory_total_used_bytes_status"], ("missing", "observed"))
+            if not good["gpu_memory_observation_available"]:
+                self.assertEqual(good["gpu_memory_bytes_status"], "missing")
+                self.assertIn("unavailable", good["gpu_memory_missing_reason"])
             self.assertEqual(good["elapsed_seconds_unit"], "seconds")
             self.assertEqual(Path(good["output_path"]).name, "good")
             self.assertIn("cache", good["cache_policy"])

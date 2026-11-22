@@ -1,5 +1,13 @@
 # Handoff
 
+## TV3 — Docker import and collector timing verification — 22/11/2026
+
+- Verified the running VM container `big-data-recsys:smoke` on Tesla T4 imports successfully: Python `3.10.12`, cuDF `23.04.00`, CuPy `12.0.0b3`, NVTabular `23.08.00`, PyTorch runtime `2.1.0a0+4136153`, CUDA `12.1`, Transformers4Rec `23.12.00`, Transformers `4.27.1`, and `torch.cuda.is_available=True`.
+- The container has a PyTorch metadata mismatch: runtime import reports `2.1.0a0+4136153`, while `pip freeze` reports `torch==2.1.2`. Runtime/import evidence is authoritative for the Docker measurement; `environment/README.md` and `environment/logs/02-import-test.log` record both values.
+- Updated `benchmark/collect.py` so elapsed process wall time is captured by an independent child-wait thread and is not extended by an `nvidia-smi` query. GPU process and total-GPU measurements now have explicit `*_status` fields and missing-measurement reasons instead of reporting only zero bytes.
+- Added collector regression coverage for the missing-GPU status fields. Targeted collector test passes.
+- VM repository before changes had unrelated untracked artifacts under `metrics/` and `reports/e5/`; those files were not modified or committed.
+
 ## TV3 — E5 real E2 scalability aggregation — 22/11/2026
 
 - E5 completed with status `complete` from successful real E2 logs for 10/25/50/100%, using `benchmark.scalability` and no separate model run.
