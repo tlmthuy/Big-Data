@@ -1,5 +1,15 @@
 # Handoff
 
+## TV3 — E1 official real-data 10% — 22/11/2026
+
+- VM: `bigdata-ec2`, branch `feature/tv3-environment-benchmark`, runtime run commit `0fada5fa4e0102381cb29826c343162926e6ddf3`. Data TV1 10% official: split manifest `859142ba5d298d31d59fbbdb3a08a0e67537fc475ccc6f88a977aecea1bbf117`, catalog `04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6`, schema `2dbae5364c9955ec90e7b0c098e28f78a0565677d1887c7ed53b3a45ee45c6c8`.
+- Protocol: `full_evaluation_wall_v1`, K=20, 10% subset, final day 7 test partition, training days 1-6, batch TV2 256/eval 32/epochs 3/seed 1. The TV2 matrix was frozen before test evaluation; the test partition was not used for config or checkpoint selection.
+- Popularity PASS: run `e1-popularity-010`, Recall@20 `0.08676140613313388`, NDCG@20 `0.03476648339460129`, 1337 sessions. Log `metrics/raw/e1-popularity-010/`.
+- GRU PASS: run `e1-gru-010`, Recall@20 `0.08825729244577413`, NDCG@20 `0.03804320278602695`, 1337 sessions. Checkpoint keys loaded and verified. Log `metrics/raw/e1-gru-010/`.
+- XLNet PASS: run `e1-xlnet-010`, Recall@20 `0.12490650710545999`, NDCG@20 `0.05133183399511177`, 1337 sessions. Checkpoint keys loaded and verified. Log `metrics/raw/e1-xlnet-010/`.
+- Post-run validation: 1337 JSONL predictions per run, exactly 20 unique top-20 IDs per row, all top-20/catalog IDs outside technical IDs 0/1/2, targets outside technical IDs, and all run exit codes 0.
+- Runtime: Docker `big-data-recsys:smoke`, Tesla T4 15360 MiB, Ubuntu 22.04.5, NVIDIA driver `570.172.08`; no warm-up or cache flush.
+
 ## TV3 — Preflight và trạng thái E1 — 22/11/2026
 
 - Trạng thái git local: branch `feature/tv3-environment-benchmark`,

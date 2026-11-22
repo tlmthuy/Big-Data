@@ -1,0 +1,11 @@
+TV3 next task: Run E2 script on four subsets 10/25/50/100%.
+
+Requirements:
+- Use the existing TV2 scripts/config and real TV1 accepted artifacts.
+- Run GRU only, batch size 256, seed 1, epochs 3, sequence length 20, test partition per matrix.
+- Record counts, vocabulary size, read time, preprocessing time, training time and memory for each subset.
+- Run exactly 10%, 25%, 50%, and 100% sessions.
+- Record warm-up, OS/page cache state and machine configuration before/after runs.
+- Separate shared first-seen month cost from each subset cost.
+- Document end-to-end total by TV2 config: first-seen shared cost + subset read + subset preprocessing + GRU training/evaluation stage, without double counting or adding standalone read into pipeline child elapsed.
+- Preserve pass/fail, raw logs, run.json and artifacts/metrics.json; do not commit checkpoints, caches or credentials.
