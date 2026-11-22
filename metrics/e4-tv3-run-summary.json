@@ -1,0 +1,33 @@
+{
+  "experiment": "E4",
+  "status": "both_passed",
+  "pair": "10_percent",
+  "n_events": 19692,
+  "verification_method": "multiplicity-sensitive multiset fingerprint and nine-string schema",
+  "formats": {
+    "csv": {
+      "bytes": 2631808,
+      "read_seconds": 0.01283526199949847,
+      "peak_read_process_rss_bytes": 98770944,
+      "n_events": 19692,
+      "status": "passed",
+      "preprocessing_seconds": 31.389110877999883,
+      "preprocessing_rss_bytes": 2111741952,
+      "preprocessing_gpu_memory_bytes": 249561088,
+      "cache_policy": "OS cache warm after pair verification; no privileged cache drop",
+      "path": "metrics/raw/e4-010-csv"
+    },
+    "parquet": {
+      "bytes": 618046,
+      "read_seconds": 0.003742939999938244,
+      "peak_read_process_rss_bytes": 95875072,
+      "n_events": 19692,
+      "status": "passed",
+      "preprocessing_seconds": 30.08522615899983,
+      "preprocessing_rss_bytes": 2134700032,
+      "preprocessing_gpu_memory_bytes": 249561088,
+      "cache_policy": "OS cache warm after pair verification; no privileged cache drop",
+      "path": "metrics/raw/e4-010-parquet"
+    }
+  }
+}

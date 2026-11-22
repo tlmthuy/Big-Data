@@ -1,5 +1,13 @@
 # Handoff
 
+## TV3 — E4 official real-data CSV/Parquet 10% pair — 22/11/2026
+
+- E4 passed for both formats; the 19,692-row pair passed the multiplicity-sensitive multiset fingerprint and nine-string schema verification.
+- CSV: 2,631,808 bytes, read `0.01283526199949847s`, peak read RSS `98,770,944 bytes`, TV1 preprocessing `31.389110877999883s`, preprocessing RSS `2,111,741,952 bytes`, preprocessing GPU memory `249,561,088 bytes`.
+- Parquet: 618,046 bytes, read `0.003742939999938244s`, peak read RSS `95,875,072 bytes`, TV1 preprocessing `30.08522615899983s`, preprocessing RSS `2,134,700,032 bytes`, preprocessing GPU memory `249,561,088 bytes`.
+- Both used the same TV1 preprocessing argv and shared first-seen artifact; OS cache warm after verification, no privileged cache drop. Pair conversion/verification was outside timed read.
+- Fingerprint sum and squared sum matched across formats. Logs/artifacts: `metrics/raw/e4-010-csv/` and `metrics/raw/e4-010-parquet/`.
+
 ## TV3 — E3 official real-data 10% batch resource comparison — 22/11/2026
 
 - GRU E3 passed for both TV2 resource configs on subset 10%, validation split, 1,324 sessions, seed 1, epochs 3 and sequence length 20.

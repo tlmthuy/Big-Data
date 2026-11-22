@@ -1,8 +1,8 @@
-TV3 next task: Run E4 script for CSV/Parquet 10% pair.
+TV3 next task: Run E5 scalability aggregation from real E2 logs.
 
 Requirements:
-- Use the existing TV2 scripts/config and the accepted TV1 shared 10% raw CSV/Parquet pair.
-- Verify row count and multiset fingerprint for both formats before timed runs.
-- Use the same TV1 preprocessing entrypoint and shared first-seen artifact.
-- Record file size, read time, preprocessing time and memory with warm-up/cache state.
-- Preserve pass/fail, run.json, stdout/stderr and artifacts/metrics.json separately for CSV and Parquet.
+- Use successful E2 run.json and artifacts/metrics.json for 10/25/50/100% only.
+- Reuse TV2 benchmark.scalability entrypoint and real-TV1 stage telemetry.
+- Reject missing subsets, toy logs, wrong protocol or mismatched environment/checksum/config.
+- Report total end-to-end stage cost with shared first-seen cost separated from per-subset read, preprocessing and training.
+- Preserve partial/failure status and output scalability.csv, scalability.svg and summary.json; do not create a separate model run.
