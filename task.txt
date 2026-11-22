@@ -1,8 +1,8 @@
-TV3 next task: Run E5 scalability aggregation from real E2 logs.
+TV3 next task: Reproduce one official run and prepare cleanup record.
 
 Requirements:
-- Use successful E2 run.json and artifacts/metrics.json for 10/25/50/100% only.
-- Reuse TV2 benchmark.scalability entrypoint and real-TV1 stage telemetry.
-- Reject missing subsets, toy logs, wrong protocol or mismatched environment/checksum/config.
-- Report total end-to-end stage cost with shared first-seen cost separated from per-subset read, preprocessing and training.
-- Preserve partial/failure status and output scalability.csv, scalability.svg and summary.json; do not create a separate model run.
+- Choose one successful official run and reproduce it with the same commit, site, split, seed and protocol.
+- Preserve the original and reproduction logs separately; do not overwrite either.
+- Record warm-up/cache state and machine configuration.
+- Stop or terminate cloud resources only after TV2/TV4/TV5 confirm the metrics package.
+- Store a cleanup record with stopped resources, retained artifacts and no credentials.

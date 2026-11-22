@@ -1,5 +1,13 @@
 # Handoff
 
+## TV3 — E5 real E2 scalability aggregation — 22/11/2026
+
+- E5 completed with status `complete` from successful real E2 logs for 10/25/50/100%, using `benchmark.scalability` and no separate model run.
+- Composed stages exclude shared first-seen: 10% 58.914481238s, 25% 125.932370666s, 50% 246.832022469s, 100% 491.238606855s.
+- Including shared first-seen `1.5164737080049235s` once: 60.430954946s, 127.448844374s, 248.348496177s, 492.755080563s respectively.
+- Bottleneck: 10% preprocessing; 25/50/100% training including sequence I/O. One run per subset; no variance or confidence interval.
+- Outputs: `reports/e5/scalability.csv`, `reports/e5/scalability.svg`, `reports/e5/summary.json`. Limitation: composed stage timing is not an observed end-to-end process wall time.
+
 ## TV3 — E4 official real-data CSV/Parquet 10% pair — 22/11/2026
 
 - E4 passed for both formats; the 19,692-row pair passed the multiplicity-sensitive multiset fingerprint and nine-string schema verification.
