@@ -27,8 +27,9 @@
 ## TV3 — E3 official real-data 10% batch resource comparison — 22/11/2026
 
 - GRU E3 passed for both TV2 resource configs on subset 10%, validation split, 1,324 sessions, seed 1, epochs 3 and sequence length 20.
-- Batch 32: run `e3-gru-010-b32`, Recall@20 `0.19637462235649547`, NDCG@20 `0.09061635825363464`, process elapsed `65.94311637600003s`, peak process RSS `1,492,623,360 bytes`, peak GPU memory `2,388,656,128 bytes`, exactly 1,324 predictions and 20 unique IDs per prediction.
-- Batch 128: run `e3-gru-010-b128`, Recall@20 `0.1299093655589124`, NDCG@20 `0.05908318361917487`, process elapsed `44.7698482299993s`, peak process RSS `1,487,417,344 bytes`, peak GPU memory `4,167,041,024 bytes`, exactly 1,324 predictions and 20 unique IDs per prediction.
+- Machine: Tesla T4 15,360 MiB, NVIDIA driver `570.172.08`, 8 vCPU, 31 GiB RAM, Ubuntu 22.04.5 LTS kernel `6.8.0-1036-aws`, Docker `28.4.0`, container `big-data-recsys:smoke`, CUDA `12.1`.
+- Batch 32: run `e3-gru-010-b32`, actual config train batch `32`, eval batch `32`, epochs `3`, seed `1`, learning rate `0.00071`, subset `10`, split `validation`, train-through `6`, device `cuda`, no checkpoint replay. Recall@20 `0.19637462235649547`, NDCG@20 `0.09061635825363464`, process elapsed `65.94311637600003s`, full-evaluation wall `0.7155545870000424s`, throughput `1850.3130635369982 sessions/s`, `0.54044908383689 ms/session`, peak process RSS `1,492,623,360 bytes`, peak GPU memory `2,388,656,128 bytes`, exactly 1,324 predictions and 20 unique IDs per prediction.
+- Batch 128: run `e3-gru-010-b128`, actual config train batch `128`, eval batch `32`, epochs `3`, seed `1`, learning rate `0.00071`, subset `10`, split `validation`, train-through `6`, device `cuda`, no checkpoint replay. Recall@20 `0.1299093655589124`, NDCG@20 `0.05908318361917487`, process elapsed `44.7698482299993s`, full-evaluation wall `0.7083099780002158s`, throughput `1869.2381035462367 sessions/s`, `0.5349773247735768 ms/session`, peak process RSS `1,487,417,344 bytes`, peak GPU memory `4,167,041,024 bytes`, exactly 1,324 predictions and 20 unique IDs per prediction.
 - Warm-up policy: none; cache policy: no cache flush and inherited OS cache state. The only changed TV2 resource variable was train batch size.
 - Logs/artifacts: `metrics/raw/e3-gru-010-b32/` and `metrics/raw/e3-gru-010-b128/`.
 
