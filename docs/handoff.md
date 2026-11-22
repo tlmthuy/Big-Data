@@ -2,6 +2,51 @@
 
 ## Trạng thái hiện hành
 
+### TV2 — Real-data smoke và kiểm tra E2/E3/E4/E5 — 22/11/2026
+
+- VM `bigdata-ec2` đã truy cập bằng SSH; runtime chính thức là Ubuntu
+  22.04.5, Tesla T4 15,360 MiB, Docker 28.4.0, NVIDIA Container Toolkit
+  1.20.2 và image `big-data-recsys:smoke` từ Merlin `23.12`.
+- Repo VM ở commit `ebd5f97b88515e4809d27ed4dd0275582751744e`, đúng nhánh
+  `feature/tv2-model-evaluation`, working tree sạch trước các run.
+- Cohort thật subset 10% được giữ nguyên: 256 session train partition 1,
+  64 session validation partition 2, seed 42. Artifact membership, split
+  và fingerprint nguồn tại
+  `metrics/local/tv2-real-smoke-20261121/cohort/cohort.json`.
+- **Popularity** PASS qua collector: 64 session, predictions và Top-20 có đủ
+  64 dòng, Recall@20 `0.046875`, NDCG@20 `0.013629089384393436`,
+  inference wall protocol `full_evaluation_wall_v1`.
+- **GRU** PASS: train/eval partition 1→2, 64 predictions Top-20,
+  Recall@20 `0.0`, NDCG@20 `0.0`; checkpoint hợp lệ và có đầy đủ
+  `model`, `optimizer`, `state_dict`, `trained_days`, `training_config`.
+- **XLNet** PASS: cùng cohort, catalog, partition và protocol, 64 predictions
+  Top-20, Recall@20 `0.0`, NDCG@20 `0.0`; checkpoint hợp lệ và có đầy đủ
+  state cần kiểm tra.
+- Kết quả neural 0.0 là kết quả smoke cohort nhỏ, không phải kết quả E1
+  chính thức. Popularity/GRU/XLNet không dùng test và không fit lại mapping,
+  vocabulary, schema hoặc catalog; mỗi run ghi commit `ebd5f97`.
+- **E3**: batch train chỉ đổi 32/128 trên cùng cohort GRU. Cả hai run đều
+  PASS, không phát sinh OOM; 64/64 predictions và Top-20. Đây là smoke
+  resource, không phải benchmark E3 đầy đủ.
+- **E2**: đã đối chiếu binding/artifact/version/telemetry cho cả bốn subset
+  10/25/50/100 trong run config; chưa chạy benchmark preprocessing/train đầy
+  đủ bốn subset.
+- **E4**: chạy riêng cặp raw CSV/Parquet có cùng 19,692 event bằng cùng
+  entrypoint TV1 `pipeline/preprocess_weekly.py`, cùng first-seen và logic.
+  Cả hai PASS; CSV 2,631,808 byte/read `0.012153715s`, Parquet 618,046
+  byte/read `0.003978104s`; preprocessing hai phía đều khoảng 31.1–31.8 giây.
+  Fingerprint multiset và số event khớp. Đây là smoke cặp nhỏ, không phải
+  benchmark E4 đầy đủ.
+- **E5**: chưa tạo chạy model riêng; regression suite đạt 31 test PASS,
+  1 test SKIP vì thiếu nhánh reference NVIDIA cho test pinned.
+  Test aggregation E5 PASS trong suite. Chưa có tập run E2 thực đủ để tạo
+  scalability/E5 chính thức.
+- Artifact smoke trên VM tại
+  `metrics/local/tv2-real-smoke-20261121/runs/`; checkpoint không commit.
+  Các log, run JSON và metrics nhỏ chỉ lưu local trên VM theo quy tắc artifact.
+- Phần còn lại: benchmark E1/E2/E3 đầy đủ, batch official freeze, E5 metrics
+  package chính thức và bàn giao TV4/TV5. Không merge nhánh feature vào main.
+
 ### TV2 — Đồng bộ main và bắt đầu preflight dữ liệu thật — 21/11/2026
 
 - Merge main `6d449da` vào `feature/tv2-model-evaluation`, commit đồng bộ `b9d7c4f`. Giải conflict theo bản config/timing mới trên main; loại phần auto-merge ghi đè `inference_seconds` Popularity về ranking một lần. **29/29 test đạt**, checksum manifest TV2 khớp.
