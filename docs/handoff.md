@@ -1,5 +1,13 @@
 # Handoff
 
+## TV3 — E3 official real-data 10% batch resource comparison — 22/11/2026
+
+- GRU E3 passed for both TV2 resource configs on subset 10%, validation split, 1,324 sessions, seed 1, epochs 3 and sequence length 20.
+- Batch 32: run `e3-gru-010-b32`, Recall@20 `0.19637462235649547`, NDCG@20 `0.09061635825363464`, process elapsed `65.94311637600003s`, peak process RSS `1,492,623,360 bytes`, peak GPU memory `2,388,656,128 bytes`, exactly 1,324 predictions and 20 unique IDs per prediction.
+- Batch 128: run `e3-gru-010-b128`, Recall@20 `0.1299093655589124`, NDCG@20 `0.05908318361917487`, process elapsed `44.7698482299993s`, peak process RSS `1,487,417,344 bytes`, peak GPU memory `4,167,041,024 bytes`, exactly 1,324 predictions and 20 unique IDs per prediction.
+- Warm-up policy: none; cache policy: no cache flush and inherited OS cache state. The only changed TV2 resource variable was train batch size.
+- Logs/artifacts: `metrics/raw/e3-gru-010-b32/` and `metrics/raw/e3-gru-010-b128/`.
+
 ## TV3 — E2 official real-data 10/25/50/100% — 22/11/2026
 
 - GRU E2 passed for all four subsets using TV2 batch 256/eval 32/epochs 3/seed 1 and `full_evaluation_wall_v1`.

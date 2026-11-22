@@ -1,7 +1,8 @@
-TV3 next task: Run E3 script on one subset 10% with GRU batch sizes 32 and 128.
+TV3 next task: Run E4 script for CSV/Parquet 10% pair.
 
 Requirements:
-- Use existing TV2 scripts/config and accepted TV1 subset 10% artifacts.
-- Keep GRU, data, split, epoch, sequence length and seed fixed; change only train batch size 32 vs 128.
-- Record warm-up and OS cache state for both runs.
-- Preserve pass/fail, run.json, stdout/stderr, artifacts/metrics.json and memory logs separately.
+- Use the existing TV2 scripts/config and the accepted TV1 shared 10% raw CSV/Parquet pair.
+- Verify row count and multiset fingerprint for both formats before timed runs.
+- Use the same TV1 preprocessing entrypoint and shared first-seen artifact.
+- Record file size, read time, preprocessing time and memory with warm-up/cache state.
+- Preserve pass/fail, run.json, stdout/stderr and artifacts/metrics.json separately for CSV and Parquet.

@@ -1,0 +1,47 @@
+{
+  "experiment": "E3",
+  "status": "both_passed",
+  "protocol": "full_evaluation_wall_v1",
+  "model": "gru",
+  "subset": "10",
+  "eval_split": "validation",
+  "epochs": 3,
+  "seed": 1,
+  "sequence_length": 20,
+  "runs": {
+    "32": {
+      "run_id": "e3-gru-010-b32",
+      "status": "passed",
+      "exit_code": 0,
+      "batch_size": 32,
+      "predictions": 1324,
+      "top20_valid": true,
+      "n_sessions": 1324,
+      "recall_at_20": 0.19637462235649547,
+      "ndcg_at_20": 0.09061635825363464,
+      "process_elapsed_seconds": 65.943116376,
+      "peak_process_tree_rss_bytes": 1492623360,
+      "gpu_memory_bytes_peak": 2388656128,
+      "warm_up_policy": "none",
+      "cache_policy": "no cache flush; inherited OS cache state",
+      "path": "metrics/raw/e3-gru-010-b32"
+    },
+    "128": {
+      "run_id": "e3-gru-010-b128",
+      "status": "passed",
+      "exit_code": 0,
+      "batch_size": 128,
+      "predictions": 1324,
+      "top20_valid": true,
+      "n_sessions": 1324,
+      "recall_at_20": 0.1299093655589124,
+      "ndcg_at_20": 0.05908318361917487,
+      "process_elapsed_seconds": 44.76984823,
+      "peak_process_tree_rss_bytes": 1487417344,
+      "gpu_memory_bytes_peak": 4167041024,
+      "warm_up_policy": "none",
+      "cache_policy": "no cache flush; inherited OS cache state",
+      "path": "metrics/raw/e3-gru-010-b128"
+    }
+  }
+}
