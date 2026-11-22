@@ -2,6 +2,33 @@
 
 ## Trạng thái hiện hành
 
+### TV3 — Smoke test model trên dữ liệu thật — 22/11/2026
+
+- Artifacts TV1 subset 10 và cohort smoke TV2 đã được đọc lại trong Docker
+  `big-data-recsys:smoke`, cuDF 23.04.00, PyTorch GPU T4.
+- Cohort: 256 session train partition 1 và 64 session validation partition 2.
+  Catalog có 63,398 item thực; mã kỹ thuật padding/null/OOV là 0/1/2.
+- GRU đã train/eval thành công trên partition 1→2:
+  checkpoint có `model`, `optimizer`, `state_dict`, `trained_days`,
+  `training_config` và `training_source_sha256`; 64 predictions;
+  Top-20 đủ 20; target không dùng mã kỹ thuật; Top-20 nằm trong catalog;
+  không chứa padding/null/OOV.
+- XLNet đã train/eval thành công trên cùng cohort:
+  checkpoint và prediction structure tương đương GRU; 64 predictions;
+  Top-20 đủ 20; target không dùng mã kỹ thuật; Top-20 nằm trong catalog;
+  không chứa padding/null/OOV.
+- Config chạy: batch train 256, eval batch 32, epochs 3, seed 1;
+  GRU learning rate `0.00071`; XLNet learning rate `0.000666`.
+- Recall@20 và NDCG@20 của cả hai neural runs trên cohort nhỏ đều `0.0`.
+  Đây là real-data smoke và không phải kết quả E1 chính thức.
+- Evidence run hiện có tại
+  `metrics/local/tv2-real-smoke-20261121/runs/real-smoke-gru-cohort-v1/`
+  và `metrics/local/tv2-real-smoke-20261121/runs/real-smoke-xlnet-cohort-v1/`
+  trên VM. Validation độc lập được lưu tại
+  `metrics/tv3-model-smoke-20261122-validation.txt`.
+- Task TV3 "Smoke test model" đạt vì ít nhất GRU và XLNet đều chạy được.
+  Không coi đây là benchmark chính thức E1/E2/E3/E5.
+
 ### TV3 — Smoke đọc Parquet processed — 22/11/2026
 
 - VM `bigdata-ec2` truy cập được qua SSH; repo/chờ chạy ở commit
