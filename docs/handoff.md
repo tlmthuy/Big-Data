@@ -1,5 +1,28 @@
 # Handoff
 
+## TV3 — Preflight và trạng thái E1 — 22/11/2026
+
+- Trạng thái git local: branch `feature/tv3-environment-benchmark`,
+  commit `c14fbe410788ef6371637b1abf0754f8e1c33cfe`, remote tip cũng
+  trỏ tới cùng commit sau `git fetch origin --prune`, working tree sạch.
+- Remote được xác nhận: `https://github.com/tlmthuy/Big-Data.git`.
+- SSH alias `bigdata-ec2` không reachable tại `3.212.44.151:22`;
+  `Test-NetConnection` thất bại và `ssh` timeout. Chưa thể kết nối VM,
+  xác nhận runtime/artifact TV1 mới nhất trên VM, hay chạy model thật.
+- Không tạo run chính thức E1, không ghi smoke log vào kết quả chính thức,
+  không commit dữ liệu/chạy model khi không xác minh TV1/TV2.
+- Phần còn lại của E1 theo [dòng TV3 trong team_tasks](team_tasks.md):
+  chạy riêng Popularity, GRU, XLNet bằng script/config TV2, cùng subset,
+  split, catalog, `K=20`, protocol `full_evaluation_wall_v1`, seed/config
+  TV2 đã đóng băng, và chỉ dùng artifact TV1 đã chấp nhận. Không dùng
+  test partition để chọn config/checkpoint.
+- Popularity/GRU/XLNet không kết luận PASS/FAIL cho full E1 trong phiên này.
+  Kết quả smoke/cohort hiện có chỉ là bằng chứng lịch sử và không thay thế
+  run chính thức.
+- Bước cần mở lại: khởi động/mở SSH cho VM hoặc cung cấp HostName/IP mới,
+  sau đó checkout fetch branch TV3 mới nhất, xác nhận TV1 data/manifest
+  và branch TV2, rồi chạy lần lượt từng model qua collector.
+
 ## Trạng thái hiện hành
 
 ### TV3 — Benchmark collector runtime/memory — 22/11/2026
