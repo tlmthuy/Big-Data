@@ -60,6 +60,12 @@ class ExperimentContracts(unittest.TestCase):
             self.assertEqual(bad["exit_code"], 7)
             self.assertIn("bad", (root / "bad/stderr.txt").read_text())
             self.assertTrue((root / "bad/run.json").is_file())
+            self.assertEqual(good["run_id"], "good")
+            self.assertEqual(good["cpu_memory_unit"], "bytes")
+            self.assertEqual(good["gpu_memory_unit"], "bytes")
+            self.assertEqual(good["elapsed_seconds_unit"], "seconds")
+            self.assertEqual(Path(good["output_path"]).name, "good")
+            self.assertIn("cache", good["cache_policy"])
 
 
 
