@@ -2,6 +2,32 @@
 
 ## Trạng thái hiện hành
 
+### TV3 — Smoke đọc Parquet processed — 22/11/2026
+
+- VM `bigdata-ec2` truy cập được qua SSH; repo/chờ chạy ở commit
+  `fc389554d998ec1bca578199a7f8fb75673b72e4`, nhánh
+  `feature/tv2-model-evaluation` trước khi tạo nhánh TV3.
+- Chạy trong Docker `big-data-recsys:smoke`, cuDF `23.04.00`, Tesla T4.
+- Đọc thật `/workspace/data/clean/e2-weekly/10/workflow/processed_nvt/part_0.parquet`.
+  Kết quả PASS: 96,433 row; có 12 cột; cột `product_id-list` xuất hiện.
+- Schema `schema.pbtxt` khớp SHA-256
+  `2dbae5364c9955ec90e7b0c098e28f78a0565677d1887c7ed53b3a45ee45c6c8`, và cột
+  `product_id-list` có trong schema.
+- Catalog subset 10 chứa 63,398 item; encoded ID từ 3 đến 63400.
+  Technical IDs đã loại khỏi catalog: padding `0`, null `1`, OOV `2`.
+- Mapping `product_mapping.parquet` đọc được: 63,398 row, cột
+  `product_id` và `encoded_id`; SHA-256
+  `961f9c06619d334eee73ddbc3b7609d7bd91da5214a491625f81192654d8b8ec`.
+- Split manifest xác nhận `no_overlap_and_complete_coverage=true`,
+  `input_sessions=96433`; checksum split manifest
+  `859142ba5d298d31d59fbbdb3a08a0e67537fc475ccc6f88a977aecea1bbf117`.
+- Kết quả và script smoke trên VM:
+  `metrics/tv3-parquet-smoke-20261122/stdout.txt`,
+  `metrics/tv3-parquet-smoke-20261122/smoke.py`.
+- Task TV3 "Smoke test đọc Parquet" đạt done gate. Không dùng kết quả này
+  làm benchmark E1–E5; đây chỉ xác nhận container đọc được processed sample,
+  schema và mapping/catalog bàn giao TV1.
+
 ### TV2 — Real-data smoke và kiểm tra E2/E3/E4/E5 — 22/11/2026
 
 - VM `bigdata-ec2` đã truy cập bằng SSH; runtime chính thức là Ubuntu
