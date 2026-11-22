@@ -1,33 +1,38 @@
 {
   "experiment": "E4",
-  "status": "both_passed",
+  "status": "both_passed_full_subset",
   "pair": "10_percent",
-  "n_events": 19692,
+  "n_events": 882808,
+  "scope": "official full subset rerun",
+  "first_seen_sha256": "5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7",
+  "cache_policy": "OS cache warm after pair verification; no privileged cache drop",
   "verification_method": "multiplicity-sensitive multiset fingerprint and nine-string schema",
   "formats": {
     "csv": {
-      "bytes": 2631808,
-      "read_seconds": 0.01283526199949847,
-      "peak_read_process_rss_bytes": 98770944,
-      "n_events": 19692,
+      "bytes": 134004153,
+      "sha256": "6eba94ee6b9869a66d90d5ca2256ac1f983853e4c63358995e12fea8cf7a1b42",
+      "read_seconds": 0.45413743600011003,
+      "peak_read_process_rss_bytes": 247054336,
+      "n_events": 882808,
       "status": "passed",
-      "preprocessing_seconds": 31.389110877999883,
-      "preprocessing_rss_bytes": 2111741952,
-      "preprocessing_gpu_memory_bytes": 249561088,
+      "preprocessing_seconds": 34.987556843999755,
+      "preprocessing_rss_bytes": 2383167488,
+      "preprocessing_gpu_memory_bytes": 979369984,
       "cache_policy": "OS cache warm after pair verification; no privileged cache drop",
-      "path": "metrics/raw/e4-010-csv"
+      "path": "metrics/raw/e4-full-010-csv"
     },
     "parquet": {
-      "bytes": 618046,
-      "read_seconds": 0.003742939999938244,
-      "peak_read_process_rss_bytes": 95875072,
-      "n_events": 19692,
+      "bytes": 25382745,
+      "sha256": "e19911ea4c012b602748e83a0fca7607c06750de302edfafb1991dfee0184a26",
+      "read_seconds": 0.1085011539998959,
+      "peak_read_process_rss_bytes": 230273024,
+      "n_events": 882808,
       "status": "passed",
-      "preprocessing_seconds": 30.08522615899983,
-      "preprocessing_rss_bytes": 2134700032,
-      "preprocessing_gpu_memory_bytes": 249561088,
+      "preprocessing_seconds": 33.57124894300023,
+      "preprocessing_rss_bytes": 2314313728,
+      "preprocessing_gpu_memory_bytes": 807403520,
       "cache_policy": "OS cache warm after pair verification; no privileged cache drop",
-      "path": "metrics/raw/e4-010-parquet"
+      "path": "metrics/raw/e4-full-010-parquet"
     }
   }
 }

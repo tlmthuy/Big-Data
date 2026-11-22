@@ -18,11 +18,12 @@
 
 ## TV3 — E4 official real-data CSV/Parquet 10% pair — 22/11/2026
 
-- E4 passed for both formats; the 19,692-row pair passed the multiplicity-sensitive multiset fingerprint and nine-string schema verification.
-- CSV: 2,631,808 bytes, read `0.01283526199949847s`, peak read RSS `98,770,944 bytes`, TV1 preprocessing `31.389110877999883s`, preprocessing RSS `2,111,741,952 bytes`, preprocessing GPU memory `249,561,088 bytes`.
-- Parquet: 618,046 bytes, read `0.003742939999938244s`, peak read RSS `95,875,072 bytes`, TV1 preprocessing `30.08522615899983s`, preprocessing RSS `2,134,700,032 bytes`, preprocessing GPU memory `249,561,088 bytes`.
-- Both used the same TV1 preprocessing argv and shared first-seen artifact; OS cache warm after verification, no privileged cache drop. Pair conversion/verification was outside timed read.
-- Fingerprint sum and squared sum matched across formats. Logs/artifacts: `metrics/raw/e4-010-csv/` and `metrics/raw/e4-010-parquet/`.
+- Full 10% E4 rerun passed for both formats with 882,808 events; this replaces the 19,692-row smoke pair as the official full-subset pair.
+- CSV: 134,004,153 bytes, SHA-256 `6eba94ee6b9869a66d90d5ca2256ac1f983853e4c63358995e12fea8cf7a1b42`, read `0.45413743600011003s`, peak read RSS `247,054,336 bytes`, TV1 preprocessing `34.987556843999755s`, preprocessing RSS `2,383,167,488 bytes`, preprocessing GPU memory `979,369,984 bytes`.
+- Parquet: 25,382,745 bytes, SHA-256 `e19911ea4c012b602748e83a0fca7607c06750de302edfafb1991dfee0184a26`, read `0.1085011539998959s`, peak read RSS `230,273,024 bytes`, TV1 preprocessing `33.57124894300023s`, preprocessing RSS `2,314,313,728 bytes`, preprocessing GPU memory `807,403,520 bytes`.
+- Both pair verification and timed reads used nine string fields and the multiplicity-sensitive fingerprint; verification sum and squared sum matched exactly across formats.
+- Both preprocessing runs used the same TV1 `preprocess_weekly.py` entrypoint, subset `10`, and shared first-seen artifact SHA-256 `5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7`. OS cache was warm after pair verification; no privileged cache drop. Pair conversion and verification were outside timed read.
+- Full pair logs/artifacts: `metrics/raw/e4-full-010-csv/` and `metrics/raw/e4-full-010-parquet/`. The earlier 19,692-row pair remains a smoke result only.
 
 ## TV3 — E3 official real-data 10% batch resource comparison — 22/11/2026
 
