@@ -2,6 +2,31 @@
 
 ## Trạng thái hiện hành
 
+### TV3 — Benchmark collector runtime/memory — 22/11/2026
+
+- Bổ sung `benchmark/collect.py` để thu run trong một process riêng,
+  preserve exit code/stdout/stderr và ghi `run.json`.
+- Collector ghi `run_id`, `started_at`, `finished_at`, `elapsed_seconds`
+  bằng giây, `exit_code`, `status`, `output_path`, stdout/stderr.
+- CPU memory: peak RSS của process tree trong bytes.
+  `rss_scope` ghi rõ cộng RSS parent/child và shared pages có thể được
+  đếm trùng.
+- GPU memory: GPU process memory lấy bằng `nvidia-smi` `used_memory`
+  match PID parent/child; tổng GPU visible được lưu riêng. Cả hai đều
+  quy đổi sang bytes.
+- Phạm vi đo: toàn thời gian child process và sampling process-tree RSS;
+  không gồm ghi `run.json`. Không warm-up, không flush cache.
+- GPU smoke thành công trong Docker T4:
+  run_id `tv3-collector-smoke-20261122`, exit `0`,
+  elapsed `5.627924586999143` giây,
+  peak process-tree RSS `545,116,160` bytes,
+  peak GPU process memory `188,743,680` bytes,
+  peak tổng GPU visible `191,889,408` bytes.
+- `torch.cuda.is_available=true`; child allocated `67,108,864` bytes
+  và reserved `67,108,864` bytes.
+- Unit test collector/experiment: 31 test đạt, 6 skip theo runtime tùy chọn.
+- Smoke log: `metrics/tv3-collector-smoke-20261122/run-output/`.
+
 ### TV3 — Smoke test model trên dữ liệu thật — 22/11/2026
 
 - Artifacts TV1 subset 10 và cohort smoke TV2 đã được đọc lại trong Docker
