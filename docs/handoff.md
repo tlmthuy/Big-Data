@@ -1,5 +1,15 @@
 # Handoff
 
+## TV3 — E2 official real-data 10/25/50/100% — 22/11/2026
+
+- GRU E2 passed for all four subsets using TV2 batch 256/eval 32/epochs 3/seed 1 and `full_evaluation_wall_v1`.
+- 10%: 882,808 events, vocabulary 63,398, 1,337 predictions, Recall@20 `0.08825729244577413`, NDCG@20 `0.03804320278602695`, read `0.172556934s`, preprocessing `30.449049161s`, training `55.181851470s`, peak process RSS `1,492,635,648 bytes`, peak GPU memory `7,977,566,208 bytes`.
+- 25%: 2,213,138 events, vocabulary 87,247, 3,266 predictions, Recall@20 `0.15737905695039803`, NDCG@20 `0.07156953474506007`, read `0.366867471s`, preprocessing `34.093408106s`, training `178.456597162s`, peak process RSS `1,548,365,824 bytes`, peak GPU memory `14,327,742,464 bytes`.
+- 50%: 4,421,037 events, vocabulary 103,940, 6,427 predictions, Recall@20 `0.27477827913489966`, NDCG@20 `0.12148368074443924`, read `0.735025497s`, preprocessing `37.860843321s`, training `406.215798496s`, peak process RSS `1,587,884,032 bytes`, peak GPU memory `13,755,219,968 bytes`.
+- 100%: 8,829,314 events, vocabulary 118,333, 13,052 predictions, Recall@20 `0.38990193073858420`, NDCG@20 `0.1803755829750735`, read `1.359735334s`, preprocessing `45.411392957s`, training `865.158472368s`, peak process RSS `1,635,422,208 bytes`, peak GPU memory `14,904,459,264 bytes`.
+- Shared first-seen month cost is `1.5164737080049235s` per subset and must not be counted repeatedly. TV2 end-to-end stage for each subset is shared first-seen cost plus TV1 subset read plus TV1 preprocessing plus GRU training/evaluation, with no standalone read double-counted inside preprocessing elapsed.
+- All four runs passed, valid JSONL had exactly 20 unique IDs per prediction, and logs/artifacts are in `metrics/raw/e2-gru-{010,025,050,100}/`.
+
 ## TV3 — E1 official real-data 10% — 22/11/2026
 
 - VM: `bigdata-ec2`, branch `feature/tv3-environment-benchmark`, runtime run commit `0fada5fa4e0102381cb29826c343162926e6ddf3`. Data TV1 10% official: split manifest `859142ba5d298d31d59fbbdb3a08a0e67537fc475ccc6f88a977aecea1bbf117`, catalog `04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6`, schema `2dbae5364c9955ec90e7b0c098e28f78a0565677d1887c7ed53b3a45ee45c6c8`.
