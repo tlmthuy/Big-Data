@@ -13,6 +13,24 @@ import sys
 import psutil
 
 
+def _process_tree_snapshot(pid):
+    """Return sampled RSS and PIDs for the child and live descendants."""
+    try:
+        parent = psutil.Process(pid)
+        members = [parent, *parent.children(recursive=True)]
+    except (psutil.NoSuchProcess, psutil.AccessDenied):
+        return 0, set()
+    rss = 0
+    pids = set()
+    for member in members:
+        try:
+            rss += member.memory_info().rss
+            pids.add(member.pid)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    return rss, pids
+
+
 def _nvidia_smi_values(query):
     executable = shutil.which("nvidia-smi")
     if not executable:
@@ -25,6 +43,8 @@ def _nvidia_smi_values(query):
             timeout=2,
         )
     except (OSError, subprocess.SubprocessError):
+        return None
+    if not output.strip():
         return None
     values = []
     for line in output.splitlines():
@@ -68,7 +88,7 @@ def _gpu_memory_for_processes(pids):
 
 def _gpu_total_memory():
     values = _nvidia_smi_values("--query-gpu=memory.used")
-    if values is None:
+    if values is None or not values:
         return 0, False
     return sum(values) * 1024 * 1024, True
 
@@ -113,10 +133,6 @@ def run_command(argv, output, metadata=None):
         with (output / "stdout.txt").open("w", encoding="utf-8") as stdout, \
                 (output / "stderr.txt").open("w", encoding="utf-8") as stderr:
             process = subprocess.Popen(argv, stdout=stdout, stderr=stderr)
-            try:
-                parent = psutil.Process(process.pid)
-            except psutil.NoSuchProcess:
-                parent = None
             exit_state = threading.Event()
             completion = {}
 
@@ -129,17 +145,18 @@ def run_command(argv, output, metadata=None):
 
             waiter = threading.Thread(target=wait_for_child, daemon=True)
             waiter.start()
+
+            rss, pids = _process_tree_snapshot(process.pid)
+            record["peak_process_tree_rss_bytes"] = max(record["peak_process_tree_rss_bytes"], rss)
+            gpu_bytes, gpu_available = _gpu_memory_for_processes(pids)
+            record["gpu_memory_observation_available"] = record["gpu_memory_observation_available"] or gpu_available
+            record["gpu_memory_bytes_peak"] = max(record["gpu_memory_bytes_peak"], gpu_bytes)
+            if gpu_available:
+                record["gpu_memory_bytes_status"] = "observed"
+
             while not exit_state.wait(0.05):
                 try:
-                    members = [parent, *parent.children(recursive=True)] if parent else []
-                    rss = 0
-                    pids = set()
-                    for member in members:
-                        try:
-                            rss += member.memory_info().rss
-                            pids.add(member.pid)
-                        except (psutil.NoSuchProcess, psutil.AccessDenied):
-                            continue
+                    rss, pids = _process_tree_snapshot(process.pid)
                     record["peak_process_tree_rss_bytes"] = max(record["peak_process_tree_rss_bytes"], rss)
                     gpu_bytes, gpu_available = _gpu_memory_for_processes(pids)
                     record["gpu_memory_observation_available"] = record["gpu_memory_observation_available"] or gpu_available
@@ -154,6 +171,8 @@ def run_command(argv, output, metadata=None):
                 except psutil.NoSuchProcess:
                     pass
             waiter.join()
+            rss, pids = _process_tree_snapshot(process.pid)
+            record["peak_process_tree_rss_bytes"] = max(record["peak_process_tree_rss_bytes"], rss)
             record["exit_code"] = completion["exit_code"]
             record["status"] = "passed" if record["exit_code"] == 0 else "failed"
     except OSError as error:

@@ -6,6 +6,7 @@
 - The container has a PyTorch metadata mismatch: runtime import reports `2.1.0a0+4136153`, while `pip freeze` reports `torch==2.1.2`. Runtime/import evidence is authoritative for the Docker measurement; `environment/README.md` and `environment/logs/02-import-test.log` record both values.
 - Updated `benchmark/collect.py` so elapsed process wall time is captured by an independent child-wait thread and is not extended by an `nvidia-smi` query. GPU process and total-GPU measurements now have explicit `*_status` fields and missing-measurement reasons instead of reporting only zero bytes.
 - Added collector regression coverage for the missing-GPU status fields. Targeted collector test passes.
+- Collector sampling fix: RSS is sampled from a live parent/child process snapshot immediately, periodically and once after wait completion; the old loop no longer depends on recreating stale `psutil.Process` state. Empty `nvidia-smi` output is now explicitly missing measurement rather than a zero-byte observed GPU sample. Regression tests cover both cases.
 - VM repository before changes had unrelated untracked artifacts under `metrics/` and `reports/e5/`; those files were not modified or committed.
 
 ## TV3 — E5 real E2 scalability aggregation — 22/11/2026
@@ -44,6 +45,7 @@
 - 100%: 8,829,314 events, 965,304 session coverage across partitions, 13,052 final-test sessions, vocabulary 118,333, Recall@20 `0.38990193073858420`, NDCG@20 `0.1803755829750735`, read `1.359735334s`, preprocessing `45.411392957s`, source training `432.5792361840022s`, source final evaluation `11.88824238000052s`, process wall `546.3950088989995s`, peak process RSS `1,635,422,208 bytes`, peak GPU memory `14,904,459,264 bytes`.
 - The previously recorded 55.181/178.457/406.216/865.158 training figures were not present in the source `run.json`/`metrics.json` pair and have been replaced by the source fields above. Source training values are below process wall time for every subset.
 - Shared first-seen month cost is `1.5164737080049235s` per subset and must not be counted repeatedly. TV2 end-to-end stage for each subset is shared first-seen cost plus TV1 subset read plus TV1 preprocessing plus GRU training/evaluation, with no standalone read double-counted inside preprocessing elapsed.
+- JSON summary `metrics/e2-tv3-run-summary.json` is synchronized with these source training and inference fields and now includes subset session/user/item counts plus partition coverage counts: 10% `187563/163847/63398` and `96433`; 25% `469728/356271/87247` and `241715`; 50% `938071/601608/103940` and `482239`; 100% `1877365/957543/118333` and `965304`.
 - All four runs passed, valid JSONL had exactly 20 unique IDs per prediction, and logs/artifacts are in `metrics/raw/e2-gru-{010,025,050,100}/`.
 
 ## TV3 — E1 official real-data 10% — 22/11/2026

@@ -7,8 +7,9 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
-from benchmark.collect import run_command
+from benchmark.collect import _gpu_total_memory, _nvidia_smi_values, _process_tree_snapshot, run_command
 from benchmark.scalability import summarize, write_outputs
 from scripts.runs.run_experiments import resolve
 
@@ -17,6 +18,25 @@ FIXTURES = ROOT / "evaluation/tests/fixtures"
 
 
 class ExperimentContracts(unittest.TestCase):
+    def test_empty_nvidia_smi_output_is_missing_not_zero_observation(self):
+        with mock.patch("benchmark.collect.shutil.which", return_value="/usr/bin/nvidia-smi"), \
+                mock.patch("benchmark.collect.subprocess.check_output", return_value="\n"):
+            self.assertIsNone(_nvidia_smi_values("--query-gpu=memory.used"))
+            self.assertEqual(_gpu_total_memory(), (0, False))
+
+    def test_process_tree_snapshot_sums_live_members_and_pids(self):
+        parent = mock.Mock()
+        parent.pid = 101
+        parent.memory_info.return_value = mock.Mock(rss=100)
+        child = mock.Mock()
+        child.pid = 202
+        child.memory_info.return_value = mock.Mock(rss=50)
+        parent.children.return_value = [child]
+        with mock.patch("benchmark.collect.psutil.Process", return_value=parent):
+            rss, pids = _process_tree_snapshot(101)
+        self.assertEqual(rss, 150)
+        self.assertEqual(pids, {101, 202})
+
     def test_only_batch_changes_in_E3_and_E2_model_fixed(self):
         matrix = json.loads((ROOT / "configs/experiments.json").read_text())
         runs = matrix["runs"]
