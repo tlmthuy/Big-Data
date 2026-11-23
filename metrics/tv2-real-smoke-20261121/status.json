@@ -1,0 +1,59 @@
+{
+  "checked_at": "2026-11-21T10:08:18.297292+00:00",
+  "branch": "feature/tv2-model-evaluation",
+  "synced_main_commit": "6d449da3039ac9d367dc90ad8f2feb4dcc223abf",
+  "sync_commit": "b9d7c4fbb6ce646b10c460c1930cd290d09c69a6",
+  "local_checks": {
+    "tests": 29,
+    "status": "passed",
+    "handoff_hashes": "passed"
+  },
+  "ssh": {
+    "alias": "bigdata-ec2",
+    "argv": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=10",
+      "-o",
+      "ConnectionAttempts=1",
+      "bigdata-ec2",
+      "hostname"
+    ],
+    "exit_code": 255,
+    "stderr": "ssh-preflight.txt"
+  },
+  "selected_data_manifest": "data/manifests/e2_preprocessing_verified.json",
+  "artifact_scope": "selected cuDF weekly run for each subset; shared DuckDB first-seen retained",
+  "subsets": [
+    {
+      "subset": 10,
+      "vm_output": "/home/ubuntu/tv1-weekly-20261121/data/clean/e2-weekly/10",
+      "manifest_sequence_count": 96433,
+      "manifest_vocabulary_size": 63398
+    },
+    {
+      "subset": 25,
+      "vm_output": "/home/ubuntu/tv1-weekly-20261121/data/clean/e2-weekly/25",
+      "manifest_sequence_count": 241715,
+      "manifest_vocabulary_size": 87247
+    },
+    {
+      "subset": 50,
+      "vm_output": "/home/ubuntu/tv1-weekly-20261121/data/clean/e2-weekly/50",
+      "manifest_sequence_count": 482239,
+      "manifest_vocabulary_size": 103940
+    },
+    {
+      "subset": 100,
+      "vm_output": "/home/ubuntu/tv1-weekly-20261121/data/clean/e2-weekly/100",
+      "manifest_sequence_count": 965304,
+      "manifest_vocabulary_size": 118333
+    }
+  ],
+  "status": "awaiting_VM_SSH_access",
+  "real_data_verified": false,
+  "real_model_smoke_started": false,
+  "note": "Source manifest available; cannot verify VM files or start models until SSH access succeeds. Manifest counts are TV1 evidence, not TV2 rerun results."
+}

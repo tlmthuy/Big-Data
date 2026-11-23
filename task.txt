@@ -1,0 +1,8 @@
+TV3 next task: Reproduce one official run and prepare cleanup record.
+
+Requirements:
+- Choose one successful official run and reproduce it with the same commit, site, split, seed and protocol.
+- Preserve the original and reproduction logs separately; do not overwrite either.
+- Record warm-up/cache state and machine configuration.
+- Stop or terminate cloud resources only after TV2/TV4/TV5 confirm the metrics package.
+- Store a cleanup record with stopped resources, retained artifacts and no credentials.

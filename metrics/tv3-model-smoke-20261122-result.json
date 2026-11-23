@@ -1,0 +1,65 @@
+{
+  "status": "passed",
+  "task": "TV3 smoke test model",
+  "checked_at": "2026-11-22",
+  "subset": 10,
+  "train_sessions": 256,
+  "validation_sessions": 64,
+  "catalog_size": 63398,
+  "technical_ids": {
+    "padding": 0,
+    "null": 1,
+    "oov": 2
+  },
+  "gru": {
+    "run_id": "real-smoke-gru-cohort-v1",
+    "checkpoint_keys": [
+      "artifacts",
+      "model",
+      "optimizer",
+      "state_dict",
+      "trained_days",
+      "training_config",
+      "training_source_sha256"
+    ],
+    "trained_days": [
+      1
+    ],
+    "prediction_count": 64,
+    "top20_count_ok": true,
+    "target_technical_id_free": true,
+    "top20_in_catalog": true,
+    "top20_no_padding_null_oov": true,
+    "Recall@20": 0.0,
+    "NDCG@20": 0.0,
+    "git_commit": "ebd5f97b88515e4809d27ed4dd0275582751744e"
+  },
+  "xlnet": {
+    "run_id": "real-smoke-xlnet-cohort-v1",
+    "checkpoint_keys": [
+      "artifacts",
+      "model",
+      "optimizer",
+      "state_dict",
+      "trained_days",
+      "training_config",
+      "training_source_sha256"
+    ],
+    "trained_days": [
+      1
+    ],
+    "prediction_count": 64,
+    "top20_count_ok": true,
+    "target_technical_id_free": true,
+    "top20_in_catalog": true,
+    "top20_no_padding_null_oov": true,
+    "Recall@20": 0.0,
+    "NDCG@20": 0.0,
+    "git_commit": "ebd5f97b88515e4809d27ed4dd0275582751744e"
+  },
+  "vm_validation": "metrics/tv3-model-smoke-20261122-validation.txt",
+  "evidence": [
+    "metrics/local/tv2-real-smoke-20261121/runs/real-smoke-gru-cohort-v1/",
+    "metrics/local/tv2-real-smoke-20261121/runs/real-smoke-xlnet-cohort-v1/"
+  ]
+}

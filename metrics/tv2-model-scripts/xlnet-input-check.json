@@ -1,0 +1,74 @@
+{
+  "status": "input_contract_checked_only",
+  "counts": [
+    {
+      "day_index": 1,
+      "split": "train",
+      "n_sessions": 1,
+      "n_items": 3
+    },
+    {
+      "day_index": 1,
+      "split": "validation",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 1,
+      "split": "test",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 2,
+      "split": "train",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 2,
+      "split": "validation",
+      "n_sessions": 3,
+      "n_items": 4
+    },
+    {
+      "day_index": 2,
+      "split": "test",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 3,
+      "split": "train",
+      "n_sessions": 0,
+      "n_items": 0
+    },
+    {
+      "day_index": 3,
+      "split": "validation",
+      "n_sessions": 1,
+      "n_items": 2
+    },
+    {
+      "day_index": 3,
+      "split": "test",
+      "n_sessions": 0,
+      "n_items": 0
+    }
+  ],
+  "train_through": 2,
+  "artifacts": {
+    "sessions": {
+      "path": "evaluation\\tests\\fixtures\\sessions.jsonl",
+      "sha256": "b4937c7ae3a45cfd0c4c6b3bfd8679c40865cbcccc02c76cacae68b6436a1d4e"
+    },
+    "catalog": {
+      "path": "evaluation\\tests\\fixtures\\catalog.json",
+      "sha256": "cabb3075529b72fc3a075e73e1edd07f9e846858063b0972f730ecf17de894fe"
+    },
+    "schema": {
+      "path": "evaluation\\tests\\fixtures\\schema.pbtxt",
+      "sha256": "c2405d7751b184ec9a4a975a4163818acbfd1926fa89e43e95e041ade77ea067"
+    }
+  }
+}

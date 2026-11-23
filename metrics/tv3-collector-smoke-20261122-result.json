@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "task": "TV3 benchmark collector runtime and memory",
+  "checked_at": "2026-11-22",
+  "run_id": "tv3-collector-smoke-20261122",
+  "runtime": {
+    "host": "bigdata-ec2",
+    "docker_image": "big-data-recsys:smoke",
+    "gpu": "Tesla T4"
+  },
+  "started_at": "2026-11-22T04:04:07.174305+00:00",
+  "finished_at": "2026-11-22T04:04:12.802381+00:00",
+  "elapsed_seconds": 5.627924586999143,
+  "elapsed_seconds_unit": "seconds",
+  "exit_code": 0,
+  "peak_process_tree_rss_bytes": 545116160,
+  "cpu_memory_unit": "bytes",
+  "gpu_memory_bytes_peak": 188743680,
+  "gpu_memory_unit": "bytes",
+  "gpu_memory_observation_available": true,
+  "gpu_memory_total_used_bytes_peak": 191889408,
+  "warm_up_policy": "none",
+  "cache_policy": "no-cache-flush",
+  "measurement_scope": "entire child process wall time and sampled process-tree RSS; excludes run.json write",
+  "torch_cuda_available": true,
+  "torch_allocated_bytes": 67108864,
+  "torch_reserved_bytes": 67108864,
+  "output_path": "metrics/tv3-collector-smoke-20261122/run-output",
+  "vm_run_json": "metrics/tv3-collector-smoke-20261122/run-output/run.json"
+}

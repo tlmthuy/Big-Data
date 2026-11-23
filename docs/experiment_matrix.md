@@ -8,7 +8,7 @@ bản đối chiếu. Lấy tất cả artifact và telemetry từ cùng run tro
 tháng vẫn dùng chung. Xem [hướng dẫn TV1](weekly_workflow.md).
 
 
-**Đã tích hợp config/collector; kiểm tra bằng toy, chưa xác minh trên dữ liệu thật.** [Matrix 11 run](../configs/experiments.json), [site template](../configs/site.example.json), [runner E1–E4](../scripts/runs/run_experiments.py), [collector](../benchmark/collect.py), [E5](../benchmark/scalability.py) và [hướng dẫn TV3](modeling/experiment_runbook.md) sẵn dùng để chạy benchmark E1–E5 khi bind đủ đầu vào.
+TV3 đã ghi kết quả chạy dữ liệu thật E1–E5 trong [handoff](handoff.md#tv3--quyết-định-tích-hợp-kết-quả--23112026). Để chạy lại, dùng [matrix 11 run](../configs/experiments.json), [site template](../configs/site.example.json), [runner E1–E4](../scripts/runs/run_experiments.py), [collector](../benchmark/collect.py), [E5](../benchmark/scalability.py) và [hướng dẫn TV3](modeling/experiment_runbook.md).
 
 | ID | Câu hỏi | Biến thay đổi | Kết quả bắt buộc |
 |---|---|---|---|
@@ -18,7 +18,7 @@ tháng vẫn dùng chung. Xem [hướng dẫn TV1](weekly_workflow.md).
 | E4 | Định dạng nào hiệu quả hơn? | CSV / Parquet cùng nội dung | size, read time, preprocessing time, memory |
 | E5 | Có scale được không? | phân tích các run E2 | runtime/1M event, bottleneck, uncertainty |
 
-Số liệu trống cho tới khi có run thật.
+Có thể dùng số RSS đã thu cho mục đích mô tả. Báo cáo cần ghi rõ đây là RSS cao nhất quan sát được qua lấy mẫu cây tiến trình. Truy vấn GPU đồng bộ có thể kéo dài khoảng cách giữa các mẫu và bỏ sót đỉnh RAM ngắn. Đo lại với vòng lấy mẫu RSS độc lập trước khi dùng số RSS của collector để kết luận chênh lệch RAM giữa các cấu hình.
 
 Config đã chốt: E1 subset 10% cho ba model; E2/E5 GRU trên 10/25/50/100%; E3 GRU 10% chỉ thay batch train 32/128; E4 raw subset 10% cùng nội dung CSV/Parquet. E1/E2 test D sau freeze, E3 validation D; train 1…D−1 và validation t+1. `inference_seconds` của cả ba model dùng [full_evaluation_wall_v1](modeling/inference_timing.md), chuẩn hóa theo số session hợp lệ; compute diagnostic không dùng so latency trực tiếp. [Toy collector logs](../metrics/tv2-config-collector-smoke/README.md) giúp tham khảo vận hành/format, chưa là kết quả dữ liệu thật.
 

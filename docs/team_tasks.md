@@ -48,7 +48,7 @@ Chưa Done chính thức: người nhận cần tái tạo/nhận artifact thậ
 
 ## TV3 — Môi trường và vận hành run
 
-Đầu mối nhận việc: [environment/README.md](../environment/README.md) và [manifest TV2](../configs/tv2_handoff.json). Chỉ metric/Popularity toy sẵn chạy; GRU/XLNet và config E1–E4 chưa bàn giao.
+Đầu mối nhận việc: [environment/README.md](../environment/README.md) và [manifest TV2](../configs/tv2_handoff.json). Metric/Popularity toy sẵn chạy; script GRU/XLNet, config E1–E4 và E5 được mô tả tại [neural_runbook.md](modeling/neural_runbook.md), chưa nghiệm thu GPU/dataset thật.
 
 | Task | Yêu cầu đầu ra (done gate) | Ghi chú thực thi cụ thể |
 | --- | --- | --- |

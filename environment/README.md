@@ -80,7 +80,7 @@ Dockerfile chỉ bọc image ứng viên, không tự cài dependencies hoặc �
 | GPU, VRAM / CPU / RAM / Ubuntu | Tesla T4 (compute capability 7.5), 15360 MiB / Intel Xeon Platinum 8259CL @ 2.50GHz, 8 vCPU / 30,98 GiB / Ubuntu 22.04.5 LTS, kernel `6.8.0-1036-aws` |
 | Driver / CUDA / Docker / NVIDIA Container Toolkit | `570.172.08` / driver hỗ trợ CUDA 12.8 (`nvidia-smi`), CUDA toolkit trong container `12.1.105` / Docker `28.4.0` / `1.20.2` |
 | Merlin image tag, digest, local image ID | tag `23.12`; digest `nvcr.io/nvidia/merlin/merlin-pytorch@sha256:63874463e35350fabd873547311963adaf1e25cd12658707345738647cf5cd50`; local image ID `sha256:b61c670bff3e0f3e19b2c45c1687cf169ba9f66c7606de8573d5ead915f90051` |
-| Python / PyTorch / Transformers4Rec | `3.10.12` / `2.1.0a0+4136153` (CUDA `12.1`, cuDNN `8902`) / `23.12.00` (transformers `4.27.1`) |
+| Python / PyTorch / Transformers4Rec | `3.10.12` / import runtime `2.1.0a0+4136153` (CUDA `12.1`, cuDNN `8902`; `pip freeze` metadata ghi `torch==2.1.2`) / `23.12.00` (transformers `4.27.1`) |
 | cuDF / CuPy / NVTabular / Merlin | `23.04.00` / `12.0.0b3` / `23.08.00` / merlin.core `23.08.00`, merlin.models `23.12.00` |
 | Commit chạy, command, log path, kết quả smoke | Commit: `5f839a7a081a8d59ed157b4eb1d4e974937dd3bf`; command: ba lệnh `docker run` ở bước 3 (`nvidia-smi`, import test, `unittest`) và `pip freeze` ([`pip_freeze_baseline.txt`](pip_freeze_baseline.txt)); log: thư mục [`environment/logs/`](logs/) gồm `01-nvidia-smi.log`, `02-import-test.log`, `03-unittest.log`, `04-docker-image-inspect.json`, `05-docker-info.log`, `06-nvidia-ctk.log`; kết quả smoke: xem `02-import-test.log` và `03-unittest.log` (chạy ngày 21/11/2026, chưa chạy dữ liệu thật) |
 

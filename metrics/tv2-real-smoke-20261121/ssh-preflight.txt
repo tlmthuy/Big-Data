@@ -1,0 +1,1 @@
+ssh: connect to host <configured_vm_ip> port 22: Connection timed out

@@ -1,6 +1,223 @@
 # Handoff
 
+## TV3 — Quyết định tích hợp kết quả — 23/11/2026
+
+- Chấp nhận tích hợp nhánh TV3 tại `c4e9138` với giới hạn đo RAM. `peak_process_tree_rss_bytes` là RSS lớn nhất quan sát được qua lấy mẫu cây tiến trình. Collector gọi `nvidia-smi` đồng bộ trong vòng lấy mẫu, nên khoảng cách giữa hai mẫu có thể vượt 50 ms và bỏ sót đỉnh RAM ngắn.
+- Có thể dùng Recall@20, NDCG@20 và các số thời gian train/inference hiện có. Ghi rõ giới hạn khi trình bày RSS. Nếu cần kết luận về chênh lệch RAM giữa các subset E2, các batch E3 hoặc các định dạng E4 dựa trên số RSS của collector, tách lấy mẫu RSS khỏi truy vấn GPU rồi đo lại các run liên quan.
+- Tích hợp code và summary đã push. Việc xác nhận raw log E4 rerun và gói bàn giao cho TV2 được theo dõi theo [quy trình bàn giao](team_tasks.md#tv3--môi-trường-và-vận-hành-run).
+
+## TV3 — Docker import and collector timing verification — 22/11/2026
+
+- Verified the running VM container `big-data-recsys:smoke` on Tesla T4 imports successfully: Python `3.10.12`, cuDF `23.04.00`, CuPy `12.0.0b3`, NVTabular `23.08.00`, PyTorch runtime `2.1.0a0+4136153`, CUDA `12.1`, Transformers4Rec `23.12.00`, Transformers `4.27.1`, and `torch.cuda.is_available=True`.
+- The container has a PyTorch metadata mismatch: runtime import reports `2.1.0a0+4136153`, while `pip freeze` reports `torch==2.1.2`. Runtime/import evidence is authoritative for the Docker measurement; `environment/README.md` and `environment/logs/02-import-test.log` record both values.
+- Updated `benchmark/collect.py` so elapsed process wall time is captured by an independent child-wait thread and is not extended by an `nvidia-smi` query. GPU process and total-GPU measurements now have explicit `*_status` fields and missing-measurement reasons instead of reporting only zero bytes.
+- Added collector regression coverage for the missing-GPU status fields. Targeted collector test passes.
+- Collector sampling fix: RSS is sampled from a live parent/child process snapshot immediately, periodically and once after wait completion; the old loop no longer depends on recreating stale `psutil.Process` state. Empty `nvidia-smi` output is now explicitly missing measurement rather than a zero-byte observed GPU sample. Regression tests cover both cases.
+- VM repository before changes had unrelated untracked artifacts under `metrics/` and `reports/e5/`; those files were not modified or committed.
+
+## TV3 — E5 real E2 scalability aggregation — 22/11/2026
+
+- E5 completed with status `complete` after recomputing `benchmark.scalability` directly from the original successful E2 `run.json` and `artifacts/metrics.json`; no separate model run was created.
+- The reconciled source fields are `train_with_input_scan_seconds` and `inference_seconds`. Composed stages exclude shared first-seen: 10% `58.91448123800001s`, 25% `125.93237066599977s`, 50% `246.83202246900055s`, 100% `491.2386068550031s`.
+- Including shared first-seen `1.5164737080049235s` once: `60.43095494600493s`, `127.4488443740047s`, `248.34849617700547s`, `492.75508056300805s`.
+- Bottleneck: 10% preprocessing; 25/50/100% training including sequence I/O. One run per subset; no variance or confidence interval.
+- Reconciled VM output: `reports/e5-reconciled-20261122/{scalability.csv,scalability.svg,summary.json}`. Limitation: composed stage timing is not one observed end-to-end process wall time.
+
+## TV3 — E4 official real-data CSV/Parquet 10% pair — 22/11/2026
+
+- Full 10% E4 rerun passed for both formats with 882,808 events; this replaces the 19,692-row smoke pair as the official full-subset pair.
+- CSV: 134,004,153 bytes, SHA-256 `6eba94ee6b9869a66d90d5ca2256ac1f983853e4c63358995e12fea8cf7a1b42`, read `0.45413743600011003s`, peak read RSS `247,054,336 bytes`, TV1 preprocessing `34.987556843999755s`, preprocessing RSS `2,383,167,488 bytes`, preprocessing GPU memory `979,369,984 bytes`.
+- Parquet: 25,382,745 bytes, SHA-256 `e19911ea4c012b602748e83a0fca7607c06750de302edfafb1991dfee0184a26`, read `0.1085011539998959s`, peak read RSS `230,273,024 bytes`, TV1 preprocessing `33.57124894300023s`, preprocessing RSS `2,314,313,728 bytes`, preprocessing GPU memory `807,403,520 bytes`.
+- Both pair verification and timed reads used nine string fields and the multiplicity-sensitive fingerprint; verification sum and squared sum matched exactly across formats.
+- Both preprocessing runs used the same TV1 `preprocess_weekly.py` entrypoint, subset `10`, and shared first-seen artifact SHA-256 `5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7`. OS cache was warm after pair verification; no privileged cache drop. Pair conversion and verification were outside timed read.
+- Full pair logs/artifacts: `metrics/raw/e4-full-010-csv/` and `metrics/raw/e4-full-010-parquet/`. The earlier 19,692-row pair remains a smoke result only.
+
+## TV3 — E3 official real-data 10% batch resource comparison — 22/11/2026
+
+- GRU E3 passed for both TV2 resource configs on subset 10%, validation split, 1,324 sessions, seed 1, epochs 3 and sequence length 20.
+- Machine: Tesla T4 15,360 MiB, NVIDIA driver `570.172.08`, 8 vCPU, 31 GiB RAM, Ubuntu 22.04.5 LTS kernel `6.8.0-1036-aws`, Docker `28.4.0`, container `big-data-recsys:smoke`, CUDA `12.1`.
+- Batch 32: run `e3-gru-010-b32`, actual config train batch `32`, eval batch `32`, epochs `3`, seed `1`, learning rate `0.00071`, subset `10`, split `validation`, train-through `6`, device `cuda`, no checkpoint replay. Recall@20 `0.19637462235649547`, NDCG@20 `0.09061635825363464`, process elapsed `65.94311637600003s`, full-evaluation wall `0.7155545870000424s`, throughput `1850.3130635369982 sessions/s`, `0.54044908383689 ms/session`, peak process RSS `1,492,623,360 bytes`, peak GPU memory `2,388,656,128 bytes`, exactly 1,324 predictions and 20 unique IDs per prediction.
+- Batch 128: run `e3-gru-010-b128`, actual config train batch `128`, eval batch `32`, epochs `3`, seed `1`, learning rate `0.00071`, subset `10`, split `validation`, train-through `6`, device `cuda`, no checkpoint replay. Recall@20 `0.1299093655589124`, NDCG@20 `0.05908318361917487`, process elapsed `44.7698482299993s`, full-evaluation wall `0.7083099780002158s`, throughput `1869.2381035462367 sessions/s`, `0.5349773247735768 ms/session`, peak process RSS `1,487,417,344 bytes`, peak GPU memory `4,167,041,024 bytes`, exactly 1,324 predictions and 20 unique IDs per prediction.
+- Warm-up policy: none; cache policy: no cache flush and inherited OS cache state. The only changed TV2 resource variable was train batch size.
+- Logs/artifacts: `metrics/raw/e3-gru-010-b32/` and `metrics/raw/e3-gru-010-b128/`.
+
+## TV3 — E2 official real-data 10/25/50/100% — 22/11/2026
+
+- GRU E2 passed for all four subsets using TV2 batch 256/eval 32/epochs 3/seed 1 and `full_evaluation_wall_v1`. Warm-up policy: `none`; cache policy: `no cache flush; inherited OS cache state`.
+- Machine: Tesla T4 15,360 MiB, NVIDIA driver `570.172.08`, 8 vCPU, 31 GiB RAM, Ubuntu 22.04.5 LTS kernel `6.8.0-1036-aws`, Docker `28.4.0`, container `big-data-recsys:smoke`.
+- 10%: 882,808 events, 96,433 session coverage across partitions, 1,337 final-test sessions, vocabulary 63,398, Recall@20 `0.08825729244577413`, NDCG@20 `0.03804320278602695`, read `0.172556934s`, preprocessing `30.449049161s`, source training `27.590925735000383s`, source final evaluation `0.7019494080004733s`, process wall `41.77022658900023s`, peak process RSS `1,492,635,648 bytes`, peak GPU memory `7,977,566,208 bytes`.
+- 25%: 2,213,138 events, 241,715 session coverage across partitions, 3,266 final-test sessions, vocabulary 87,247, Recall@20 `0.15737905695039803`, NDCG@20 `0.07156953474506007`, read `0.366867471s`, preprocessing `34.093408106s`, source training `89.22829858099885s`, source final evaluation `2.243796507999832s`, process wall `118.18261974399957s`, peak process RSS `1,548,365,824 bytes`, peak GPU memory `14,327,742,464 bytes`.
+- 50%: 4,421,037 events, 482,239 session coverage across partitions, 6,427 final-test sessions, vocabulary 103,940, Recall@20 `0.27477827913489966`, NDCG@20 `0.12148368074443924`, read `0.735025497s`, preprocessing `37.860843321s`, source training `203.10789924799974s`, source final evaluation `5.128254403000028s`, process wall `258.71616461900066s`, peak process RSS `1,587,884,032 bytes`, peak GPU memory `13,755,219,968 bytes`.
+- 100%: 8,829,314 events, 965,304 session coverage across partitions, 13,052 final-test sessions, vocabulary 118,333, Recall@20 `0.38990193073858420`, NDCG@20 `0.1803755829750735`, read `1.359735334s`, preprocessing `45.411392957s`, source training `432.5792361840022s`, source final evaluation `11.88824238000052s`, process wall `546.3950088989995s`, peak process RSS `1,635,422,208 bytes`, peak GPU memory `14,904,459,264 bytes`.
+- The previously recorded 55.181/178.457/406.216/865.158 training figures were not present in the source `run.json`/`metrics.json` pair and have been replaced by the source fields above. Source training values are below process wall time for every subset.
+- Shared first-seen month cost is `1.5164737080049235s` per subset and must not be counted repeatedly. TV2 end-to-end stage for each subset is shared first-seen cost plus TV1 subset read plus TV1 preprocessing plus GRU training/evaluation, with no standalone read double-counted inside preprocessing elapsed.
+- JSON summary `metrics/e2-tv3-run-summary.json` is synchronized with these source training and inference fields and now includes subset session/user/item counts plus partition coverage counts: 10% `187563/163847/63398` and `96433`; 25% `469728/356271/87247` and `241715`; 50% `938071/601608/103940` and `482239`; 100% `1877365/957543/118333` and `965304`.
+- All four runs passed, valid JSONL had exactly 20 unique IDs per prediction, and logs/artifacts are in `metrics/raw/e2-gru-{010,025,050,100}/`.
+
+## TV3 — E1 official real-data 10% — 22/11/2026
+
+- VM: `bigdata-ec2`, branch `feature/tv3-environment-benchmark`, runtime run commit `0fada5fa4e0102381cb29826c343162926e6ddf3`. Data TV1 10% official: split manifest `859142ba5d298d31d59fbbdb3a08a0e67537fc475ccc6f88a977aecea1bbf117`, catalog `04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6`, schema `2dbae5364c9955ec90e7b0c098e28f78a0565677d1887c7ed53b3a45ee45c6c8`.
+- Protocol: `full_evaluation_wall_v1`, K=20, 10% subset, final day 7 test partition, training days 1-6, batch TV2 256/eval 32/epochs 3/seed 1. The TV2 matrix was frozen before test evaluation; the test partition was not used for config or checkpoint selection.
+- Popularity PASS: run `e1-popularity-010`, Recall@20 `0.08676140613313388`, NDCG@20 `0.03476648339460129`, 1337 sessions. Log `metrics/raw/e1-popularity-010/`.
+- GRU PASS: run `e1-gru-010`, Recall@20 `0.08825729244577413`, NDCG@20 `0.03804320278602695`, 1337 sessions. Checkpoint keys loaded and verified. Log `metrics/raw/e1-gru-010/`.
+- XLNet PASS: run `e1-xlnet-010`, Recall@20 `0.12490650710545999`, NDCG@20 `0.05133183399511177`, 1337 sessions. Checkpoint keys loaded and verified. Log `metrics/raw/e1-xlnet-010/`.
+- Post-run validation: 1337 JSONL predictions per run, exactly 20 unique top-20 IDs per row, all top-20/catalog IDs outside technical IDs 0/1/2, targets outside technical IDs, and all run exit codes 0.
+- Runtime: Docker `big-data-recsys:smoke`, Tesla T4 15360 MiB, Ubuntu 22.04.5, NVIDIA driver `570.172.08`; no warm-up or cache flush.
+
+## TV3 — Preflight và trạng thái E1 — 22/11/2026
+
+- Trạng thái git local: branch `feature/tv3-environment-benchmark`,
+  commit `c14fbe410788ef6371637b1abf0754f8e1c33cfe`, remote tip cũng
+  trỏ tới cùng commit sau `git fetch origin --prune`, working tree sạch.
+- Remote được xác nhận: `https://github.com/tlmthuy/Big-Data.git`.
+- SSH alias `bigdata-ec2` không reachable tại `3.212.44.151:22`;
+  `Test-NetConnection` thất bại và `ssh` timeout. Chưa thể kết nối VM,
+  xác nhận runtime/artifact TV1 mới nhất trên VM, hay chạy model thật.
+- Không tạo run chính thức E1, không ghi smoke log vào kết quả chính thức,
+  không commit dữ liệu/chạy model khi không xác minh TV1/TV2.
+- Phần còn lại của E1 theo [dòng TV3 trong team_tasks](team_tasks.md):
+  chạy riêng Popularity, GRU, XLNet bằng script/config TV2, cùng subset,
+  split, catalog, `K=20`, protocol `full_evaluation_wall_v1`, seed/config
+  TV2 đã đóng băng, và chỉ dùng artifact TV1 đã chấp nhận. Không dùng
+  test partition để chọn config/checkpoint.
+- Popularity/GRU/XLNet không kết luận PASS/FAIL cho full E1 trong phiên này.
+  Kết quả smoke/cohort hiện có chỉ là bằng chứng lịch sử và không thay thế
+  run chính thức.
+- Bước cần mở lại: khởi động/mở SSH cho VM hoặc cung cấp HostName/IP mới,
+  sau đó checkout fetch branch TV3 mới nhất, xác nhận TV1 data/manifest
+  và branch TV2, rồi chạy lần lượt từng model qua collector.
+
 ## Trạng thái hiện hành
+
+### TV3 — Benchmark collector runtime/memory — 22/11/2026
+
+- Bổ sung `benchmark/collect.py` để thu run trong một process riêng,
+  preserve exit code/stdout/stderr và ghi `run.json`.
+- Collector ghi `run_id`, `started_at`, `finished_at`, `elapsed_seconds`
+  bằng giây, `exit_code`, `status`, `output_path`, stdout/stderr.
+- CPU memory: peak RSS của process tree trong bytes.
+  `rss_scope` ghi rõ cộng RSS parent/child và shared pages có thể được
+  đếm trùng.
+- GPU memory: GPU process memory lấy bằng `nvidia-smi` `used_memory`
+  match PID parent/child; tổng GPU visible được lưu riêng. Cả hai đều
+  quy đổi sang bytes.
+- Phạm vi đo: toàn thời gian child process và sampling process-tree RSS;
+  không gồm ghi `run.json`. Không warm-up, không flush cache.
+- GPU smoke thành công trong Docker T4:
+  run_id `tv3-collector-smoke-20261122`, exit `0`,
+  elapsed `5.627924586999143` giây,
+  peak process-tree RSS `545,116,160` bytes,
+  peak GPU process memory `188,743,680` bytes,
+  peak tổng GPU visible `191,889,408` bytes.
+- `torch.cuda.is_available=true`; child allocated `67,108,864` bytes
+  và reserved `67,108,864` bytes.
+- Unit test collector/experiment: 31 test đạt, 6 skip theo runtime tùy chọn.
+- Smoke log: `metrics/tv3-collector-smoke-20261122/run-output/`.
+
+### TV3 — Smoke test model trên dữ liệu thật — 22/11/2026
+
+- Artifacts TV1 subset 10 và cohort smoke TV2 đã được đọc lại trong Docker
+  `big-data-recsys:smoke`, cuDF 23.04.00, PyTorch GPU T4.
+- Cohort: 256 session train partition 1 và 64 session validation partition 2.
+  Catalog có 63,398 item thực; mã kỹ thuật padding/null/OOV là 0/1/2.
+- GRU đã train/eval thành công trên partition 1→2:
+  checkpoint có `model`, `optimizer`, `state_dict`, `trained_days`,
+  `training_config` và `training_source_sha256`; 64 predictions;
+  Top-20 đủ 20; target không dùng mã kỹ thuật; Top-20 nằm trong catalog;
+  không chứa padding/null/OOV.
+- XLNet đã train/eval thành công trên cùng cohort:
+  checkpoint và prediction structure tương đương GRU; 64 predictions;
+  Top-20 đủ 20; target không dùng mã kỹ thuật; Top-20 nằm trong catalog;
+  không chứa padding/null/OOV.
+- Config chạy: batch train 256, eval batch 32, epochs 3, seed 1;
+  GRU learning rate `0.00071`; XLNet learning rate `0.000666`.
+- Recall@20 và NDCG@20 của cả hai neural runs trên cohort nhỏ đều `0.0`.
+  Đây là real-data smoke và không phải kết quả E1 chính thức.
+- Evidence run hiện có tại
+  `metrics/local/tv2-real-smoke-20261121/runs/real-smoke-gru-cohort-v1/`
+  và `metrics/local/tv2-real-smoke-20261121/runs/real-smoke-xlnet-cohort-v1/`
+  trên VM. Validation độc lập được lưu tại
+  `metrics/tv3-model-smoke-20261122-validation.txt`.
+- Task TV3 "Smoke test model" đạt vì ít nhất GRU và XLNet đều chạy được.
+  Không coi đây là benchmark chính thức E1/E2/E3/E5.
+
+### TV3 — Smoke đọc Parquet processed — 22/11/2026
+
+- VM `bigdata-ec2` truy cập được qua SSH; repo/chờ chạy ở commit
+  `fc389554d998ec1bca578199a7f8fb75673b72e4`, nhánh
+  `feature/tv2-model-evaluation` trước khi tạo nhánh TV3.
+- Chạy trong Docker `big-data-recsys:smoke`, cuDF `23.04.00`, Tesla T4.
+- Đọc thật `/workspace/data/clean/e2-weekly/10/workflow/processed_nvt/part_0.parquet`.
+  Kết quả PASS: 96,433 row; có 12 cột; cột `product_id-list` xuất hiện.
+- Schema `schema.pbtxt` khớp SHA-256
+  `2dbae5364c9955ec90e7b0c098e28f78a0565677d1887c7ed53b3a45ee45c6c8`, và cột
+  `product_id-list` có trong schema.
+- Catalog subset 10 chứa 63,398 item; encoded ID từ 3 đến 63400.
+  Technical IDs đã loại khỏi catalog: padding `0`, null `1`, OOV `2`.
+- Mapping `product_mapping.parquet` đọc được: 63,398 row, cột
+  `product_id` và `encoded_id`; SHA-256
+  `961f9c06619d334eee73ddbc3b7609d7bd91da5214a491625f81192654d8b8ec`.
+- Split manifest xác nhận `no_overlap_and_complete_coverage=true`,
+  `input_sessions=96433`; checksum split manifest
+  `859142ba5d298d31d59fbbdb3a08a0e67537fc475ccc6f88a977aecea1bbf117`.
+- Kết quả và script smoke trên VM:
+  `metrics/tv3-parquet-smoke-20261122/stdout.txt`,
+  `metrics/tv3-parquet-smoke-20261122/smoke.py`.
+- Task TV3 "Smoke test đọc Parquet" đạt done gate. Không dùng kết quả này
+  làm benchmark E1–E5; đây chỉ xác nhận container đọc được processed sample,
+  schema và mapping/catalog bàn giao TV1.
+
+### TV2 — Real-data smoke và kiểm tra E2/E3/E4/E5 — 22/11/2026
+
+- VM `bigdata-ec2` đã truy cập bằng SSH; runtime chính thức là Ubuntu
+  22.04.5, Tesla T4 15,360 MiB, Docker 28.4.0, NVIDIA Container Toolkit
+  1.20.2 và image `big-data-recsys:smoke` từ Merlin `23.12`.
+- Repo VM ở commit `ebd5f97b88515e4809d27ed4dd0275582751744e`, đúng nhánh
+  `feature/tv2-model-evaluation`, working tree sạch trước các run.
+- Cohort thật subset 10% được giữ nguyên: 256 session train partition 1,
+  64 session validation partition 2, seed 42. Artifact membership, split
+  và fingerprint nguồn tại
+  `metrics/local/tv2-real-smoke-20261121/cohort/cohort.json`.
+- **Popularity** PASS qua collector: 64 session, predictions và Top-20 có đủ
+  64 dòng, Recall@20 `0.046875`, NDCG@20 `0.013629089384393436`,
+  inference wall protocol `full_evaluation_wall_v1`.
+- **GRU** PASS: train/eval partition 1→2, 64 predictions Top-20,
+  Recall@20 `0.0`, NDCG@20 `0.0`; checkpoint hợp lệ và có đầy đủ
+  `model`, `optimizer`, `state_dict`, `trained_days`, `training_config`.
+- **XLNet** PASS: cùng cohort, catalog, partition và protocol, 64 predictions
+  Top-20, Recall@20 `0.0`, NDCG@20 `0.0`; checkpoint hợp lệ và có đầy đủ
+  state cần kiểm tra.
+- Kết quả neural 0.0 là kết quả smoke cohort nhỏ, không phải kết quả E1
+  chính thức. Popularity/GRU/XLNet không dùng test và không fit lại mapping,
+  vocabulary, schema hoặc catalog; mỗi run ghi commit `ebd5f97`.
+- **E3**: batch train chỉ đổi 32/128 trên cùng cohort GRU. Cả hai run đều
+  PASS, không phát sinh OOM; 64/64 predictions và Top-20. Đây là smoke
+  resource, không phải benchmark E3 đầy đủ.
+- **E2**: đã đối chiếu binding/artifact/version/telemetry cho cả bốn subset
+  10/25/50/100 trong run config; chưa chạy benchmark preprocessing/train đầy
+  đủ bốn subset.
+- **E4**: chạy riêng cặp raw CSV/Parquet có cùng 19,692 event bằng cùng
+  entrypoint TV1 `pipeline/preprocess_weekly.py`, cùng first-seen và logic.
+  Cả hai PASS; CSV 2,631,808 byte/read `0.012153715s`, Parquet 618,046
+  byte/read `0.003978104s`; preprocessing hai phía đều khoảng 31.1–31.8 giây.
+  Fingerprint multiset và số event khớp. Đây là smoke cặp nhỏ, không phải
+  benchmark E4 đầy đủ.
+- **E5**: chưa tạo chạy model riêng; regression suite đạt 31 test PASS,
+  1 test SKIP vì thiếu nhánh reference NVIDIA cho test pinned.
+  Test aggregation E5 PASS trong suite. Chưa có tập run E2 thực đủ để tạo
+  scalability/E5 chính thức.
+- Artifact smoke trên VM tại
+  `metrics/local/tv2-real-smoke-20261121/runs/`; checkpoint không commit.
+  Các log, run JSON và metrics nhỏ chỉ lưu local trên VM theo quy tắc artifact.
+- Phần còn lại: benchmark E1/E2/E3 đầy đủ, batch official freeze, E5 metrics
+  package chính thức và bàn giao TV4/TV5. Không merge nhánh feature vào main.
+
+### TV2 — Đồng bộ main và bắt đầu preflight dữ liệu thật — 21/11/2026
+
+- Merge main `6d449da` vào `feature/tv2-model-evaluation`, commit đồng bộ `b9d7c4f`. Giải conflict theo bản config/timing mới trên main; loại phần auto-merge ghi đè `inference_seconds` Popularity về ranking một lần. **29/29 test đạt**, checksum manifest TV2 khớp.
+- Dùng bộ cuDF tuần chính thức tại `/home/ubuntu/tv1-weekly-20261121/data/clean/e2-weekly/<subset>/` theo `data/manifests/e2_preprocessing_verified.json`; sessions/schema/catalog/workflow/telemetry phải cùng run. Không quay về bộ DuckDB tháng/workflows cũ; first-seen chung giữ checksum đã chốt.
+- Đã thử SSH alias `bigdata-ec2` hai lần; cả hai timeout cổng 22. Chưa truy cập được artifact/runtime VM, **chưa chạy smoke model trên dữ liệu thật**; không coi manifest TV1 là kết quả TV2 đã chạy lại. [Status và log preflight](../metrics/tv2-real-smoke-20261121/status.json).
+- Bước tiếp theo sau khi VM/SSH truy cập được: kiểm tra artifact/checksum/membership/counts, runtime model; chạy validation smoke bằng dữ liệu thật cho Popularity/GRU/XLNet, giữ test ngoài bước thử; bind config/E2 telemetry và command E4 theo cùng bộ dữ liệu đã chọn. Cần xác nhận VM đang bật, IP SSH hiện tại hoặc mở truy cập SSH đúng máy chạy.
 
 ### TV1 — Tích hợp workflow/sequence/split/bốn subset — 21/11/2026
 
