@@ -1,5 +1,11 @@
 # Handoff
 
+## TV2 — Đúc kết sau thực nghiệm — 24/11/2026
+
+- Thêm mục “Những đúc kết sau khi chạy thực nghiệm” ở đầu [tài liệu phân tích](../reports/tables/tv2-20261124/analysis.md): tác động cleanup/event mix, coverage session, độ đa dạng subset, bottleneck theo quy mô, tradeoff batch, format và phạm vi kết luận accuracy.
+- Làm rõ 912.061/1.877.365 session (48,58%) có một interaction **sau cleanup**, gồm cả session vốn một event và session bị rút còn một; chưa phân tách hai nhóm, không gọi đây là số session bị cleanup xóa. Có ví dụ A/A→A→A/A→A→B và ý nghĩa đối với prefix/target.
+- Nội dung được sinh cùng báo cáo bằng `python -m scripts.analyze_results`, giữ run_id/protocol/số liệu đã kiểm tra và các caveat về raw-vs-clean, test/catalog thay đổi, một seed và RSS. Không chạy experiment mới hoặc merge main trong cập nhật này.
+
 ## TV2 — Bổ sung phân tích theo góp ý giảng viên — 24/11/2026
 
 - Bổ sung vào [báo cáo E1–E5](../reports/tables/tv2-20261124/analysis.md) và [phụ lục riêng](../reports/tables/tv2-20261124/instructor_feedback_analysis.md): population/mẫu số sampling, raw–clean–sequence counts, phân bố event/độ dài, vocabulary coverage, actual saved/used split counts, selection/truncation bias, leakage và hiệu lực so sánh, stage shares và khuyến nghị triển khai.

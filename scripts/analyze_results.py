@@ -151,6 +151,42 @@ Nguồn tính toán: bản sao raw JSON từ VM, không lấy số từ các sum
 
 Lệnh tái tạo: `python -m scripts.analyze_results` từ root, trên output path mới hoặc lưu trữ output cũ trước khi chạy lại. CSV đầy đủ ở `reports/tables/tv2-20261124/`; có run_id và source path. Biểu đồ SVG/CSV/JSON tại `reports/figures/tv2-20261124/scalability/`.
 
+## Những đúc kết sau khi chạy thực nghiệm
+
+Các đúc kết dưới đây tổng hợp run E1–E5 và thống kê preprocessing của đúng bộ cuDF đã chọn; bằng chứng chi tiết nằm trong các mục tương ứng và phần bổ sung theo góp ý giảng viên. Đây là kết quả trong điều kiện đã đo, không phải bảo đảm cho mọi dữ liệu/máy chạy.
+
+### 1. Cleanup định hình lại ý nghĩa bài toán
+
+View chiếm khoảng **96,21% raw event tuần**, tăng lên **99,98% cleaned event ở subset 100%**. Code loại sản phẩm lặp liên tiếp không phân biệt event type, nên `view A → cart A → purchase A` có thể rút thành một A. Đây là cơ chế có thể làm giảm event cart/purchase; chưa audit từng dòng bị bỏ để quy toàn bộ thay đổi cho riêng cơ chế này. Vì vậy metric hiện đo **next-product trong chuỗi đã cleanup**, chịu ảnh hưởng mạnh của browsing; chưa chứng minh dự đoán mua hàng hay tăng conversion. Tỷ lệ event toàn bộ cleaned data không phải tỷ lệ event type của final test target.
+
+### 2. Kết quả chỉ bao phủ session có đủ lịch sử
+
+Trong **1.877.365 session** của tuần 100%, **912.061 session (48,58%) chỉ còn một interaction sau cleanup**, còn **965.304 session (51,42%)** đủ ít nhất hai interaction để tạo prefix/target. **Không được hiểu rằng cleanup làm mất gần nửa session**: nhóm 48,58% gồm cả session vốn chỉ có một event và session nhiều event bị rút còn một sản phẩm; thống kê hiện chưa tách số lượng hai nhóm.
+
+Ví dụ: `A` và `A → A → A` đều thành `A`, không tạo được cặp lịch sử/next-item; `A → A → B` thành `A → B`, dùng A dự đoán B. Do đó accuracy chưa áp dụng cho toàn bộ single-click/cold-session traffic. Đây là giới hạn coverage của protocol, không phải tỷ lệ dự đoán sai hay số dòng bị lỗi.
+
+### 3. Ít session hơn vẫn có thể chứa nhiều sản phẩm chung
+
+Subset 10% có **63.398/118.333 sản phẩm**, bằng **53,58% vocabulary** của tuần 100%. Phân bố độ dài sau cleanup gần mức 100% (TV lớn nhất khoảng 0,001824; median 2, p90 8 và p95 12 ở cả bốn mức). Điều này hỗ trợ dùng subset nhỏ để kiểm tra pipeline và thực nghiệm giới hạn tài nguyên. Tuy nhiên chưa chứng minh đại diện toàn bộ long tail, nhóm user hoặc phân bố theo thời gian; không suy rằng 10% session tương đương 53,58% chất lượng dữ liệu hay đủ thay thế run 100%.
+
+### 4. Điểm cần tối ưu thay đổi khi dữ liệu lớn lên
+
+Trong tổng stage E5 không gồm first-seen chung, preprocessing chiếm **51,68% ở 10%**, còn training chiếm **88,06% ở 100%**. Tăng tốc đọc file đơn thuần khó giải quyết bottleneck training ở mức lớn. Nên ưu tiên theo stage chi phối tại quy mô mục tiêu, thay vì tối ưu cùng một bước cho mọi subset. Đây là tỷ trọng elapsed stage, không phải CPU/GPU utilization.
+
+Event tăng khoảng **{x:.2f} lần**, tổng stage tăng **{y:.2f} lần** từ 10% lên 100%; chi phí trên triệu event giảm, phù hợp với việc phân bổ chi phí cố định lên nhiều dữ liệu hơn. Bốn điểm đo trên một máy chưa đủ để khẳng định distributed speedup, asymptotic complexity hoặc ngoại suy ngoài miền dữ liệu đã chạy.
+
+### 5. Batch lớn là tradeoff, không phải cải tiến miễn phí
+
+E3 batch 128 có process runtime nhanh hơn batch 32 khoảng **{batch_wall:.2f} lần**, nhưng Recall@20 giảm từ **{e3[0]['Recall@20'] * 100:.2f}% xuống {e3[1]['Recall@20'] * 100:.2f}%** trên cùng validation. Cùng số epoch nhưng số optimizer updates khác nhau; chưa thể kết luận batch lớn luôn tốt hơn. Eval batch vẫn 32 nên inference wall gần nhau. Không dùng sampled RSS hiện tại để tuyên bố tiết kiệm RAM.
+
+### 6. Parquet tiết kiệm storage/read, lợi ích toàn pipeline nhỏ hơn
+
+E4 cùng 882.808 event: Parquet nhỏ hơn CSV **{size_ratio:.2f} lần**, timed read nhanh hơn **{read_ratio:.2f} lần**; full preprocessing chỉ từ **{e4[0]['preprocessing_wall_seconds_including_read']:.2f}s xuống {e4[1]['preprocessing_wall_seconds_including_read']:.2f}s**. Các bước cleanup/fit/groupby/split vẫn tồn tại, nên không nhân lợi ích đọc thành tốc độ toàn chương trình. Đây là warm-cache single-run measurement, conversion nằm ngoài timed read.
+
+### 7. Kết luận accuracy phải gắn với thiết kế so sánh
+
+Trong cùng test/catalog E1, XLNet có Recall/NDCG cao nhất, Popularity có chi phí thấp nhất; GRU chỉ nhỉnh hơn Popularity ở test hiện tại. E2 quan sát accuracy tăng cùng subset nhưng test/catalog cũng đổi, nên **chưa thể nói accuracy tăng chỉ vì thêm train data**. E2/E5 hiện phù hợp nhất cho kết luận scaling chi phí toàn pipeline. Muốn kiểm tra riêng train-size gain cần thí nghiệm khác giữ validation/test/catalog/mapping cố định; đề xuất này chưa chạy và không thay thế số liệu cũ. Một run/seed và preprocessing fit trước split vẫn là các giới hạn cần nêu khi bảo vệ kết luận.
+
 ## E1 — So sánh model
 
 Subset 10%, train partitions 1–6, test partition 7, 1.337 session; kiểm tra cùng session/catalog fingerprints và split counts. K=20, cho phép seen items. Thời gian inference là wall toàn evaluation, gồm input/output/metric, không phải forward latency thuần.
