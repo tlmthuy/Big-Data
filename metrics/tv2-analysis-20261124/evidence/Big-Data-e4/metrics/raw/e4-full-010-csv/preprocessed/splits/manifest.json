@@ -1,0 +1,243 @@
+{
+  "subset": 10,
+  "input_hashes": {
+    "part_0.parquet": "ffa47e8d497a1dab6a61c0446c54bd560abc373f967dcbe81023a94216ac3ca0"
+  },
+  "notebook_commit": "f0ca2b5343dd1e40b5d2422b942f014b224f5c20",
+  "seed": 1,
+  "engine": "NVIDIA GPU",
+  "cudf": "23.04.00",
+  "cupy": "12.0.0b3",
+  "nvtabular": "23.08.00",
+  "requested_ratios": {
+    "train": 0.8,
+    "valid": 0.1,
+    "test": 0.1
+  },
+  "partition_col": "day_index",
+  "sort_col": "user_session",
+  "input_sessions": 96433,
+  "membership": "membership.parquet",
+  "membership_sha256": "b5d39462d6e42beb1f1c583e4b129309e2549660547d693ac48ab134d0ccf6f2",
+  "catalog_sha256": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6",
+  "schema_sha256": "d8a1abf627837cd38cb3c3eb379a51cc9ee4b766256a7134c34c25e22bf8c0e4",
+  "split_seconds": 2.9156821660003516,
+  "no_overlap_and_complete_coverage": true,
+  "daily_pairs": [
+    {
+      "train": 1,
+      "validation": 2
+    },
+    {
+      "train": 2,
+      "validation": 3
+    },
+    {
+      "train": 3,
+      "validation": 4
+    },
+    {
+      "train": 4,
+      "validation": 5
+    },
+    {
+      "train": 5,
+      "validation": 6
+    },
+    {
+      "train": 6,
+      "validation": 7
+    }
+  ],
+  "counts": [
+    {
+      "day_index": 1,
+      "split": "train",
+      "sessions": 11128,
+      "distinct_items": 19157,
+      "item_interactions": 59829,
+      "path": "1/train.parquet",
+      "sha256": "61c9bd293d6911314d11d4245c4e7fafd2f279370904d548ebeb4a826100c840"
+    },
+    {
+      "day_index": 1,
+      "split": "valid",
+      "sessions": 1404,
+      "distinct_items": 4416,
+      "item_interactions": 7477,
+      "path": "1/valid.parquet",
+      "sha256": "174bfd670a4a484664223e3f9f3d9d73505f5e1f096347ecff498964a7594be4"
+    },
+    {
+      "day_index": 1,
+      "split": "test",
+      "sessions": 1403,
+      "distinct_items": 4589,
+      "item_interactions": 7777,
+      "path": "1/test.parquet",
+      "sha256": "563035aae8fbe334b7887bbb1060801d5e7950dc4ddd1b664afe17d178f74b7d"
+    },
+    {
+      "day_index": 2,
+      "split": "train",
+      "sessions": 10549,
+      "distinct_items": 18304,
+      "item_interactions": 55882,
+      "path": "2/train.parquet",
+      "sha256": "7b9a5606a2a169c171729a175487c26887d7b70a33f7721a1c60e8b8594214ed"
+    },
+    {
+      "day_index": 2,
+      "split": "valid",
+      "sessions": 1315,
+      "distinct_items": 4187,
+      "item_interactions": 6967,
+      "path": "2/valid.parquet",
+      "sha256": "794ee089a0b0d7f7259bea4f03ae62288bbdcb344a2816b7af00f1edbc508484"
+    },
+    {
+      "day_index": 2,
+      "split": "test",
+      "sessions": 1328,
+      "distinct_items": 4142,
+      "item_interactions": 6969,
+      "path": "2/test.parquet",
+      "sha256": "ae50e351b7aff555991ab449ceda47065fefaabac96b6c0197294c8379173233"
+    },
+    {
+      "day_index": 3,
+      "split": "train",
+      "sessions": 9768,
+      "distinct_items": 17542,
+      "item_interactions": 53206,
+      "path": "3/train.parquet",
+      "sha256": "69f35e942f260ff66d333675d4a9ebc1a87931a38d8b42fd4b2edae4767f3621"
+    },
+    {
+      "day_index": 3,
+      "split": "valid",
+      "sessions": 1214,
+      "distinct_items": 3878,
+      "item_interactions": 6579,
+      "path": "3/valid.parquet",
+      "sha256": "e855f15ed3f9f65ce4e5be2beaa0ca5ccc1dbc929f21ba7937d84712c6c05001"
+    },
+    {
+      "day_index": 3,
+      "split": "test",
+      "sessions": 1221,
+      "distinct_items": 4027,
+      "item_interactions": 6781,
+      "path": "3/test.parquet",
+      "sha256": "a0b11590a8d54627d73f86ba1f5f9e1d194234ee4589bee97f68ffbb0c6a7a7b"
+    },
+    {
+      "day_index": 4,
+      "split": "train",
+      "sessions": 12344,
+      "distinct_items": 18808,
+      "item_interactions": 64183,
+      "path": "4/train.parquet",
+      "sha256": "a5f04ec1b46c2e0647a1b9984dadc586797800ab58614ec0c3af80c4b2f76d14"
+    },
+    {
+      "day_index": 4,
+      "split": "valid",
+      "sessions": 1554,
+      "distinct_items": 4363,
+      "item_interactions": 8034,
+      "path": "4/valid.parquet",
+      "sha256": "51642ed8612268a34e0f5a4651c20fca22afd5489e2c83d2dd5f577048097540"
+    },
+    {
+      "day_index": 4,
+      "split": "test",
+      "sessions": 1573,
+      "distinct_items": 4533,
+      "item_interactions": 8379,
+      "path": "4/test.parquet",
+      "sha256": "48aff14188f74195ecb613c9d71204a728ce7ca4bc174ec3054ac09a386a8007"
+    },
+    {
+      "day_index": 5,
+      "split": "train",
+      "sessions": 11432,
+      "distinct_items": 18551,
+      "item_interactions": 61621,
+      "path": "5/train.parquet",
+      "sha256": "8ca008f778226686d2bf601f9650e43e3e1a0543e284ac9ec3499f1369f588bc"
+    },
+    {
+      "day_index": 5,
+      "split": "valid",
+      "sessions": 1442,
+      "distinct_items": 4378,
+      "item_interactions": 7919,
+      "path": "5/valid.parquet",
+      "sha256": "0895a2b1424f371966454a1a412e0abebd3b58c9bac1545249bbacc9e6d5058b"
+    },
+    {
+      "day_index": 5,
+      "split": "test",
+      "sessions": 1444,
+      "distinct_items": 4235,
+      "item_interactions": 7658,
+      "path": "5/test.parquet",
+      "sha256": "ecd93d2481e53255bd629cd532bd7925d2d437163ec69ec8475e51b8fc0f1877"
+    },
+    {
+      "day_index": 6,
+      "split": "train",
+      "sessions": 11223,
+      "distinct_items": 18646,
+      "item_interactions": 60886,
+      "path": "6/train.parquet",
+      "sha256": "1154e706953ae75675e4248604025ca64ef15ba23780dc5e9657a4ed819aacca"
+    },
+    {
+      "day_index": 6,
+      "split": "valid",
+      "sessions": 1418,
+      "distinct_items": 4161,
+      "item_interactions": 7512,
+      "path": "6/valid.parquet",
+      "sha256": "2967552ecb73727b38c2ab5e96baec084d186c7af8940f2883a1aa2d4b0a0c13"
+    },
+    {
+      "day_index": 6,
+      "split": "test",
+      "sessions": 1415,
+      "distinct_items": 4383,
+      "item_interactions": 7489,
+      "path": "6/test.parquet",
+      "sha256": "d43ec24124322087df04f7fd5e3c96069f561177c13cdf901494b19f6015ea51"
+    },
+    {
+      "day_index": 7,
+      "split": "train",
+      "sessions": 10597,
+      "distinct_items": 18367,
+      "item_interactions": 56758,
+      "path": "7/train.parquet",
+      "sha256": "8b1802374e134fd52b68c1ec6fa7af7038d6aaaab82e44a969666f8b8f7b734b"
+    },
+    {
+      "day_index": 7,
+      "split": "valid",
+      "sessions": 1324,
+      "distinct_items": 3879,
+      "item_interactions": 6866,
+      "path": "7/valid.parquet",
+      "sha256": "67124ade2c249cd939892991db40923c96865d294a4eea9f9b5a3e23629f25d1"
+    },
+    {
+      "day_index": 7,
+      "split": "test",
+      "sessions": 1337,
+      "distinct_items": 4378,
+      "item_interactions": 7500,
+      "path": "7/test.parquet",
+      "sha256": "9cc2bf1953ea11039820fddfa79679b8c4a9193336fb1c5488babef4c434c15d"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "argv": [
+    "python",
+    "pipeline/preprocess_weekly.py",
+    "--input",
+    "/workspace/metrics/local/tv2-real-smoke-20261121/e4/raw.csv",
+    "--input-format",
+    "csv",
+    "--output-dir",
+    "metrics/raw/e4-010-csv/artifacts/preprocessed",
+    "--subset",
+    "10",
+    "--first-seen",
+    "/workspace/data/clean/monthly_first_seen/product_first_seen.parquet"
+  ],
+  "metadata": {
+    "scope": "TV1 preprocessing command; includes its input read"
+  },
+  "run_id": "preprocessing",
+  "output_path": "/workspace/metrics/raw/e4-010-csv/artifacts/preprocessing",
+  "started_at": "2026-11-22T06:36:30.856752+00:00",
+  "peak_process_tree_rss_bytes": 2111741952,
+  "cpu_memory_unit": "bytes",
+  "rss_sampling_seconds": 0.05,
+  "rss_scope": "sum of sampled parent/child RSS; shared pages may be counted twice",
+  "gpu_memory_bytes_peak": 249561088,
+  "gpu_memory_unit": "bytes",
+  "gpu_memory_scope": "nvidia-smi compute-app used_memory matched to sampled parent/child PIDs",
+  "gpu_memory_sampling_seconds": 0.05,
+  "gpu_memory_observation_available": true,
+  "gpu_memory_total_used_bytes_peak": 252706816,
+  "gpu_memory_total_scope": "sum of nvidia-smi memory.used across visible GPUs",
+  "elapsed_seconds_unit": "seconds",
+  "measurement_scope": "entire child process wall time and sampled process-tree RSS; excludes run.json write",
+  "warm_up_policy": "none",
+  "cache_policy": "no cache flush; inherited OS cache state",
+  "stdout": "/workspace/metrics/raw/e4-010-csv/artifacts/preprocessing/stdout.txt",
+  "stderr": "/workspace/metrics/raw/e4-010-csv/artifacts/preprocessing/stderr.txt",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 31.389110877999883,
+  "finished_at": "2026-11-22T06:37:02.246020+00:00"
+}

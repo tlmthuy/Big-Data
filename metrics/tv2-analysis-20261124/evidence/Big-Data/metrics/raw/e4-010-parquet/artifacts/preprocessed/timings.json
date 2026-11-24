@@ -1,0 +1,15 @@
+{
+  "status": "measured",
+  "n_events": 19692,
+  "eligible_events": 19692,
+  "events_after_repeat_removal": 14343,
+  "input_format": "parquet",
+  "input_sha256": "db1dc19e28e582a9ba008122b999450553c9eba7cddbac5a0c506b8dffba8df3",
+  "first_seen_artifact": "/workspace/data/clean/monthly_first_seen/product_first_seen.parquet",
+  "first_seen_sha256": "5923002be2c73b90d7cf4261967b416a8684d1d9d884a64da1c3d9d15baba8a7",
+  "preprocessing_seconds": 27.577407117000803,
+  "read_seconds": 0.006080389000089781,
+  "prepare_seconds": 0.6442862430003515,
+  "workflow_seconds": 19.952172395999696,
+  "split_seconds": 6.980948478000755
+}

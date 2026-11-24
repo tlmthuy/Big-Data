@@ -1,0 +1,312 @@
+[
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e1-popularity-010/run.json",
+    "sha256": "6149fb66390a2a1e28e02bcaad0fc4785c8c47948aa443b26b2c80c669b82833"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e1-popularity-010/artifacts/metrics.json",
+    "sha256": "f2c1a378268f8ee7c443e028c2caab53084ef054177b9821f782ce2ede5f0ec2"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e1-popularity-010/artifacts/popularity.json",
+    "sha256": "749ad7ea8b2763258f8a79197eb110f32eb59668a68597e154257d9896a6e229"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e2-gru-025/run.json",
+    "sha256": "b1dfad2517214f688765621207ef1708c7e7de237eb337c823ab0bc8fb0fc8df"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e2-gru-025/artifacts/metrics.json",
+    "sha256": "c1195c74c8ac92724a5f737e91d934e89826967a49575e009a7a4ab39c03b1f9"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-csv/run.json",
+    "sha256": "4f2101b7b7ed562b16f1ed7346a0fc8ede6933722bbab49efc2dfb2bde53cea8"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-csv/artifacts/metrics.json",
+    "sha256": "8813cd2a1c3df07853e13be4a9a3c11ef1fffcda4ec7a64c6b5729cb81c27522"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-csv/artifacts/preprocessing/run.json",
+    "sha256": "646150f6aca62c1035b4d6778c683fb08b4e7fcc1d34d7770c9ae4f1adaf3c91"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-csv/artifacts/preprocessed/timings.json",
+    "sha256": "772e564b92f4c5c35f9d582943ec7bd29d2fb36865ce2a633a9c4ba8db45a54a"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-csv/artifacts/preprocessed/manifest.json",
+    "sha256": "7d4b35159a93a636d05036ffa3ea2a3268b543d6b1aa910ff56f98a619294868"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-csv/artifacts/preprocessed/workflow/catalog.json",
+    "sha256": "9f30b515ec5d560aac39a5047dcb3b32bb2f7aa137b8e3e351c4d3a3ef8fd8af"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-csv/artifacts/preprocessed/workflow/manifest.json",
+    "sha256": "dd508d3ba132fbae91c69e1b4a45aa080f8b6d8908c5bd2b6d407542570d2c04"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-csv/artifacts/preprocessed/workflow/workflow/metadata.json",
+    "sha256": "86ec1e99db7fa06c76c1b84c9dd9fef2b6097e2e68bb9e8200c309e082a06573"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-csv/artifacts/preprocessed/workflow/processed_nvt/_metadata.json",
+    "sha256": "fe486cb5e626012abc4d3862ccad78c3ba9428db5ca52bba000bec10a1926a80"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-csv/artifacts/preprocessed/workflow/processed_nvt/.merlin/schema.json",
+    "sha256": "d8737e40969a6fb619b28638dc7abc749b51c936aba156162829652d5042854d"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-csv/artifacts/preprocessed/splits/manifest.json",
+    "sha256": "3b7d409e8295da7c361908f33977ea75463d31bcf09d490f802c2a881c94d4ef"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e1-xlnet-010/run.json",
+    "sha256": "94e0540d9b290d99b32ffe7c9d882b5c27f99efd978a7dc0640a27b1ca170500"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e1-xlnet-010/artifacts/metrics.json",
+    "sha256": "81fba1213fcfe870b25e6754c577664c59ff573a7e303e2428f26356304987ae"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e2-gru-100/run.json",
+    "sha256": "cfe58fb4a10cee19828c0d81f8870cbea791843e4125eb178b91ba4f41c8e570"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e2-gru-100/artifacts/metrics.json",
+    "sha256": "b3f12da1bca827cdb4a5639ec0dcb528c94c26b2cf984487b9f54ad54cb33340"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e2-gru-010/run.json",
+    "sha256": "655aa0a6f798ec3a1554d063ad42f3623a8bed14529abe3cb7fadebb8d97ef6d"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e2-gru-010/artifacts/metrics.json",
+    "sha256": "69c5a1d889582b2bf77402deb5c54daf478590ee98ae5b0cc9821bd162d66925"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-parquet/run.json",
+    "sha256": "4297788d666b8e6515978077d68c3e9730da957f2fc5334714fcb1391aaaa002"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-parquet/artifacts/metrics.json",
+    "sha256": "f7a4dd86a8938f6f0bb071caab86d456b6964db360427d3edd8ef6eeba023cc9"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-parquet/artifacts/preprocessing/run.json",
+    "sha256": "ef00103b6b1e220563892c3d140855b35fe4d8b5a9109db06633b9e3c80de6f5"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-parquet/artifacts/preprocessed/timings.json",
+    "sha256": "0222bdb58d9b9d88b44192c41ec30d15ee82b19dfd48756b42fe4c105595894e"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-parquet/artifacts/preprocessed/manifest.json",
+    "sha256": "eb4fed2ed516a804eba72c83fb4cb3b54ab514fa88d57cfdc12d7877bee3a941"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-parquet/artifacts/preprocessed/workflow/catalog.json",
+    "sha256": "9f30b515ec5d560aac39a5047dcb3b32bb2f7aa137b8e3e351c4d3a3ef8fd8af"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-parquet/artifacts/preprocessed/workflow/manifest.json",
+    "sha256": "8214c3858ca989e24ca39346835ddb5c34139c8bafc6631dfc4018273ec55ac9"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-parquet/artifacts/preprocessed/workflow/workflow/metadata.json",
+    "sha256": "c6f0306e2ee63269f54ece482d9f0db19a6c5addd6a6993cb38114c86d689e84"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-parquet/artifacts/preprocessed/workflow/processed_nvt/_metadata.json",
+    "sha256": "fe486cb5e626012abc4d3862ccad78c3ba9428db5ca52bba000bec10a1926a80"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-parquet/artifacts/preprocessed/workflow/processed_nvt/.merlin/schema.json",
+    "sha256": "dc46f38ae82f787b350ae0ad706a2c730454173a29ff40d895ed3bee643da10b"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e4-010-parquet/artifacts/preprocessed/splits/manifest.json",
+    "sha256": "8322f9f69c0d3f61be4fa43354be126356e483258627f5ae8a7a625cb5c6ccb2"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e3-gru-010-b32/run.json",
+    "sha256": "995361e952ae0f266763df8cce07477a2b5c7bd1c668bcd6a10800e2e5e15bd6"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e3-gru-010-b32/artifacts/metrics.json",
+    "sha256": "6843f8e925c6846b6de64aff9336674672f7f611fb6b609954eb208dbd340ce1"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e3-gru-010-b128/run.json",
+    "sha256": "03e533fc1f8803b04e60b30c795e53f31532d59d6feddb37c62d0c1e3264634e"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e3-gru-010-b128/artifacts/metrics.json",
+    "sha256": "14949516895a55a87a331b4b5f3b09ab31d295a81e5c9978effc1888f0ab0638"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e1-gru-010/run.json",
+    "sha256": "1e45cdc0e52bd1cb556fe48cc26b95923f4e356cdf2b1f2cbbe9340e5e6cecb8"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e1-gru-010/artifacts/metrics.json",
+    "sha256": "88ae03f1b5c610aed0c9f199e198a9871c581890b0665152ee4f086c5da6a01b"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e2-gru-050/run.json",
+    "sha256": "67c0daa8962ba84da11a1eac64d755f0af8c5243aa6ea1847c377c526e181453"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "metrics/raw/e2-gru-050/artifacts/metrics.json",
+    "sha256": "4fd0995e61433a4a65764d1b5ed6045f6e49f85ad3f75e36e2ecd545376dca4b"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "reports/e5-reconciled-20261122/scalability.svg",
+    "sha256": "2c796543b360f718a6260d7e6974be246cd422f6d987eab4cd52d26e87e4491d"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "reports/e5-reconciled-20261122/summary.json",
+    "sha256": "ec65952fcd929a5fdf669a26d4bf3145ae585ead406ad3bcfee07eb55d0634d9"
+  },
+  {
+    "workspace": "Big-Data",
+    "path": "reports/e5-reconciled-20261122/scalability.csv",
+    "sha256": "76b24394a383de6e41aa4ec53c9a806580c7c7051e7903855eb2ac89d9e647d9"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-csv/metrics.json",
+    "sha256": "c410e0dfa3aa90718bac830977053edbf4283fc900a76cb7ea3ba26f1c648e10"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-csv/preprocessing/run.json",
+    "sha256": "cf92a180785055235f94ad5647e9048ca8898f4033497c47aa7d6d472ac810e2"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-csv/preprocessed/timings.json",
+    "sha256": "d3759e4056d14cd192f4361b9a4756ef0cbb6ceaf2b79bfe311f011ca0ce0aa7"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-csv/preprocessed/manifest.json",
+    "sha256": "950419597fa2fe8a5409c8b6aed33ad9e400ff1e9ddcf7b4dfa5a3d7c88c4cf1"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-csv/preprocessed/workflow/manifest.json",
+    "sha256": "725ce85c2e0ac3a21e73ae2a33276aaa24747a4005bf9169865f8514cafa6e57"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-csv/preprocessed/workflow/workflow/metadata.json",
+    "sha256": "7e1098c9be5b32110e645a362fd26e06c84c131d20d9ac914049e46f4c18a39b"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-csv/preprocessed/workflow/processed_nvt/_metadata.json",
+    "sha256": "4715359764dc4f1da97ccd4377cd30cf9432225caceaf65dedf91f56907a14d3"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-csv/preprocessed/workflow/processed_nvt/.merlin/schema.json",
+    "sha256": "c0ca08a03d79a7856a42210a4a82a302b22b69b4c658afde658282243aee6d9d"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-csv/preprocessed/splits/manifest.json",
+    "sha256": "4bc12f42415e399a1d9b51b79f36b7716e4229731d3cec5cf2fcf071aef45b70"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-parquet/metrics.json",
+    "sha256": "9846462647e62495ed826e6e93d9c7f1146be82a7d6f675558d0af795d26852b"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-parquet/preprocessing/run.json",
+    "sha256": "52a800060205226becf9ffa2c8d096c0e1e5e7e153a7819ef7e4478b10156a2a"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-parquet/preprocessed/timings.json",
+    "sha256": "dc5562c9f8a3b6d8bd4aa883260fea941a2960057228d6116da11defbb76edb6"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-parquet/preprocessed/manifest.json",
+    "sha256": "5f9f490fc8582a3e3ab8a72012e0771dd26d656a05ee53037a7e292b8540f98e"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-parquet/preprocessed/workflow/manifest.json",
+    "sha256": "b8b2ecff053c5c14efd232f40411d5d34f57e2322191254a8765ceaeac0b5e34"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-parquet/preprocessed/workflow/workflow/metadata.json",
+    "sha256": "094529bb063882b4d626becfbfca313480b08619393c33425d654294b5b81ccc"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-parquet/preprocessed/workflow/processed_nvt/_metadata.json",
+    "sha256": "4715359764dc4f1da97ccd4377cd30cf9432225caceaf65dedf91f56907a14d3"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-parquet/preprocessed/workflow/processed_nvt/.merlin/schema.json",
+    "sha256": "72c19ad6bde4d1f09aa88d2a664fda238cb8a4e3a74da444f498799daa4d4808"
+  },
+  {
+    "workspace": "Big-Data-e4",
+    "path": "metrics/raw/e4-full-010-parquet/preprocessed/splits/manifest.json",
+    "sha256": "2275b4fa22b0d8bdbedef31e9d9a4cf123e68a453577c354adbafc39db14f50e"
+  }
+]

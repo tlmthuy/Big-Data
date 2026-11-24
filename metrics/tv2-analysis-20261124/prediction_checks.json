@@ -1,0 +1,74 @@
+[
+  {
+    "run_id": "e1-gru-010",
+    "sessions": 1337,
+    "recall_recomputed": 0.08825729244577413,
+    "ndcg_recomputed": 0.03804320278602695,
+    "predictions_sha256": "a5dd1891c07b64f6d3c54a830d8c4df993005ed82569dafaec4b6a0c789544b4",
+    "status": "passed"
+  },
+  {
+    "run_id": "e1-popularity-010",
+    "sessions": 1337,
+    "recall_recomputed": 0.08676140613313388,
+    "ndcg_recomputed": 0.03476648339460129,
+    "predictions_sha256": "392a0a20dfa41b5e1af7cc622fae5054562b0f3b008c1d214d5f73e380655160",
+    "status": "passed"
+  },
+  {
+    "run_id": "e1-xlnet-010",
+    "sessions": 1337,
+    "recall_recomputed": 0.12490650710545999,
+    "ndcg_recomputed": 0.05133183399511177,
+    "predictions_sha256": "4909b4cc3b060d25a09256dab383002c16e940cfeccc08d1c05c73b50bd3fa47",
+    "status": "passed"
+  },
+  {
+    "run_id": "e2-gru-010",
+    "sessions": 1337,
+    "recall_recomputed": 0.08825729244577413,
+    "ndcg_recomputed": 0.03804320278602695,
+    "predictions_sha256": "a5dd1891c07b64f6d3c54a830d8c4df993005ed82569dafaec4b6a0c789544b4",
+    "status": "passed"
+  },
+  {
+    "run_id": "e2-gru-025",
+    "sessions": 3266,
+    "recall_recomputed": 0.15737905695039803,
+    "ndcg_recomputed": 0.07156953474506007,
+    "predictions_sha256": "fb678de7ed9e663287c3b4df1d9b02d7a08c08504cec6995701cde6dc37c595a",
+    "status": "passed"
+  },
+  {
+    "run_id": "e2-gru-050",
+    "sessions": 6427,
+    "recall_recomputed": 0.27477827913489966,
+    "ndcg_recomputed": 0.12148368074443924,
+    "predictions_sha256": "2b2d3635e6ebe0e82f9c16104d16799d6fcbb6ce79abc4d3c5b85db08a6cfcb9",
+    "status": "passed"
+  },
+  {
+    "run_id": "e2-gru-100",
+    "sessions": 13052,
+    "recall_recomputed": 0.38990193073858415,
+    "ndcg_recomputed": 0.1803755829750735,
+    "predictions_sha256": "f1cf05c081378eb996e22e67ae3eee3ef138bfeca75d26477db36558544d9ad7",
+    "status": "passed"
+  },
+  {
+    "run_id": "e3-gru-010-b128",
+    "sessions": 1324,
+    "recall_recomputed": 0.1299093655589124,
+    "ndcg_recomputed": 0.05908318361917487,
+    "predictions_sha256": "bd4b5c1e0db4f53ef80e64bb0e229c85e4c10e58ba5f506ebc8b3f8090103982",
+    "status": "passed"
+  },
+  {
+    "run_id": "e3-gru-010-b32",
+    "sessions": 1324,
+    "recall_recomputed": 0.19637462235649547,
+    "ndcg_recomputed": 0.09061635825363464,
+    "predictions_sha256": "e40d42eb4a2e49635de5066862e51c82556acb49ef1f5c65745d0fa8aeb33173",
+    "status": "passed"
+  }
+]

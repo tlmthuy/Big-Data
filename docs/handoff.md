@@ -1,5 +1,13 @@
 # Handoff
 
+## TV2 — Phân tích E1–E5 từ raw logs — 24/11/2026
+
+- Đã truy cập VM và lấy bản sao byte-exact **62 raw JSON/metadata/output E5** có SHA-256; nguồn tại `Big-Data/metrics/raw/` và `Big-Data-e4/metrics/raw/e4-full-010-*`. Không dùng summary TV3 làm đầu vào tính toán. Manifest: `metrics/tv2-analysis-20261124/source_manifest.json`.
+- Tính lại Recall@20/NDCG@20 từ predictions trực tiếp trên VM cho **9 model runs**, kiểm tra session duy nhất, 20 ID không trùng/không token 0/1/2; khớp metrics đến sai số <1e-12. Kết quả và SHA-256 predictions: `metrics/tv2-analysis-20261124/prediction_checks.json`. Kiểm tra E1 cùng membership/catalog/split; E3 cùng artifacts/code và config chỉ khác batch/run_id/output; E4 chọn full 882.808 event, cùng fingerprint; E5 tái tính từ bốn raw E2 logs.
+- Output: [phân tích và bảng kết quả](../reports/tables/tv2-20261124/analysis.md), CSV E1–E5 cùng thư mục; [scaling curve SVG](../reports/figures/tv2-20261124/scalability/scalability.svg), PNG và CSV/summary E5 cùng thư mục. Lệnh tái tạo: `python -m scripts.analyze_results`; validation/checksum nằm tại `metrics/tv2-analysis-20261124/analysis_validation.json`. Không retrain hoặc sửa raw logs.
+- Kết luận: XLNet cao nhất về Recall/NDCG E1; E2 accuracy tăng theo subset nhưng test/catalog cũng thay đổi; E3 batch 128 giảm runtime, accuracy thấp hơn batch 32; E4 Parquet nhỏ/đọc nhanh hơn nhưng chênh full preprocessing ít hơn; E5 bottleneck preprocessing ở 10%, train ở 25–100%. Chỉ một lần chạy/seed; không báo std/CI hoặc kết luận tiết kiệm RAM từ RSS sampler hiện tại.
+- Task phân tích ngày 24/11 đã có bảng, scaling curve, bottleneck và limitations từ raw logs. **Sẵn sàng review**; nghiệm thu người nhận và bàn giao metrics package TV4/TV5 chưa được tự xác nhận. Commit triển khai/phân tích được ghi sau khi commit.
+
 ## TV2 — Xác nhận đóng hai task TV3 — 24/11/2026
 
 - Thúy (TV2) xác nhận trong chat và yêu cầu cập nhật main: **Rerun các run lỗi có nguyên nhân sửa được = TRUE**; **Bàn giao toàn bộ raw logs cho TV2 = TRUE**. Đây là quyết định nghiệm thu của người dùng, thay trạng thái chờ xác nhận hai task này ở các mục trước.

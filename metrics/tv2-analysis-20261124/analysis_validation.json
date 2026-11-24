@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "source_checksum_files": 62,
+  "model_prediction_checks": 9,
+  "E1_shared_artifacts": true,
+  "E4_full_pair_verified": true,
+  "E5_recomputed_subsets": 4,
+  "source": "raw VM run/metrics JSON, not TV3 summaries"
+}
