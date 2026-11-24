@@ -5,7 +5,7 @@
 - Review theo hai trục (chuẩn repo/spec task) phát hiện hai lỗi xuất số liệu: `raw_week_users` lấy nhầm user sau cleanup và GPU thiếu phép đo được xuất thành 0. Đã sửa raw counts theo `raw_subset_counts.csv`, thêm `cleaned_week_users`; GPU thiếu có null/`unavailable`, legacy observed flag giữ giá trị và ghi scope. Không sửa raw evidence, metric accuracy hoặc timing.
 - Phân tích E1–E5 đủ bảng, curve, bottleneck, limitations từ raw logs/run_id và tái tạo được. [Gói metrics chính thức](../metrics/releases/tv2-20261124/README.md) có CSV/JSON khớp nhau, effective configs, workflow/mapping/catalog versions, runtime/source/checksum, dictionary và registry các run được chọn. Command: `python -m scripts.analyze_results`; kiểm tra gói bằng `from scripts.package_metrics import verify; print(verify())`.
 - Task phân tích: triển khai và review kỹ thuật đạt, được tích hợp theo yêu cầu user. Task giao metrics cho TV4: **TRUE**; người dùng xác nhận TV4 đã kiểm tra ngày 24/11/2026. TV5 dùng cùng gói, còn chờ xác nhận theo AGENTS §11. Không giả lập receipt, không gửi tin nhắn thay user. TV4/TV5 dùng cùng package, số liệu bổ sung cần TV2 xác nhận.
-- Nhánh TV2 được merge main và xóa theo yêu cầu sau khi kiểm tra đạt; commit implementation được ghi bổ sung sau khi commit. Xác nhận TV4: đã kiểm tra theo thông báo của người dùng ngày 24/11/2026; TV5: chưa có.
+- Nhánh TV2 được merge main và xóa theo yêu cầu sau khi kiểm tra đạt; commit implementation/package: `f965644ecd43b51c7238995c8d2bec968c22cfe2`. Xác nhận TV4: đã kiểm tra theo thông báo của người dùng ngày 24/11/2026; TV5: chưa có.
 
 ## TV2 — Đúc kết sau thực nghiệm — 24/11/2026
 
