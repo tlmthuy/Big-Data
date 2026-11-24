@@ -1,10 +1,17 @@
 # Handoff
 
+## TV2 — Xác nhận đóng hai task TV3 — 24/11/2026
+
+- Thúy (TV2) xác nhận trong chat và yêu cầu cập nhật main: **Rerun các run lỗi có nguyên nhân sửa được = TRUE**; **Bàn giao toàn bộ raw logs cho TV2 = TRUE**. Đây là quyết định nghiệm thu của người dùng, thay trạng thái chờ xác nhận hai task này ở các mục trước.
+- Căn cứ hiện có trên main: summary E1–E5, E4 full 10% rerun, E2/E5 đã đối chiếu timing, environment snapshot và đường dẫn raw logs trên VM. Giữ nguyên log lỗi/run cũ; E4 smoke không thay kết quả full rerun.
+- Lần cập nhật này chỉ ghi nhận xác nhận của TV2; chưa truy cập VM hoặc kiểm tra lại từng raw log. Khi TV3 bật VM, TV2 đối chiếu raw logs theo run_id/config/artifact trước khi lập bảng chính thức, scaling curve, bottleneck và limitations. Giữ giới hạn RSS đã ghi bên dưới; không dùng summary thay raw log làm nguồn tính toán chính thức.
+- **Task TV2 “Phân tích kết quả E1 đến E5” (24/11) = FALSE**; chờ VM khả dụng để bắt đầu đối chiếu và phân tích. Đóng task bàn giao không đồng nghĩa metrics package hoặc kết luận phân tích đã được duyệt.
+
 ## TV3 — Quyết định tích hợp kết quả — 23/11/2026
 
 - Chấp nhận tích hợp nhánh TV3 tại `c4e9138` với giới hạn đo RAM. `peak_process_tree_rss_bytes` là RSS lớn nhất quan sát được qua lấy mẫu cây tiến trình. Collector gọi `nvidia-smi` đồng bộ trong vòng lấy mẫu, nên khoảng cách giữa hai mẫu có thể vượt 50 ms và bỏ sót đỉnh RAM ngắn.
 - Có thể dùng Recall@20, NDCG@20 và các số thời gian train/inference hiện có. Ghi rõ giới hạn khi trình bày RSS. Nếu cần kết luận về chênh lệch RAM giữa các subset E2, các batch E3 hoặc các định dạng E4 dựa trên số RSS của collector, tách lấy mẫu RSS khỏi truy vấn GPU rồi đo lại các run liên quan.
-- Tích hợp code và summary đã push. Việc xác nhận raw log E4 rerun và gói bàn giao cho TV2 được theo dõi theo [quy trình bàn giao](team_tasks.md#tv3--môi-trường-và-vận-hành-run).
+- Tích hợp code và summary đã push. Cập nhật 24/11: TV2 đã xác nhận đóng task rerun và bàn giao theo quyết định ở đầu file; đối chiếu raw log trên VM tiếp tục trong bước phân tích E1–E5.
 
 ## TV3 — Docker import and collector timing verification — 22/11/2026
 
