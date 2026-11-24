@@ -35,6 +35,11 @@
 - Lần cập nhật này chỉ ghi nhận xác nhận của TV2; chưa truy cập VM hoặc kiểm tra lại từng raw log. Khi TV3 bật VM, TV2 đối chiếu raw logs theo run_id/config/artifact trước khi lập bảng chính thức, scaling curve, bottleneck và limitations. Giữ giới hạn RSS đã ghi bên dưới; không dùng summary thay raw log làm nguồn tính toán chính thức.
 - **Task TV2 “Phân tích kết quả E1 đến E5” (24/11) = FALSE**; chờ VM khả dụng để bắt đầu đối chiếu và phân tích. Đóng task bàn giao không đồng nghĩa metrics package hoặc kết luận phân tích đã được duyệt.
 
+## TV3 — Bổ sung log môi trường — 24/11/2026
+
+- Tích hợp năm log gốc từ commit `e1c4ab0`: NVIDIA-SMI, import trong container, unittest, Docker info và NVIDIA Container Toolkit. [Hồ sơ môi trường](../environment/README.md#bản-ghi-runtime-chính-thức) liên kết tới từng file.
+- Log unittest ngày 21/11 ghi 28 test đạt và 1 test bỏ qua vì nhánh tham chiếu NVIDIA đã pin không có trong checkout lúc chạy.
+
 ## TV3 — Quyết định tích hợp kết quả — 23/11/2026
 
 - Chấp nhận tích hợp nhánh TV3 tại `c4e9138` với giới hạn đo RAM. `peak_process_tree_rss_bytes` là RSS lớn nhất quan sát được qua lấy mẫu cây tiến trình. Collector gọi `nvidia-smi` đồng bộ trong vòng lấy mẫu, nên khoảng cách giữa hai mẫu có thể vượt 50 ms và bỏ sót đỉnh RAM ngắn.
