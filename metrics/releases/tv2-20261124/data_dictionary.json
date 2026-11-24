@@ -1,0 +1,18 @@
+{
+  "accuracy_units": "Recall@20/NDCG@20 fractions [0,1], single target per valid session",
+  "time_units": "seconds unless named ms_per_session",
+  "memory_units": "bytes; missing is null, not measured zero",
+  "inference_protocol": "full_evaluation_wall_v1; complete evaluation including I/O and metrics",
+  "train_seconds_including_sequence_io": "training only, excludes daily validation",
+  "process_wall_seconds": "whole model process; not added to component timings",
+  "sampled_rss_bytes_descriptive_only": "may double-count shared pages/miss short peaks; no cross-config RAM conclusion",
+  "sampled_gpu_process_bytes": "sampled process GPU memory, not CUDA allocated/reserved or total GPU used",
+  "sampled_gpu_status": "observed_legacy_flag from observation_available=true; unavailable -> null bytes",
+  "raw_week_users": "before product deduplication: raw_subset_counts.csv",
+  "cleaned_week_users": "after cuDF product deduplication: selected E2 profile",
+  "E2_accuracy": "different eval/catalog across subsets; not isolated train-size gain",
+  "E3_accuracy": "validation; do not compare directly with E1/E2 test",
+  "E4_preprocessing_wall": "includes its own read; do not add standalone read",
+  "E5_composed": "raw read + preprocess excluding raw read/first-seen + train with sequence I/O + final eval; not observed E2E wall",
+  "first_seen_shared": "add once per complete scenario; separate shared build cost"
+}

@@ -1,0 +1,27 @@
+{
+  "subset": 10,
+  "input_path": "/workspace/metrics/raw/e4-010-parquet/artifacts/preprocessed/week.parquet",
+  "input_sha256": "f8e3ad546f98e9b84708f46b611e4e313b8051700d745205780ce71ed0ca962b",
+  "notebook_commit": "f0ca2b5343dd1e40b5d2422b942f014b224f5c20",
+  "input_events": 14343,
+  "product_vocabulary_size": 7226,
+  "fit_seconds": 13.574958461000278,
+  "cudf_version": "23.04.00",
+  "nvtabular_version": "23.08.00",
+  "technical_ids": {
+    "padding": 0,
+    "null": 1,
+    "oov": 2
+  },
+  "artifacts": {
+    "workflow": "workflow/",
+    "schema": "processed_nvt/schema.pbtxt",
+    "vocabulary": "product_mapping.parquet",
+    "catalog": "catalog.json"
+  },
+  "checksums": {
+    "processed_nvt/schema.pbtxt": "56140ce5d744bf044dc11e814e910060458ed2e062e471918ec8e807bca4af99",
+    "catalog.json": "9f30b515ec5d560aac39a5047dcb3b32bb2f7aa137b8e3e351c4d3a3ef8fd8af",
+    "product_mapping.parquet": "232db21ba0bf776bdf7c3ab8faf05f91720f8dbe774065fccb794d73c106c8eb"
+  }
+}

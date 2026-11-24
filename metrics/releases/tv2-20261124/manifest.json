@@ -1,0 +1,64 @@
+{
+  "package_id": "tv2-20261124",
+  "owner": "TV2",
+  "recipients": [
+    "TV4",
+    "TV5"
+  ],
+  "status": "TV4_checked_TV5_pending",
+  "recipient_acknowledgements": {
+    "TV4": {
+      "date": "2026-11-24",
+      "status": "checked",
+      "reported_by": "Thuy (TV2), user confirmation in this chat: TV4 has checked"
+    },
+    "TV5": null
+  },
+  "receipt_rule": "Do not infer human acceptance from AI review or publication",
+  "checksum_rule": "CRLF normalized to LF; raw source_manifest uses exact archived bytes",
+  "files_sha256": {
+    "package": {
+      "metrics/releases/tv2-20261124/configs.json": "6e0cacf06341730205e5d6852cfd6e7103e61e28f40219d43523397b7690f78a",
+      "metrics/releases/tv2-20261124/data_dictionary.json": "2a451ddb58035b258e2ba7d0ffeeeee506bb8da9bbf4494b76c737168e7744c7",
+      "metrics/releases/tv2-20261124/E1.csv": "e8982fde79051c2b7f4924d437e558d9abdd3cf7dec3edb5c28edce5b8e5c4bd",
+      "metrics/releases/tv2-20261124/E2.csv": "6078cbb6ebd1c83c86f07c2332d48c0da2b8a82ab741096ec1cfd7e98cb63aee",
+      "metrics/releases/tv2-20261124/E3.csv": "d9984a3cdb6e472747a5ea11cbe936cbe37f36eb321318bdd3eb5dc8e1857996",
+      "metrics/releases/tv2-20261124/E4.csv": "7d099687320ad6816dbe6ecd8d512a50e8ec8ba409181bc65d7fdd9ba60d8058",
+      "metrics/releases/tv2-20261124/E5.csv": "4f32f707d70645934b8373ba6f1b7a608b9653595dd4cadb0caab34df61fd973",
+      "metrics/releases/tv2-20261124/metrics.json": "039eef07fa126efc45ec619d88d03cbba49edd3dc259e886daf339bc4b530c98",
+      "metrics/releases/tv2-20261124/README.md": "a331448de64e57b2c0890839b97a3e36a369c169f901b9ed688a2a1c7f6b4b2f",
+      "metrics/releases/tv2-20261124/review.json": "011ecd553d5b97fbbf6950c1613851d2589fa54babcb49bfa7ed42d3430e96f9",
+      "metrics/releases/tv2-20261124/run_registry.json": "ce9ff62b84d4c7cc3a1948f24124032e009d87022dfda2d4dc001d84dd4c5f29"
+    },
+    "runtime": {
+      "environment/README.md": "e651dc99c70e2dec7d8998e5d13d367c30730fc430d6efd5b644f4fa716b9461",
+      "environment/logs/02-import-test.log": "97e561cac4f4ccb1632b5f1df14915a4a97f841a1c62af23c67076947f6026f6",
+      "environment/logs/04-docker-image-inspect.json": "f73ebb427f430c7c82389a9e8ef0e3008b8982898c66a3caca7bb77019a5046d",
+      "environment/pip_freeze_baseline.txt": "9af7f1626c56d564916b61919c7d08d6925a5eb6f41e206d4ef23f9bb7ea057c"
+    },
+    "analysis": {
+      "reports/tables/tv2-20261124/analysis.md": "efb9fe191306f22c23be5c9a6a9e60f909028cde51a71a0378e30eb6048d0445",
+      "reports/tables/tv2-20261124/instructor_feedback_analysis.md": "a16f50edb2c3a32b955512139deda6d3aec251685f0b999fe82c12b86a77677b",
+      "reports/figures/tv2-20261124/scalability/scalability.svg": "2c796543b360f718a6260d7e6974be246cd422f6d987eab4cd52d26e87e4491d"
+    },
+    "evidence": {
+      "metrics/tv2-analysis-20261124/source_manifest.json": "946351c401f293483a182a1a04c4702316ba5aa05a041fedf407a1ce27f574a2",
+      "metrics/tv2-analysis-20261124/prediction_checks.json": "33d471493ad41d2030b5e567dbcc8888089dda483beb784a9e5a82d5165a825f",
+      "metrics/tv2-analysis-20261124/analysis_validation.json": "fc84514f757aa8a9a41e8bb452786b71ec425c7f972600ee923afd5ef310409b",
+      "metrics/tv2-analysis-20261124/supplement_validation.json": "93baff8c6b4e2e54976fac6d502c1de59f26612522263fa2215f11612a42b8f2"
+    }
+  },
+  "reproduce_argv": [
+    "python",
+    "-m",
+    "scripts.analyze_results"
+  ],
+  "use_rule": "TV4/TV5 use the same TV2 package; additional numbers/changes require TV2 confirmation",
+  "limits": [
+    "single run/seed",
+    "sampled RSS descriptive",
+    "E2 changing eval/catalog",
+    "E4 warm cache",
+    "pre-split workflow fit"
+  ]
+}

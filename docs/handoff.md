@@ -1,5 +1,33 @@
 # Handoff
 
+## TV2 — Review phân tích và phát hành metrics package — 24/11/2026
+
+- Review theo hai trục (chuẩn repo/spec task) phát hiện hai lỗi xuất số liệu: `raw_week_users` lấy nhầm user sau cleanup và GPU thiếu phép đo được xuất thành 0. Đã sửa raw counts theo `raw_subset_counts.csv`, thêm `cleaned_week_users`; GPU thiếu có null/`unavailable`, legacy observed flag giữ giá trị và ghi scope. Không sửa raw evidence, metric accuracy hoặc timing.
+- Phân tích E1–E5 đủ bảng, curve, bottleneck, limitations từ raw logs/run_id và tái tạo được. [Gói metrics chính thức](../metrics/releases/tv2-20261124/README.md) có CSV/JSON khớp nhau, effective configs, workflow/mapping/catalog versions, runtime/source/checksum, dictionary và registry các run được chọn. Command: `python -m scripts.analyze_results`; kiểm tra gói bằng `from scripts.package_metrics import verify; print(verify())`.
+- Task phân tích: triển khai và review kỹ thuật đạt, được tích hợp theo yêu cầu user. Task giao metrics cho TV4: **TRUE**; người dùng xác nhận TV4 đã kiểm tra ngày 24/11/2026. TV5 dùng cùng gói, còn chờ xác nhận theo AGENTS §11. Không giả lập receipt, không gửi tin nhắn thay user. TV4/TV5 dùng cùng package, số liệu bổ sung cần TV2 xác nhận.
+- Nhánh TV2 được merge main và xóa theo yêu cầu sau khi kiểm tra đạt; commit implementation/package: `f965644ecd43b51c7238995c8d2bec968c22cfe2`. Xác nhận TV4: đã kiểm tra theo thông báo của người dùng ngày 24/11/2026; TV5: chưa có.
+
+## TV2 — Đúc kết sau thực nghiệm — 24/11/2026
+
+- Thêm mục “Những đúc kết sau khi chạy thực nghiệm” ở đầu [tài liệu phân tích](../reports/tables/tv2-20261124/analysis.md): tác động cleanup/event mix, coverage session, độ đa dạng subset, bottleneck theo quy mô, tradeoff batch, format và phạm vi kết luận accuracy.
+- Làm rõ 912.061/1.877.365 session (48,58%) có một interaction **sau cleanup**, gồm cả session vốn một event và session bị rút còn một; chưa phân tách hai nhóm, không gọi đây là số session bị cleanup xóa. Có ví dụ A/A→A→A/A→A→B và ý nghĩa đối với prefix/target.
+- Nội dung được sinh cùng báo cáo bằng `python -m scripts.analyze_results`, giữ run_id/protocol/số liệu đã kiểm tra và các caveat về raw-vs-clean, test/catalog thay đổi, một seed và RSS. Không chạy experiment mới hoặc merge main trong cập nhật này.
+
+## TV2 — Bổ sung phân tích theo góp ý giảng viên — 24/11/2026
+
+- Bổ sung vào [báo cáo E1–E5](../reports/tables/tv2-20261124/analysis.md) và [phụ lục riêng](../reports/tables/tv2-20261124/instructor_feedback_analysis.md): population/mẫu số sampling, raw–clean–sequence counts, phân bố event/độ dài, vocabulary coverage, actual saved/used split counts, selection/truncation bias, leakage và hiệu lực so sánh, stage shares và khuyến nghị triển khai.
+- Số liệu mới tính từ manifest cuDF đúng run và raw audit, không dùng profile DuckDB cũ. Kiểm tra tổng histogram/session/event, sequence eligibility, event-type totals và split counts khớp nguồn. Lưu CSV `sampling_population`, `subset_distribution`, `preprocessing_retention`, `event_mix_before_after`, `split_population`, `stage_shares`; checksum/validation tại `metrics/tv2-analysis-20261124/supplement_validation.json`. `python -m scripts.analyze_results` tái tạo cả báo cáo gốc và phần bổ sung.
+- Phát hiện cần trình bày: raw tuần view 96,2071%, sau cleanup 100% là 99,9778%; dedup theo product có thể rút view/cart/purchase liên tiếp cùng item. Đây là cơ chế giải thích có căn cứ code, chưa audit event-level và không phải tỷ lệ event_type của final test target. 48,58% session chỉ còn một interaction bị loại khỏi model; khoảng cách TV độ dài giữa subset và mức 100% nhỏ nhưng không chứng minh mọi khía cạnh đại diện.
+- Giữ nguyên protocol/kết quả hiện hành. E2/E5 dùng để kết luận chi phí/scaling; accuracy giữa subset chỉ mô tả vì test/catalog thay đổi. Đề xuất train-size experiment giữ validation/test/catalog/mapping cố định được ghi rõ **chưa chạy**, không tự thêm run hoặc thay số. Không có bảo đảm điểm số; mục tiêu là tăng tính đầy đủ và khả năng bảo vệ kết luận từ bằng chứng.
+
+## TV2 — Phân tích E1–E5 từ raw logs — 24/11/2026
+
+- Đã truy cập VM và lấy bản sao byte-exact **62 raw JSON/metadata/output E5** có SHA-256; nguồn tại `Big-Data/metrics/raw/` và `Big-Data-e4/metrics/raw/e4-full-010-*`. Không dùng summary TV3 làm đầu vào tính toán. Manifest: `metrics/tv2-analysis-20261124/source_manifest.json`.
+- Tính lại Recall@20/NDCG@20 từ predictions trực tiếp trên VM cho **9 model runs**, kiểm tra session duy nhất, 20 ID không trùng/không token 0/1/2; khớp metrics đến sai số <1e-12. Kết quả và SHA-256 predictions: `metrics/tv2-analysis-20261124/prediction_checks.json`. Kiểm tra E1 cùng membership/catalog/split; E3 cùng artifacts/code và config chỉ khác batch/run_id/output; E4 chọn full 882.808 event, cùng fingerprint; E5 tái tính từ bốn raw E2 logs.
+- Output: [phân tích và bảng kết quả](../reports/tables/tv2-20261124/analysis.md), CSV E1–E5 cùng thư mục; [scaling curve SVG](../reports/figures/tv2-20261124/scalability/scalability.svg), PNG và CSV/summary E5 cùng thư mục. Lệnh tái tạo: `python -m scripts.analyze_results`; validation/checksum nằm tại `metrics/tv2-analysis-20261124/analysis_validation.json`. Không retrain hoặc sửa raw logs.
+- Kết luận: XLNet cao nhất về Recall/NDCG E1; E2 accuracy tăng theo subset nhưng test/catalog cũng thay đổi; E3 batch 128 giảm runtime, accuracy thấp hơn batch 32; E4 Parquet nhỏ/đọc nhanh hơn nhưng chênh full preprocessing ít hơn; E5 bottleneck preprocessing ở 10%, train ở 25–100%. Chỉ một lần chạy/seed; không báo std/CI hoặc kết luận tiết kiệm RAM từ RSS sampler hiện tại.
+- Task phân tích ngày 24/11 đã có bảng, scaling curve, bottleneck và limitations từ raw logs. **Sẵn sàng review**; nghiệm thu người nhận và bàn giao metrics package TV4/TV5 chưa được tự xác nhận. Commit triển khai/phân tích: `f9ea397af5320317733e9744cd0d030b33e496df`.
+
 ## TV2 — Xác nhận đóng hai task TV3 — 24/11/2026
 
 - Thúy (TV2) xác nhận trong chat và yêu cầu cập nhật main: **Rerun các run lỗi có nguyên nhân sửa được = TRUE**; **Bàn giao toàn bộ raw logs cho TV2 = TRUE**. Đây là quyết định nghiệm thu của người dùng, thay trạng thái chờ xác nhận hai task này ở các mục trước.
