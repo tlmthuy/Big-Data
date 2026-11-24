@@ -16,7 +16,7 @@
   "runbook": "docs/modeling/tv2_runbook.md",
   "environment_guide": "environment/README.md",
   "python_minimum": "3.10",
-  "runtime_status": "Config/collector integrated; E1 (three models) and E3 (batch 32/128) passed GPU toy runs; 29 offline tests passed. Real data and official TV3 runtime unverified.",
+  "runtime_status": "Official TV3 Docker/T4 runtime verified. Popularity, GRU and XLNet passed real-data 10% cohort smoke; E3 batch 32/128 passed; E4 CSV/Parquet pair passed. E1/E2/E3 official benchmark and E5 scalability remain pending.",
   "files_sha256": {
     "evaluation/__init__.py": "47fe5c3c117acdeaee61a18885ff4e09d80d8c53d8f76cafcdb044d2775a6680",
     "evaluation/data.py": "dd8540317fdd5b86b5451bbb1cbaee345392f889434ecfa2d7a81d0473492edf",
@@ -346,5 +346,28 @@
   "inference_timing_guide": "docs/modeling/inference_timing.md",
   "experiment_matrix": "configs/experiments.json",
   "site_template": "configs/site.example.json",
-  "real_data_verified": false
+  "real_data_verified": true,
+  "real_smoke": {
+    "status": "cohort_smoke_verified",
+    "date": "2026-11-22",
+    "git_commit": "ebd5f97b88515e4809d27ed4dd0275582751744e",
+    "subset": 10,
+    "train_sessions": 256,
+    "validation_sessions": 64,
+    "train_partition": 1,
+    "validation_partition": 2,
+    "cohort_manifest": "metrics/local/tv2-real-smoke-20261121/cohort/cohort.json",
+    "runs_root": "metrics/local/tv2-real-smoke-20261121/runs",
+    "popularity": "passed",
+    "gru": "passed",
+    "xlnet": "passed",
+    "e2_binding": "verified_four_subsets",
+    "e3_batch_32": "passed",
+    "e3_batch_128": "passed",
+    "e4_csv": "passed",
+    "e4_parquet": "passed",
+    "e5_separate_model_run": "not_required",
+    "regression_tests": "31 passed, 1 skipped",
+    "official_benchmarks_pending": ["E1-full", "E2-full", "E3-full", "E5-from-real-E2"]
+  }
 }

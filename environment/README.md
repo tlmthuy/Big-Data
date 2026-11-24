@@ -4,7 +4,7 @@
 
 - Metric/Popularity đã qua toy test trên Windows, Python 3.13.12; chưa chạy dataset thật hoặc GPU. Code dùng API Python >= 3.10.
 - `environment.yml` là môi trường CPU/toy Python 3.10, không cài Merlin/cuDF/NVTabular/PyTorch. Chưa chạy lại trên Python 3.10.
-- Dockerfile nhận image Merlin qua build argument, chưa có image/digest GPU được nhóm xác minh. Không có môi trường GPU sẵn dùng chỉ bằng build mặc định.
+- Dockerfile nhận image Merlin qua build argument. Image `merlin-pytorch:23.12` (digest trong [bản ghi runtime](#bản-ghi-runtime-chính-thức)) đã được chạy trên VM AWS Ubuntu 22.04 với Tesla T4, xác minh ngày 21/11/2026. Build vẫn phải truyền `--build-arg MERLIN_IMAGE=...`; Dockerfile không có image mặc định.
 - GRU/XLNet đã có CLI trên main và đạt [toy GPU smoke WSL RTX 3050](../metrics/tv2-model-smoke/README.md). Local model runtime chiếm 4,04 GB, [requirements](smoke-models.requirements.txt); runtime này không gồm cuDF/NVTabular và không thay image Docker/cloud chính thức. Config/collector E1–E4 và công cụ E5 đã tích hợp, có [hướng dẫn và lệnh toy](../docs/modeling/experiment_runbook.md), **chưa xác minh trên dữ liệu thật**.
 
 ## Nhận bàn giao TV2
@@ -66,16 +66,23 @@ Dockerfile chỉ bọc image ứng viên, không tự cài dependencies hoặc �
 
 4. Lưu `docker image inspect big-data-recsys:smoke`, `python -m pip freeze`, GPU/CPU/RAM, Ubuntu, driver, CUDA, Docker, Python và package versions trong artifact môi trường; cập nhật bảng bên dưới bằng giá trị thực. Import/toy test đạt chưa thay thế smoke preprocessing và model step khi TV1/TV2 bàn giao code.
 
+## Artifact môi trường
+
+- [`pip_freeze_baseline.txt`](pip_freeze_baseline.txt): 257 dòng `pip freeze` của image `merlin-pytorch:23.12`, trước khi cài thêm package nào.
+- Thông tin VM/Docker/GPU: `nvidia-smi`, `docker info`, `nvidia-ctk --version` lấy ngày 21/11/2026 (ghi trong bảng bên dưới).
+- Cảnh báo `Tensorflow dtype mappings did not load` khi import Merlin là bình thường: image PyTorch không có TensorFlow và pipeline này không dùng.
+- Package cài thêm ngoài image: chưa có. Nếu cài, ghi tên và version vào đây.
+
 ## Bản ghi runtime chính thức
 
 | Thông tin | Giá trị xác minh |
 | --- | --- |
-| GPU, VRAM / CPU / RAM / Ubuntu | Chưa xác minh |
-| Driver / CUDA / Docker / NVIDIA Container Toolkit | Chưa xác minh |
-| Merlin image tag, digest, local image ID | Chưa chọn/xác minh |
-| Python / PyTorch / Transformers4Rec | Chưa xác minh trong GPU runtime |
-| cuDF / CuPy / NVTabular / Merlin | Chưa xác minh trong GPU runtime |
-| Commit chạy, command, log path, kết quả smoke | Chưa có run GPU |
+| GPU, VRAM / CPU / RAM / Ubuntu | Tesla T4 (compute capability 7.5), 15360 MiB / Intel Xeon Platinum 8259CL @ 2.50GHz, 8 vCPU / 30,98 GiB / Ubuntu 22.04.5 LTS, kernel `6.8.0-1036-aws` |
+| Driver / CUDA / Docker / NVIDIA Container Toolkit | `570.172.08` / driver hỗ trợ CUDA 12.8 (`nvidia-smi`), CUDA toolkit trong container `12.1.105` / Docker `28.4.0` / `1.20.2` |
+| Merlin image tag, digest, local image ID | tag `23.12`; digest `nvcr.io/nvidia/merlin/merlin-pytorch@sha256:63874463e35350fabd873547311963adaf1e25cd12658707345738647cf5cd50`; local image ID `sha256:b61c670bff3e0f3e19b2c45c1687cf169ba9f66c7606de8573d5ead915f90051` |
+| Python / PyTorch / Transformers4Rec | `3.10.12` / import runtime `2.1.0a0+4136153` (CUDA `12.1`, cuDNN `8902`; `pip freeze` metadata ghi `torch==2.1.2`) / `23.12.00` (transformers `4.27.1`) |
+| cuDF / CuPy / NVTabular / Merlin | `23.04.00` / `12.0.0b3` / `23.08.00` / merlin.core `23.08.00`, merlin.models `23.12.00` |
+| Commit chạy, command, log path, kết quả smoke | Commit: `5f839a7a081a8d59ed157b4eb1d4e974937dd3bf`; command: ba lệnh `docker run` ở bước 3 (`nvidia-smi`, import test, `unittest`) và `pip freeze` ([`pip_freeze_baseline.txt`](pip_freeze_baseline.txt)); log: thư mục [`environment/logs/`](logs/) gồm `01-nvidia-smi.log`, `02-import-test.log`, `03-unittest.log`, `04-docker-image-inspect.json`, `05-docker-info.log`, `06-nvidia-ctk.log`; kết quả smoke: xem `02-import-test.log` và `03-unittest.log` (chạy ngày 21/11/2026, chưa chạy dữ liệu thật) |
 
 ## Trước khi chạy experiment thật
 

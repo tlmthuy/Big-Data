@@ -103,7 +103,7 @@ def execute(run, site, root, site_path, smoke=False):
         inputs["pipeline_metrics"] = fingerprint(path)
     metadata = {"run": run, **inputs, "site_config": fingerprint(site_path),
                 "data_kind": "toy" if smoke else "real",
-                "purpose": "toy_smoke" if smoke else "benchmark",
+                "purpose": run.get("purpose", "toy_smoke" if smoke else "benchmark"),
                 "environment": fingerprint(snapshot), "pipeline_metrics": preprocessing,
                 "pipeline_timing_scope": "TV1 measured stages reused; model process timed fresh",
                 "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()}

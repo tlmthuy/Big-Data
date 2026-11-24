@@ -1,0 +1,41 @@
+{
+  "experiment": "E5",
+  "status": "complete",
+  "mode": "aggregation_only",
+  "subsets": {
+    "10": {
+      "run_id": "e2-gru-010",
+      "n_events": 882808,
+      "composed_seconds_excluding_first_seen": 58.91448123800001,
+      "composed_seconds_with_first_seen": 60.43095494600493,
+      "bottleneck": "preprocessing_excluding_raw_read_and_first_seen"
+    },
+    "25": {
+      "run_id": "e2-gru-025",
+      "n_events": 2213138,
+      "composed_seconds_excluding_first_seen": 125.93237066599977,
+      "composed_seconds_with_first_seen": 127.4488443740047,
+      "bottleneck": "train_including_sequence_io"
+    },
+    "50": {
+      "run_id": "e2-gru-050",
+      "n_events": 4421037,
+      "composed_seconds_excluding_first_seen": 246.83202246900055,
+      "composed_seconds_with_first_seen": 248.34849617700547,
+      "bottleneck": "train_including_sequence_io"
+    },
+    "100": {
+      "run_id": "e2-gru-100",
+      "n_events": 8829314,
+      "composed_seconds_excluding_first_seen": 491.2386068550031,
+      "composed_seconds_with_first_seen": 492.75508056300805,
+      "bottleneck": "train_including_sequence_io"
+    }
+  },
+  "first_seen_seconds_shared": 1.5164737080049235,
+  "outputs": [
+    "reports/e5/scalability.csv",
+    "reports/e5/scalability.svg",
+    "reports/e5/summary.json"
+  ]
+}
