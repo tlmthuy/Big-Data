@@ -48,6 +48,15 @@ Chưa Done chính thức: người nhận cần tái tạo/nhận artifact thậ
 
 ## TV3 — Môi trường và vận hành run
 
+Trạng thái xác nhận ngày 24/11/2026 theo quyết định của Thúy (TV2):
+
+| Task trên sheet | Check | Ghi chú |
+| --- | :---: | --- |
+| Rerun các run lỗi có nguyên nhân sửa được | TRUE | TV2 xác nhận đóng task; giữ log lỗi và run cũ. |
+| Bàn giao toàn bộ raw logs cho TV2 | TRUE | TV2 xác nhận nhận bàn giao; đối chiếu raw logs trên VM khi bắt đầu phân tích. |
+
+Task TV2 “Phân tích kết quả E1 đến E5” ngày 24/11 vẫn **FALSE**. TV3 bật VM để TV2 truy cập raw logs theo run_id và tạo bảng/scaling curve/bottleneck/limitations; [xác nhận và phạm vi kiểm tra](handoff.md#tv2--xác-nhận-đóng-hai-task-tv3--24112026).
+
 Đầu mối nhận việc: [environment/README.md](../environment/README.md) và [manifest TV2](../configs/tv2_handoff.json). Metric/Popularity toy sẵn chạy; script GRU/XLNet, config E1–E4 và E5 được mô tả tại [neural_runbook.md](modeling/neural_runbook.md), chưa nghiệm thu GPU/dataset thật.
 
 | Task | Yêu cầu đầu ra (done gate) | Ghi chú thực thi cụ thể |
