@@ -550,3 +550,12 @@ Phương án bàn giao là tái tạo từ CSV nguồn cùng SHA-256. Xem [lện
 - File đích: [app/output_contract.md](../app/output_contract.md); các việc chờ bàn giao tại [Dependencies](../app/output_contract.md#dependencies). Bản này chia session predictions và run results E1–E5, ghi rõ cấu hình dự kiến/thực tế, batch/tài nguyên, nguồn metric và người phụ trách dependency.
 - Tích hợp cùng exporter toy, fixture ID gốc đủ 23 item, README và cập nhật TODO đã review. Không thay model, metric hoặc benchmark protocol. Các việc UI còn lại tiếp tục theo app/TODO.md; score/artifact thật và metrics package chờ đầu mối tương ứng trong Dependencies.
 - Kiểm tra trước merge: hai ví dụ JSON hợp lệ, 23 link local tồn tại, verification toy đạt (target hạng 1/20/miss; catalog 23 item), export từ run toy mới khớp fixture về nội dung, git diff --check sạch. Nhánh TV4 được xóa sau khi main push thành công theo yêu cầu người dùng; commit merge tra bằng lịch sử Git của mục này.
+
+## TV4 — Duyệt và tích hợp prediction mẫu — 24/11/2026
+
+- Người dùng xác nhận TV2 đã duyệt format và yêu cầu tích hợp vào main. Task tạo file prediction mẫu được chấp nhận; đây không phải nghiệm thu benchmark hoặc UI cuối.
+- Commit tích hợp: `c41f191`. Nguồn TV4: `callmeshinny/demo-big-data` tại `643634af898ea4a9d7145ea918a01009880491d4`.
+- Đầu ra: `app/samples/demo-data.json`, `app/samples/sample-predictions.csv`, `app/samples/README.md`; adapter `app/export_prediction_samples.py`. Giữ nguyên hai artifact nguồn; đổi tên adapter và hướng dẫn module cho repo nhóm. Không nhập UI hoặc report từ repo standalone.
+- Kiểm tra: 4 test adapter/sample từ repo nguồn PASS khi trỏ tới module và samples đã tích hợp; CSV khớp JSON, target/rank và catalog. 6 run/8 session mẫu đã đối chiếu với prediction nguồn: prefix, target và ranking ID gốc khớp; catalog 23 sản phẩm, 20 recommendation/session. `git diff --check` sạch.
+- Lệnh kiểm tra tại root: `python -B -m app.export_prediction_samples --run metrics/tv2-toy-day1=evaluation/tests/fixtures/catalog.json --output metrics/local/tv4-sample-integration-check.json` đã chạy PASS, xuất 3 session toy và CSV. Đảm bảo metrics/local tồn tại; lệnh ghi đè file output nếu chạy lại.
+- UI main vẫn dùng fixture legacy riêng; mẫu multi-run nằm ở app/samples để không thay schema UI ngoài scope. Score null do nguồn chưa xuất. Truy vết riêng mapping/vocabulary null khi nguồn không cung cấp; catalog có ánh xạ ID và SHA-256. Không tự tạo score hoặc kết quả benchmark.
