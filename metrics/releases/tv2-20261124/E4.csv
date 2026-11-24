@@ -1,0 +1,3 @@
+run_id,format,n_events,bytes,read_seconds,preprocessing_wall_seconds_including_read,sampled_rss_bytes_descriptive_only,source_metrics
+e4-full-010-csv,csv,882808,134004153,0.45413743600011003,34.987556843999755,2383167488,metrics/tv2-analysis-20261124/evidence/Big-Data-e4/metrics/raw/e4-full-010-csv/metrics.json
+e4-full-010-parquet,parquet,882808,25382745,0.1085011539998959,33.57124894300023,2314313728,metrics/tv2-analysis-20261124/evidence/Big-Data-e4/metrics/raw/e4-full-010-parquet/metrics.json

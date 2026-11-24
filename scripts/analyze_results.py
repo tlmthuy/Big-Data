@@ -42,8 +42,10 @@ def model_row(run_id):
             "eval_ms_per_session": 1000 * metrics["inference_seconds"] / metrics["n_sessions"],
             "process_wall_seconds": run["elapsed_seconds"],
             "sampled_rss_bytes_descriptive_only": run["peak_process_tree_rss_bytes"],
-            "sampled_gpu_process_bytes": run.get("gpu_memory_bytes_peak"),
-            "sampled_gpu_status": run.get("gpu_memory_bytes_status"),
+            "sampled_gpu_process_bytes": (run.get("gpu_memory_bytes_peak")
+                if run.get("gpu_memory_observation_available") else None),
+            "sampled_gpu_status": run.get("gpu_memory_bytes_status") or (
+                "observed_legacy_flag" if run.get("gpu_memory_observation_available") else "unavailable"),
             "source_run": (directory / "run.json").as_posix(),
             "source_metrics": (directory / "artifacts/metrics.json").as_posix()}
 
@@ -63,6 +65,8 @@ def main():
     checks = {r["run_id"]: r for r in load(BASE / "prediction_checks.json")}
     e1 = [model_row("e1-" + name + "-010") for name in ["popularity", "gru", "xlnet"]]
     e2 = []
+    with Path("data/manifests/raw_subset_counts.csv").open(encoding="utf-8") as handle:
+        raw_counts = {r["percent"]: r for r in csv.DictReader(handle)}
     for subset in ["010", "025", "050", "100"]:
         row = model_row("e2-gru-" + subset)
         meta = load(RAW / row["run_id"] / "run.json")["metadata"]
@@ -75,7 +79,8 @@ def main():
         assert selected["n_events"] == row["n_events"]
         row.update(total_sequence_sessions=selected["sequence_count"],
                    vocabulary_items=selected["vocabulary_size"],
-                   raw_week_users=selected["profile"]["distinct"]["user_id"])
+                   raw_week_users=int(raw_counts[row["subset"]]["user_count"]),
+                   cleaned_week_users=selected["profile"]["distinct"]["user_id"])
         e2.append(row)
     e3 = [model_row("e3-gru-010-b" + str(batch)) | {"train_batch_size": batch}
           for batch in [32, 128]]
@@ -252,7 +257,10 @@ Event tăng {x:.2f} lần, tổng stage không gồm first-seen tăng {y:.2f} l�
         "model_prediction_checks": len(checks), "E1_shared_artifacts": True,
         "E4_full_pair_verified": True, "E5_recomputed_subsets": len(e5),
         "source": "raw VM run/metrics JSON, not TV3 summaries"}, indent=2) + "\n")
-    print("PASS: raw evidence validation; E1-E5 CSV, analysis and scaling curve generated")
+    from scripts.package_metrics import build, verify
+    build()
+    verify()
+    print("PASS: raw evidence validation; E1-E5 tables, analysis, scaling curve and metrics package generated")
 
 
 if __name__ == "__main__":

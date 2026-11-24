@@ -14,7 +14,7 @@
     "data/manifests/raw_subset_counts.csv": "6288c242241ece4e539a2a8b3f7f182b6e41da088ba11a46395d2cc3af2a9349",
     "data/raw_audit.csv": "950995a8a5f3c7ecd22feb74b431f799f45788f6a6ec3c13d526687f0f71aa82",
     "pipeline/preprocess_weekly.py": "b6e8522dd0ed912c736445f8294f9606bbe3aa17fad788f204583732b8018401",
-    "reports\\tables\\tv2-20261124\\E2.csv": "e531743129d9393cdbf74b43b8b463164b41bd575f92ae6f3a676c9cd73a3b6f",
+    "reports\\tables\\tv2-20261124\\E2.csv": "6078cbb6ebd1c83c86f07c2332d48c0da2b8a82ab741096ec1cfd7e98cb63aee",
     "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-010/artifacts/metrics.json": "69c5a1d889582b2bf77402deb5c54daf478590ee98ae5b0cc9821bd162d66925",
     "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-025/artifacts/metrics.json": "c1195c74c8ac92724a5f737e91d934e89826967a49575e009a7a4ab39c03b1f9",
     "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-050/artifacts/metrics.json": "4fd0995e61433a4a65764d1b5ed6045f6e49f85ad3f75e36e2ecd545376dca4b",

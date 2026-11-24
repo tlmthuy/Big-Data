@@ -1,0 +1,99 @@
+{
+  "scope": "selected official runs; not full failed-attempt inventory",
+  "excluded": {
+    "e4-010-csv": "smoke pair, superseded by full E4",
+    "e4-010-parquet": "smoke pair, superseded by full E4"
+  },
+  "runs": [
+    {
+      "experiment": "E1",
+      "run_id": "e1-popularity-010",
+      "status": "passed",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-popularity-010/artifacts/metrics.json"
+    },
+    {
+      "experiment": "E1",
+      "run_id": "e1-gru-010",
+      "status": "passed",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-gru-010/artifacts/metrics.json"
+    },
+    {
+      "experiment": "E1",
+      "run_id": "e1-xlnet-010",
+      "status": "passed",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-xlnet-010/artifacts/metrics.json"
+    },
+    {
+      "experiment": "E2",
+      "run_id": "e2-gru-010",
+      "status": "passed",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-010/artifacts/metrics.json"
+    },
+    {
+      "experiment": "E2",
+      "run_id": "e2-gru-025",
+      "status": "passed",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-025/artifacts/metrics.json"
+    },
+    {
+      "experiment": "E2",
+      "run_id": "e2-gru-050",
+      "status": "passed",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-050/artifacts/metrics.json"
+    },
+    {
+      "experiment": "E2",
+      "run_id": "e2-gru-100",
+      "status": "passed",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-100/artifacts/metrics.json"
+    },
+    {
+      "experiment": "E3",
+      "run_id": "e3-gru-010-b32",
+      "status": "passed",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e3-gru-010-b32/artifacts/metrics.json"
+    },
+    {
+      "experiment": "E3",
+      "run_id": "e3-gru-010-b128",
+      "status": "passed",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e3-gru-010-b128/artifacts/metrics.json"
+    },
+    {
+      "experiment": "E4",
+      "run_id": "e4-full-010-csv",
+      "status": "passed",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data-e4/metrics/raw/e4-full-010-csv/metrics.json"
+    },
+    {
+      "experiment": "E4",
+      "run_id": "e4-full-010-parquet",
+      "status": "passed",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data-e4/metrics/raw/e4-full-010-parquet/metrics.json"
+    },
+    {
+      "experiment": "E5",
+      "run_id": "e2-gru-010",
+      "status": "derived_from_verified_E2",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-010/run.json"
+    },
+    {
+      "experiment": "E5",
+      "run_id": "e2-gru-025",
+      "status": "derived_from_verified_E2",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-025/run.json"
+    },
+    {
+      "experiment": "E5",
+      "run_id": "e2-gru-050",
+      "status": "derived_from_verified_E2",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-050/run.json"
+    },
+    {
+      "experiment": "E5",
+      "run_id": "e2-gru-100",
+      "status": "derived_from_verified_E2",
+      "source": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-100/run.json"
+    }
+  ]
+}
