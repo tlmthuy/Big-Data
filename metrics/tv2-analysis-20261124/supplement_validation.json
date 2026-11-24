@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "scope": "descriptive analysis from existing artifacts; no protocol/rerun change",
+  "checks": [
+    "raw/sampling populations",
+    "histogram event and session totals",
+    "eligible sequence counts",
+    "event-type totals",
+    "same-stage distribution comparisons"
+  ],
+  "sources_sha256": {
+    "data/manifests/session_sampling_manifest.json": "da72607111d584289aa7a4ade3a4593c1ca1b11e1353438f5b5b400739942826",
+    "data/manifests/e2_preprocessing_verified.json": "a8bc1f2dd64121bea36f95291b9974616434ef28fa87bf4cdb0eae17898cb531",
+    "data/manifests/raw_subset_counts.csv": "6288c242241ece4e539a2a8b3f7f182b6e41da088ba11a46395d2cc3af2a9349",
+    "data/raw_audit.csv": "950995a8a5f3c7ecd22feb74b431f799f45788f6a6ec3c13d526687f0f71aa82",
+    "pipeline/preprocess_weekly.py": "b6e8522dd0ed912c736445f8294f9606bbe3aa17fad788f204583732b8018401",
+    "reports\\tables\\tv2-20261124\\E2.csv": "e531743129d9393cdbf74b43b8b463164b41bd575f92ae6f3a676c9cd73a3b6f",
+    "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-010/artifacts/metrics.json": "69c5a1d889582b2bf77402deb5c54daf478590ee98ae5b0cc9821bd162d66925",
+    "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-025/artifacts/metrics.json": "c1195c74c8ac92724a5f737e91d934e89826967a49575e009a7a4ab39c03b1f9",
+    "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-050/artifacts/metrics.json": "4fd0995e61433a4a65764d1b5ed6045f6e49f85ad3f75e36e2ecd545376dca4b",
+    "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-100/artifacts/metrics.json": "b3f12da1bca827cdb4a5639ec0dcb528c94c26b2cf984487b9f54ad54cb33340"
+  }
+}

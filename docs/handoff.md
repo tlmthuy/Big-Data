@@ -1,5 +1,12 @@
 # Handoff
 
+## TV2 — Bổ sung phân tích theo góp ý giảng viên — 24/11/2026
+
+- Bổ sung vào [báo cáo E1–E5](../reports/tables/tv2-20261124/analysis.md) và [phụ lục riêng](../reports/tables/tv2-20261124/instructor_feedback_analysis.md): population/mẫu số sampling, raw–clean–sequence counts, phân bố event/độ dài, vocabulary coverage, actual saved/used split counts, selection/truncation bias, leakage và hiệu lực so sánh, stage shares và khuyến nghị triển khai.
+- Số liệu mới tính từ manifest cuDF đúng run và raw audit, không dùng profile DuckDB cũ. Kiểm tra tổng histogram/session/event, sequence eligibility, event-type totals và split counts khớp nguồn. Lưu CSV `sampling_population`, `subset_distribution`, `preprocessing_retention`, `event_mix_before_after`, `split_population`, `stage_shares`; checksum/validation tại `metrics/tv2-analysis-20261124/supplement_validation.json`. `python -m scripts.analyze_results` tái tạo cả báo cáo gốc và phần bổ sung.
+- Phát hiện cần trình bày: raw tuần view 96,2071%, sau cleanup 100% là 99,9778%; dedup theo product có thể rút view/cart/purchase liên tiếp cùng item. Đây là cơ chế giải thích có căn cứ code, chưa audit event-level và không phải tỷ lệ event_type của final test target. 48,58% session chỉ còn một interaction bị loại khỏi model; khoảng cách TV độ dài giữa subset và mức 100% nhỏ nhưng không chứng minh mọi khía cạnh đại diện.
+- Giữ nguyên protocol/kết quả hiện hành. E2/E5 dùng để kết luận chi phí/scaling; accuracy giữa subset chỉ mô tả vì test/catalog thay đổi. Đề xuất train-size experiment giữ validation/test/catalog/mapping cố định được ghi rõ **chưa chạy**, không tự thêm run hoặc thay số. Không có bảo đảm điểm số; mục tiêu là tăng tính đầy đủ và khả năng bảo vệ kết luận từ bằng chứng.
+
 ## TV2 — Phân tích E1–E5 từ raw logs — 24/11/2026
 
 - Đã truy cập VM và lấy bản sao byte-exact **62 raw JSON/metadata/output E5** có SHA-256; nguồn tại `Big-Data/metrics/raw/` và `Big-Data-e4/metrics/raw/e4-full-010-*`. Không dùng summary TV3 làm đầu vào tính toán. Manifest: `metrics/tv2-analysis-20261124/source_manifest.json`.

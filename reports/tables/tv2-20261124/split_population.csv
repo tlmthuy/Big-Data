@@ -1,0 +1,5 @@
+subset,last_partition_D,saved_train_all_days,saved_validation_all_days,saved_test_all_days,train_used_1_to_Dminus1,validation_used_2_to_D,final_test_D,train_D_not_used
+10,7,77041,9671,9721,66444,8267,1337,10597
+25,7,193543,24450,23722,166910,20933,3266,26633
+50,7,386564,48614,47061,333758,41570,6427,52806
+100,7,773280,96658,95366,667633,82670,13052,105647

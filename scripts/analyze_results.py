@@ -157,7 +157,7 @@ Subset 10%, train partitions 1–6, test partition 7, 1.337 session; kiểm tra 
 
 {markdown(e1, ['run_id', 'Recall@20', 'NDCG@20', 'train_seconds_including_sequence_io', 'final_evaluation_seconds', 'eval_ms_per_session'])}
 
-XLNet có Recall/NDCG cao nhất trong ba run; Recall tăng {improvement:.2f}% tương đối so Popularity. GRU chỉ nhỉnh hơn Popularity trên test này. Popularity có train/evaluation wall thấp nhất. Chênh lệch accuracy chưa có kiểm định hoặc nhiều seed; không kết luận ưu thế tổng quát. Không so inference với ranking một lần hoặc compute diagnostic. Train của neural gồm daily validation ngoài trường train_seconds; process_wall là số riêng bao gồm audit/khởi tạo/checkpoint.
+XLNet có Recall/NDCG cao nhất trong ba run; Recall tăng {improvement:.2f}% tương đối so Popularity. GRU chỉ nhỉnh hơn Popularity trên test này. Popularity có train/evaluation wall thấp nhất. Chênh lệch accuracy chưa có kiểm định hoặc nhiều seed; không kết luận ưu thế tổng quát. Không so inference với ranking một lần hoặc compute diagnostic. Mỗi run neural còn có daily validation không nằm trong trường train_seconds; process_wall là số riêng bao gồm audit/khởi tạo/checkpoint.
 
 ## E2 — Tăng dữ liệu
 
@@ -204,6 +204,13 @@ Event tăng {x:.2f} lần, tổng stage không gồm first-seen tăng {y:.2f} l�
 - Gói này hoàn thành phân tích từ logs được kiểm tra; việc bàn giao metrics package chính thức cho TV4/TV5 và người nhận nghiệm thu là task tiếp theo, không tự xác nhận thay người nhận.
 '''
     Path("reports/tables/tv2-20261124/analysis.md").write_text(text, encoding="utf-8")
+    from scripts.analyze_sampling import generate
+    supplement = generate()
+    report = Path("reports/tables/tv2-20261124/analysis.md")
+    # Keep a single document title while also writing the standalone supplement.
+    integrated = "\n".join("#" + line if line.startswith("#") else line
+                           for line in supplement.splitlines())
+    report.write_text(text + "\n\n---\n\n" + integrated + "\n", encoding="utf-8")
     (BASE / "analysis_validation.json").write_text(json.dumps({
         "status": "passed", "source_checksum_files": len(load(BASE / "source_manifest.json")),
         "model_prediction_checks": len(checks), "E1_shared_artifacts": True,

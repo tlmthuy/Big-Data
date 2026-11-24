@@ -44,7 +44,8 @@
     "configs/pipeline_metrics.example.json": "c7b006bb7dd916d93c1f976dedcf68fafa90632fe6125f8841e3b3f6b7cd082e",
     "scripts/runs/run_experiments.py": "97e8501fff40b9275ea4d7e19df123f9c3e278c02c09df4519cc2b6786f8eecd",
     "scripts/runs/prepare_toy_site.py": "6ffc41b998fd791d7bc2a51f7aac2fcfe5e54045e7918ebb5acf51001e2cdd41",
-    "scripts/analyze_results.py": "35807f9592ab86aa649bf67e5074d2398c80da31f1e76e198e8deaec09a3b268"
+    "scripts/analyze_results.py": "0eeac490b04b0c5abf355a76186f85f2a29fd35b91980a043539b84728080854",
+    "scripts/analyze_sampling.py": "06df4eb4228de8b9c2374e653ea4c03f1d64e1bcc14e23e0410e8098b150dcf9"
   },
   "commands": [
     {
@@ -391,6 +392,8 @@
       "scripts.analyze_results"
     ],
     "recipient_acceptance": null,
-    "TV4_TV5_package_delivered": false
+    "TV4_TV5_package_delivered": false,
+    "instructor_feedback_supplement": "reports/tables/tv2-20261124/instructor_feedback_analysis.md",
+    "supplement_validation": "metrics/tv2-analysis-20261124/supplement_validation.json"
   }
 }
