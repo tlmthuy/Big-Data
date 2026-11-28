@@ -1,5 +1,0 @@
-team_commit,generated_at,run_id,series,status,metric,value,unit,scope
-43841c9,2026-11-21,e2-gru-010,planned,,elapsed_seconds,,s,Whole launched command (collector)
-43841c9,2026-11-21,e2-gru-025,planned,,elapsed_seconds,,s,Whole launched command (collector)
-43841c9,2026-11-21,e2-gru-050,planned,,elapsed_seconds,,s,Whole launched command (collector)
-43841c9,2026-11-21,e2-gru-100,planned,,elapsed_seconds,,s,Whole launched command (collector)

@@ -1,0 +1,51 @@
+{
+  "schema": "tv4-demo-data/v2",
+  "team_commit": "fixture",
+  "generated_at": "2026-11-26",
+  "data_kind": "toy",
+  "provenance": {},
+  "runs": [
+    {
+      "model": "GRU",
+      "run_id": "fixture-scored",
+      "subset": 10,
+      "split": "test",
+      "data_kind": "toy",
+      "catalog": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ],
+      "provenance": {
+        "eval_day": 7
+      },
+      "sessions": [
+        {
+          "user_session": "s1",
+          "prefix": [
+            "p1",
+            "p2"
+          ],
+          "target": "p3",
+          "recommendations": [
+            {
+              "rank": 1,
+              "product_id": "p3",
+              "score": 0.8125
+            },
+            {
+              "rank": 2,
+              "product_id": "p4",
+              "score": 0.03125
+            },
+            {
+              "rank": 3,
+              "product_id": "p1"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

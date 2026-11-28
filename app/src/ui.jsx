@@ -1,5 +1,6 @@
 import { t } from "./i18n.js";
 import React from "react";
+import { interpretationNoteText } from "./interpretation-notes.js";
 
 export function Notice({ kind = "info", title, children }) {
   return (
@@ -8,6 +9,23 @@ export function Notice({ kind = "info", title, children }) {
       {children && <div>{children}</div>}
     </section>
   );
+}
+
+export function DataLoadFailure({ title, detail }) {
+  return <Notice kind="error" title={title}>
+    <p>{t("section_data_could_not_be_loaded")}</p>
+    <details className="load-error-details">
+      <summary>{t("technical_details")}</summary>
+      <pre>{detail}</pre>
+    </details>
+  </Notice>;
+}
+
+export function InterpretationNote({ dictionaryKey, source }) {
+  return <p className="interpretation-note">
+    <span>{interpretationNoteText(dictionaryKey)}</span>
+    <small>{source ?? t("source_dictionary", dictionaryKey)}</small>
+  </p>;
 }
 
 export function DataKindBadge({ kind }) {
@@ -31,4 +49,16 @@ export function Issues({ issues }) {
       <ul>{issues.map((issue, i) => <li key={i}>{issue}</li>)}</ul>
     </details>
   );
+}
+
+/**
+ * Native <select> with a custom chevron: appearance none, --label-2 chevron 14 px from the right edge,
+ * 40 px right padding so text never runs under it. Keyboard and mobile pickers stay native; in forced
+ * colours the system arrow returns (CSS).
+ */
+export function Select({ className = "", children, ...props }) {
+  return <span className={`select-wrap ${className}`.trim()}>
+    <select {...props}>{children}</select>
+    <span className="select-chevron" aria-hidden="true" />
+  </span>;
 }

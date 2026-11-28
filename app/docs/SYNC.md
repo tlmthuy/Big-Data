@@ -19,11 +19,11 @@ workspace/
    cd Big-Data && git pull
    ```
 2. Take only artifacts that TV2 has delivered or confirmed: prediction run directories and the metrics package.
-3. Run both adapters from the team repo root (exact commands in `AGENTS.md`, section 5):
+3. Generate the demo prediction sample and confirmed results JSON from the delivered artifacts:
    - `scripts/export_demo_data.py --run RUN_DIR=CATALOG ... --output public/demo-data.json`
      (any model with K = 20; the catalog must match the run's recorded SHA-256);
-   - `scripts/export_run_results.py --matrix configs/experiments.json --collector-dir <TV2 package> --output public/run-results.json`.
-   A delivered run fills the planned record only when its `run_id` matches the matrix and `data_kind` is `real`.
+   - from the demo repo, `python3 scripts/export_official_results.py --package ../Big-Data/metrics/releases/tv2-20261124 --output public/official-results.json`.
+   For real E1, use the fixed hash-sample exporter command documented in `docs/DEMO_DAY.md`.
 4. Commit only the small JSON in `public/`. Note the source run ID and the team commit in the commit message.
 
 ## 3. Push the UI back (this repo → team repo)

@@ -1,5 +1,5 @@
 import { t } from "./i18n.js";
-// Loading and validation for the two JSON files in public/.
+// Loading and validation for JSON artifacts in public/.
 // Pure functions (no React) so they can be tested with `node --test`.
 
 
@@ -42,6 +42,13 @@ export async function loadJson(url, fetchImpl = fetch) {
   }
 }
 
+export async function loadDeclaredProductInfo(productLookup, fetchImpl = fetch) {
+  if (typeof productLookup !== "string" || !productLookup.trim()) {
+    return { data: null, error: null, requested: false };
+  }
+  return { ...await loadJson(productLookup, fetchImpl), requested: true };
+}
+
 export function normalizeProductInfo(raw) {
   if (!isObject(raw) || !isObject(raw.products)) return {};
   const products = new Map();
@@ -53,7 +60,7 @@ export function normalizeProductInfo(raw) {
       price: Number.isFinite(info.price) ? info.price : null,
     });
   }
-  return { products, dataKind: raw.data_kind };
+  return { products, dataKind: raw.data_kind, window: isObject(raw.checks) ? raw.checks.window_utc ?? null : null };
 }
 
 // ---------------------------------------------------------------- Part A
@@ -165,11 +172,12 @@ function normalizeRun(raw, index, issues) {
     split: raw.split ?? null,
     data_kind: raw.data_kind ?? null,
     catalog_sha256: raw.catalog_sha256 ?? null,
-    catalogSize: catalog ? catalog.length : null,
+    catalogSize: Number.isSafeInteger(raw.catalog_size) ? raw.catalog_size : catalog ? catalog.length : null,
     catalogSet,
     evalPartition: provenance.eval_day ?? null,
     sample: isObject(provenance.sample) ? provenance.sample : null,
     experiment: provenance.experiment ?? null,
+    provenance,
     scoreAvailable: sessions.some((s) => s.recommendations?.some((r) => r.score !== null)),
     sessions,
   };
@@ -225,6 +233,17 @@ export function usersBySession(group) {
   return users;
 }
 
+/**
+ * First session, in the delivered hash-sample order, that every model in the group ranks in its
+ * Top-20. Used only for a presenter tip; the default session stays the first in sample order.
+ */
+export function firstAllModelHitSession(group) {
+  const runs = group?.runs ?? [];
+  if (!runs.length) return null;
+  const byRun = runs.map((run) => new Map(run.sessions.map((session) => [session.user_session, session])));
+  return (group.sessionIds ?? []).find((id) => byRun.every((sessions) => sessions.get(id)?.targetRank != null)) ?? null;
+}
+
 /** History and target for a session, taken from the first run in the group that has them. */
 export function sessionContext(group, sessionId) {
   let prefix = null;
@@ -246,63 +265,15 @@ export function sessionContext(group, sessionId) {
   return { prefix, target, prefixCatalog, targetCatalog };
 }
 
-// ---------------------------------------------------------------- Part B
-
 export const EXPERIMENTS = ["E1", "E2", "E3", "E4", "E5"];
-
-export function normalizeResults(raw) {
-  const issues = [];
-  if (!isObject(raw)) return { runs: [], meta: {}, issues, fatal: t("the_results_file_is_not_a") };
-  if (!Array.isArray(raw.runs)) return { runs: [], meta: {}, issues, fatal: t("cannot_find_the_runs_array") };
-  const runs = [];
-  raw.runs.forEach((r, i) => {
-    if (!isObject(r) || !isId(r.run_id) || !isId(r.experiment)) {
-      issues.push(t("record_0_skipped_because_run_id", i + 1));
-      return;
-    }
-    runs.push({
-      ...r,
-      model: r.model ?? null,
-      kind: r.kind ?? (r.model ? "model" : "io"),
-      matrix_run_id: r.matrix_run_id ?? r.run_id,
-      planned: isObject(r.planned) ? r.planned : {},
-      actual: isObject(r.actual) ? r.actual : {},
-      environment: isObject(r.environment) ? r.environment : {},
-      metrics: isObject(r.metrics) ? r.metrics : {},
-      sources: isObject(r.sources) ? r.sources : {},
-    });
-  });
-  return {
-    runs,
-    meta: {
-      environment_baseline: raw.environment_baseline ?? null,
-      package_id: raw.package_id ?? null,
-      confirmed_by_tv2: raw.confirmed_by_tv2 === true,
-      team_commit: raw.team_commit ?? null,
-    },
-    issues,
-    fatal: null,
-  };
-}
-
-/** Official = not toy. Toy runs are reference only and never mixed with official ones. */
-export function splitByKind(runs, experiment) {
-  const inExp = runs.filter((r) => r.experiment === experiment);
-  return {
-    official: inExp.filter((r) => r.data_kind !== "toy"),
-    toy: inExp.filter((r) => r.data_kind === "toy"),
-  };
-}
-
 // ---------------------------------------------------------------- formatting
+import { formatGeneralNumber } from "./format.js";
 
 /** Format a delivered value or a localized placeholder. */
 export function formatValue(value) {
   if (value === null || value === undefined || value === "") return t("not_available_yet");
   if (typeof value === "number") {
-    if (!Number.isFinite(value)) return String(value);
-    if (Number.isInteger(value)) return value.toLocaleString("en-US");
-    return Number(value.toPrecision(4)).toLocaleString("en-US", { maximumFractionDigits: 10 });
+    return formatGeneralNumber(value);
   }
   if (typeof value === "boolean") return value ? "true" : "false";
   if (Array.isArray(value)) return value.length ? value.map(formatValue).join(", ") : t("not_available_yet");

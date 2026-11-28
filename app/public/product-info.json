@@ -1,122 +1,1480 @@
 {
-  "data_kind": "toy",
-  "source": "toy sample metadata for UI testing, not from dataset",
-  "price_rule": "last observed price in the subset week",
-  "products": {
-    "p3": {
-      "brand": "samsung",
-      "category_code": "electronics.smartphone",
-      "price": 130.76
-    },
-    "p4": {
-      "brand": "sample",
-      "category_code": "furniture.living_room.table",
-      "price": null
-    },
-    "p5": {
-      "brand": "demo",
-      "category_code": null,
-      "price": null
-    },
-    "p6": {
-      "brand": null,
-      "category_code": null,
-      "price": null
-    },
-    "p7": {
-      "brand": "sample",
-      "category_code": "furniture.living_room.shelf",
-      "price": null
-    },
-    "p8": {
-      "brand": "demo",
-      "category_code": "electronics.smartphone",
-      "price": null
-    },
-    "p9": {
-      "brand": null,
-      "category_code": "appliances.kitchen.kettle",
-      "price": null
-    },
-    "p10": {
-      "brand": "sample",
-      "category_code": "computers.notebook",
-      "price": null
-    },
-    "p11": {
-      "brand": "demo",
-      "category_code": "furniture.living_room.chair",
-      "price": null
-    },
-    "p12": {
-      "brand": null,
-      "category_code": "furniture.living_room.table",
-      "price": null
-    },
-    "p13": {
-      "brand": "sample",
-      "category_code": "furniture.bedroom.wardrobe",
-      "price": null
-    },
-    "p14": {
-      "brand": "demo",
-      "category_code": "furniture.living_room.lamp",
-      "price": null
-    },
-    "p15": {
-      "brand": null,
-      "category_code": "furniture.living_room.shelf",
-      "price": null
-    },
-    "p16": {
-      "brand": "sample",
-      "category_code": "electronics.smartphone",
-      "price": null
-    },
-    "p17": {
-      "brand": "demo",
-      "category_code": "appliances.kitchen.kettle",
-      "price": null
-    },
-    "p18": {
-      "brand": null,
-      "category_code": "computers.notebook",
-      "price": null
-    },
-    "p19": {
-      "brand": "sample",
-      "category_code": "furniture.living_room.chair",
-      "price": null
-    },
-    "p20": {
-      "brand": "demo",
-      "category_code": "furniture.living_room.table",
-      "price": null
-    },
-    "p21": {
-      "brand": null,
-      "category_code": "furniture.bedroom.wardrobe",
-      "price": null
-    },
-    "p22": {
-      "brand": "sample",
-      "category_code": "furniture.living_room.lamp",
-      "price": null
-    },
-    "p23": {
-      "brand": "demo",
-      "category_code": "furniture.living_room.shelf",
-      "price": null
-    },
-    "p24": {
-      "brand": null,
-      "category_code": "electronics.smartphone",
-      "price": null
-    },
-    "p25": {
-      "brand": "sample",
-      "category_code": "appliances.kitchen.kettle",
-      "price": null
-    }
+ "data_kind": "real",
+ "source": "official 10% cleaned week file, derived by TV4",
+ "source_sha256": "743b1e5323a14eef63be9221cd8ee2aa565c3c7db2c44f000b5a7432b70b60d3",
+ "source_file": "week-010.parquet",
+ "generated_at": "2026-11-28",
+ "checks": {
+  "rows": 638089,
+  "distinct_products": 63398,
+  "min_event_time_utc": "2019-10-01T00:00:18Z",
+  "max_event_time_utc": "2019-10-07T23:59:57Z",
+  "window_utc": "2019-10-01 .. 2019-10-07 UTC",
+  "displayed_products": 292,
+  "exported_products": 292,
+  "displayed_not_in_week": []
+ },
+ "price_rule": "last price seen for the product in the week (latest event_time_ts; ties keep the later row)",
+ "products": {
+  "1002524": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 521.25
+  },
+  "1002544": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 460.63
+  },
+  "1002547": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 459.45
+  },
+  "1002633": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 358.57
+  },
+  "1003195": {
+   "brand": "huawei",
+   "category_code": "electronics.smartphone",
+   "price": 124.1
+  },
+  "1003306": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 582.92
+  },
+  "1003315": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 922.64
+  },
+  "1003316": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 931.8
+  },
+  "1003317": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 952.28
+  },
+  "1003484": {
+   "brand": "xiaomi",
+   "category_code": "electronics.smartphone",
+   "price": 169.82
+  },
+  "1003997": {
+   "brand": "xiaomi",
+   "category_code": "electronics.smartphone",
+   "price": 251.8
+  },
+  "1004209": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 88.81
+  },
+  "1004211": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 88.81
+  },
+  "1004227": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 1005.35
+  },
+  "1004237": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 1086.0
+  },
+  "1004246": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 736.03
+  },
+  "1004249": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 741.1
+  },
+  "1004258": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 743.62
+  },
+  "1004565": {
+   "brand": "huawei",
+   "category_code": "electronics.smartphone",
+   "price": 169.76
+  },
+  "1004659": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 731.04
+  },
+  "1004739": {
+   "brand": "xiaomi",
+   "category_code": "electronics.smartphone",
+   "price": 190.56
+  },
+  "1004741": {
+   "brand": "xiaomi",
+   "category_code": "electronics.smartphone",
+   "price": 190.97
+  },
+  "1004750": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 197.42
+  },
+  "1004767": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 250.97
+  },
+  "1004777": {
+   "brand": "xiaomi",
+   "category_code": "electronics.smartphone",
+   "price": 135.01
+  },
+  "1004785": {
+   "brand": "huawei",
+   "category_code": "electronics.smartphone",
+   "price": 272.08
+  },
+  "1004794": {
+   "brand": "xiaomi",
+   "category_code": "electronics.smartphone",
+   "price": 218.42
+  },
+  "1004833": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 170.92
+  },
+  "1004836": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 240.93
+  },
+  "1004838": {
+   "brand": "oppo",
+   "category_code": "electronics.smartphone",
+   "price": 179.26
+  },
+  "1004856": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 130.76
+  },
+  "1004858": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 131.02
+  },
+  "1004870": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 288.04
+  },
+  "1004873": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 380.22
+  },
+  "1004875": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 388.09
+  },
+  "1004903": {
+   "brand": "huawei",
+   "category_code": "electronics.smartphone",
+   "price": 111.66
+  },
+  "1004905": {
+   "brand": "huawei",
+   "category_code": "electronics.smartphone",
+   "price": 110.05
+  },
+  "1004957": {
+   "brand": "xiaomi",
+   "category_code": "electronics.smartphone",
+   "price": 347.17
+  },
+  "1005008": {
+   "brand": "xiaomi",
+   "category_code": "electronics.smartphone",
+   "price": 99.05
+  },
+  "1005017": {
+   "brand": "huawei",
+   "category_code": "electronics.smartphone",
+   "price": 94.45
+  },
+  "1005100": {
+   "brand": "samsung",
+   "category_code": "electronics.smartphone",
+   "price": 151.56
+  },
+  "1005104": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 975.57
+  },
+  "1005105": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 1415.48
+  },
+  "1005115": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 975.56
+  },
+  "1005135": {
+   "brand": "apple",
+   "category_code": "electronics.smartphone",
+   "price": 1747.79
+  },
+  "1005150": {
+   "brand": "xiaomi",
+   "category_code": "electronics.smartphone",
+   "price": 569.71
+  },
+  "1005160": {
+   "brand": "xiaomi",
+   "category_code": "electronics.smartphone",
+   "price": 244.27
+  },
+  "1005161": {
+   "brand": "xiaomi",
+   "category_code": "electronics.smartphone",
+   "price": 244.28
+  },
+  "1306650": {
+   "brand": "acer",
+   "category_code": "computers.notebook",
+   "price": 435.02
+  },
+  "1307004": {
+   "brand": "lenovo",
+   "category_code": "computers.notebook",
+   "price": 290.61
+  },
+  "1307073": {
+   "brand": "acer",
+   "category_code": "computers.notebook",
+   "price": 720.48
+  },
+  "1307286": {
+   "brand": "hp",
+   "category_code": "computers.notebook",
+   "price": 1091.15
+  },
+  "1500227": {
+   "brand": "epson",
+   "category_code": "computers.peripherals.printer",
+   "price": 155.19
+  },
+  "1500258": {
+   "brand": "epson",
+   "category_code": "computers.peripherals.printer",
+   "price": 266.3
+  },
+  "1500349": {
+   "brand": "hp",
+   "category_code": "computers.peripherals.printer",
+   "price": 231.15
+  },
+  "1500440": {
+   "brand": "epson",
+   "category_code": "computers.peripherals.printer",
+   "price": 174.75
+  },
+  "1801690": {
+   "brand": "samsung",
+   "category_code": "electronics.video.tv",
+   "price": 370.4
+  },
+  "1801739": {
+   "brand": "samsung",
+   "category_code": "electronics.video.tv",
+   "price": 282.89
+  },
+  "1801766": {
+   "brand": "artel",
+   "category_code": "electronics.video.tv",
+   "price": 150.34
+  },
+  "1801830": {
+   "brand": "yasin",
+   "category_code": "electronics.video.tv",
+   "price": 158.05
+  },
+  "1801881": {
+   "brand": "samsung",
+   "category_code": "electronics.video.tv",
+   "price": 499.11
+  },
+  "1801897": {
+   "brand": "samsung",
+   "category_code": "electronics.video.tv",
+   "price": 1106.82
+  },
+  "1801899": {
+   "brand": "samsung",
+   "category_code": "electronics.video.tv",
+   "price": 769.39
+  },
+  "1801910": {
+   "brand": "samsung",
+   "category_code": "electronics.video.tv",
+   "price": 643.39
+  },
+  "1802037": {
+   "brand": "lg",
+   "category_code": "electronics.video.tv",
+   "price": 300.91
+  },
+  "1802054": {
+   "brand": "yasin",
+   "category_code": "electronics.video.tv",
+   "price": 186.59
+  },
+  "2601446": {
+   "brand": "dauscher",
+   "category_code": null,
+   "price": 432.16
+  },
+  "2602062": {
+   "brand": "gefest",
+   "category_code": null,
+   "price": 559.65
+  },
+  "2700538": {
+   "brand": "atlant",
+   "category_code": "appliances.kitchen.refrigerators",
+   "price": 463.07
+  },
+  "2700609": {
+   "brand": "indesit",
+   "category_code": "appliances.kitchen.refrigerators",
+   "price": 308.61
+  },
+  "2700856": {
+   "brand": "indesit",
+   "category_code": "appliances.kitchen.refrigerators",
+   "price": 371.95
+  },
+  "2700984": {
+   "brand": "samsung",
+   "category_code": "appliances.kitchen.refrigerators",
+   "price": 538.96
+  },
+  "2701878": {
+   "brand": "beko",
+   "category_code": "appliances.kitchen.refrigerators",
+   "price": 360.04
+  },
+  "2701887": {
+   "brand": "beko",
+   "category_code": "appliances.kitchen.refrigerators",
+   "price": 342.45
+  },
+  "2702238": {
+   "brand": "bosch",
+   "category_code": "appliances.kitchen.refrigerators",
+   "price": 572.73
+  },
+  "2800431": {
+   "brand": null,
+   "category_code": "appliances.kitchen.refrigerators",
+   "price": 318.92
+  },
+  "2800585": {
+   "brand": "atlant",
+   "category_code": "appliances.kitchen.refrigerators",
+   "price": 411.59
+  },
+  "2800600": {
+   "brand": "indesit",
+   "category_code": "appliances.kitchen.refrigerators",
+   "price": 349.02
+  },
+  "2800611": {
+   "brand": "indesit",
+   "category_code": "appliances.kitchen.refrigerators",
+   "price": 347.59
+  },
+  "3100583": {
+   "brand": "redmond",
+   "category_code": "appliances.kitchen.blender",
+   "price": 47.85
+  },
+  "3100755": {
+   "brand": "redmond",
+   "category_code": "appliances.kitchen.blender",
+   "price": 51.46
+  },
+  "3600661": {
+   "brand": "samsung",
+   "category_code": "appliances.kitchen.washer",
+   "price": 293.19
+  },
+  "3600821": {
+   "brand": "smeg",
+   "category_code": "appliances.kitchen.washer",
+   "price": 1630.07
+  },
+  "3601244": {
+   "brand": "lg",
+   "category_code": "appliances.kitchen.washer",
+   "price": 360.11
+  },
+  "3601421": {
+   "brand": "lg",
+   "category_code": "appliances.kitchen.washer",
+   "price": 398.72
+  },
+  "3601437": {
+   "brand": "lg",
+   "category_code": "appliances.kitchen.washer",
+   "price": 380.96
+  },
+  "3601505": {
+   "brand": "samsung",
+   "category_code": "appliances.kitchen.washer",
+   "price": 488.82
+  },
+  "3700926": {
+   "brand": "samsung",
+   "category_code": "appliances.environment.vacuum",
+   "price": 64.02
+  },
+  "4000048": {
+   "brand": "elenberg",
+   "category_code": "construction.tools.generator",
+   "price": 92.64
+  },
+  "4100129": {
+   "brand": "sony",
+   "category_code": null,
+   "price": 463.02
+  },
+  "4300377": {
+   "brand": "polaris",
+   "category_code": null,
+   "price": 40.93
+  },
+  "4300404": {
+   "brand": "polaris",
+   "category_code": null,
+   "price": 47.88
+  },
+  "4600681": {
+   "brand": "electrolux",
+   "category_code": "appliances.kitchen.dishwasher",
+   "price": 373.21
+  },
+  "4700478": {
+   "brand": "sho-me",
+   "category_code": "auto.accessories.videoregister",
+   "price": 142.58
+  },
+  "4700533": {
+   "brand": "blackvue",
+   "category_code": "auto.accessories.videoregister",
+   "price": 635.49
+  },
+  "4700589": {
+   "brand": "xiaomi",
+   "category_code": "auto.accessories.videoregister",
+   "price": 71.56
+  },
+  "4700630": {
+   "brand": null,
+   "category_code": "auto.accessories.videoregister",
+   "price": 30.89
+  },
+  "4801928": {
+   "brand": "razer",
+   "category_code": "electronics.audio.headphone",
+   "price": 119.43
+  },
+  "4804055": {
+   "brand": "apple",
+   "category_code": "electronics.audio.headphone",
+   "price": 192.26
+  },
+  "4804056": {
+   "brand": "apple",
+   "category_code": "electronics.audio.headphone",
+   "price": 160.24
+  },
+  "4804295": {
+   "brand": "xiaomi",
+   "category_code": "electronics.audio.headphone",
+   "price": 23.08
+  },
+  "5100577": {
+   "brand": "samsung",
+   "category_code": "electronics.clocks",
+   "price": 294.92
+  },
+  "5100816": {
+   "brand": "xiaomi",
+   "category_code": null,
+   "price": 28.73
+  },
+  "5700384": {
+   "brand": "pioneer",
+   "category_code": "auto.accessories.player",
+   "price": 131.28
+  },
+  "5701086": {
+   "brand": "pioneer",
+   "category_code": "auto.accessories.player",
+   "price": 129.85
+  },
+  "5701166": {
+   "brand": null,
+   "category_code": "auto.accessories.player",
+   "price": 136.4
+  },
+  "5900124": {
+   "brand": "garmin",
+   "category_code": null,
+   "price": 578.58
+  },
+  "6000094": {
+   "brand": "starline",
+   "category_code": "auto.accessories.alarm",
+   "price": 121.24
+  },
+  "6301732": {
+   "brand": "smeg",
+   "category_code": "appliances.kitchen.kettle",
+   "price": 195.6
+  },
+  "6400241": {
+   "brand": "amd",
+   "category_code": "computers.components.cpu",
+   "price": 97.56
+  },
+  "6600554": {
+   "brand": null,
+   "category_code": "computers.components.memory",
+   "price": 36.01
+  },
+  "6600559": {
+   "brand": "geil",
+   "category_code": "computers.components.memory",
+   "price": 33.46
+  },
+  "6600732": {
+   "brand": "kingston",
+   "category_code": "computers.components.memory",
+   "price": 39.9
+  },
+  "6600843": {
+   "brand": "apacer",
+   "category_code": "computers.components.memory",
+   "price": 22.63
+  },
+  "6600944": {
+   "brand": "zeppelin",
+   "category_code": "computers.components.memory",
+   "price": 36.29
+  },
+  "6601036": {
+   "brand": "kingston",
+   "category_code": "computers.components.memory",
+   "price": 62.55
+  },
+  "7005774": {
+   "brand": "alis",
+   "category_code": "kids.carriage",
+   "price": 128.68
+  },
+  "7005978": {
+   "brand": "easywalker",
+   "category_code": "kids.carriage",
+   "price": 244.54
+  },
+  "7005981": {
+   "brand": "easywalker",
+   "category_code": "kids.carriage",
+   "price": 475.17
+  },
+  "7005983": {
+   "brand": "easywalker",
+   "category_code": "kids.carriage",
+   "price": 475.17
+  },
+  "7201809": {
+   "brand": "lego",
+   "category_code": null,
+   "price": 4.35
+  },
+  "7202676": {
+   "brand": null,
+   "category_code": null,
+   "price": 83.37
+  },
+  "8000181": {
+   "brand": "chicco",
+   "category_code": null,
+   "price": 61.75
+  },
+  "8500328": {
+   "brand": null,
+   "category_code": null,
+   "price": 265.04
+  },
+  "8700289": {
+   "brand": "elenberg",
+   "category_code": "appliances.personal.hair_cutter",
+   "price": 17.76
+  },
+  "8800213": {
+   "brand": "texet",
+   "category_code": "electronics.telephone",
+   "price": 14.64
+  },
+  "8800444": {
+   "brand": "nokia",
+   "category_code": "electronics.telephone",
+   "price": 51.46
+  },
+  "8800489": {
+   "brand": "hiper",
+   "category_code": "electronics.telephone",
+   "price": 12.33
+  },
+  "8800738": {
+   "brand": "inoi",
+   "category_code": "electronics.telephone",
+   "price": 37.22
+  },
+  "8800972": {
+   "brand": "bq",
+   "category_code": "electronics.telephone",
+   "price": 28.06
+  },
+  "8801040": {
+   "brand": "nokia",
+   "category_code": "electronics.telephone",
+   "price": 36.01
+  },
+  "8902427": {
+   "brand": null,
+   "category_code": "kids.toys",
+   "price": 30.2
+  },
+  "9100967": {
+   "brand": "steelseries",
+   "category_code": "computers.peripherals.mouse",
+   "price": 76.96
+  },
+  "9200441": {
+   "brand": "ritmix",
+   "category_code": "computers.peripherals.keyboard",
+   "price": 6.65
+  },
+  "9700220": {
+   "brand": "aerocool",
+   "category_code": "computers.components.power_supply",
+   "price": 130.02
+  },
+  "9800560": {
+   "brand": "thermaltake",
+   "category_code": null,
+   "price": 91.64
+  },
+  "10301190": {
+   "brand": null,
+   "category_code": null,
+   "price": 45.49
+  },
+  "10400421": {
+   "brand": "hb",
+   "category_code": "kids.toys",
+   "price": 36.01
+  },
+  "10600485": {
+   "brand": "matrol",
+   "category_code": null,
+   "price": 102.68
+  },
+  "10800075": {
+   "brand": "redmond",
+   "category_code": null,
+   "price": 40.67
+  },
+  "11000097": {
+   "brand": "bosch",
+   "category_code": "appliances.kitchen.toster",
+   "price": 54.03
+  },
+  "11000112": {
+   "brand": "bosch",
+   "category_code": "appliances.kitchen.toster",
+   "price": 61.75
+  },
+  "11000212": {
+   "brand": "scarlett",
+   "category_code": "appliances.kitchen.toster",
+   "price": 24.17
+  },
+  "11500695": {
+   "brand": "marshall",
+   "category_code": null,
+   "price": 308.63
+  },
+  "11600001": {
+   "brand": "microlab",
+   "category_code": "computers.desktop",
+   "price": 48.14
+  },
+  "11600004": {
+   "brand": "sven",
+   "category_code": "computers.desktop",
+   "price": 46.08
+  },
+  "11600018": {
+   "brand": "sven",
+   "category_code": "computers.desktop",
+   "price": 51.22
+  },
+  "11600048": {
+   "brand": "microlab",
+   "category_code": "computers.desktop",
+   "price": 73.32
+  },
+  "11600058": {
+   "brand": "microlab",
+   "category_code": "computers.desktop",
+   "price": 40.28
+  },
+  "11600114": {
+   "brand": "microlab",
+   "category_code": "computers.desktop",
+   "price": 32.43
+  },
+  "11600143": {
+   "brand": "sven",
+   "category_code": "computers.desktop",
+   "price": 36.01
+  },
+  "11600160": {
+   "brand": "microlab",
+   "category_code": "computers.desktop",
+   "price": 19.54
+  },
+  "11600325": {
+   "brand": "sven",
+   "category_code": "computers.desktop",
+   "price": 76.71
+  },
+  "11600349": {
+   "brand": "logitech",
+   "category_code": "computers.desktop",
+   "price": 171.52
+  },
+  "11600388": {
+   "brand": "trust",
+   "category_code": "computers.desktop",
+   "price": 72.16
+  },
+  "11700414": {
+   "brand": "electro-voice",
+   "category_code": "electronics.audio.acoustic",
+   "price": 1076.48
+  },
+  "11900383": {
+   "brand": "x-game",
+   "category_code": null,
+   "price": 108.63
+  },
+  "12202052": {
+   "brand": "sunday",
+   "category_code": "sport.bicycle",
+   "price": 267.7
+  },
+  "12202377": {
+   "brand": null,
+   "category_code": "sport.bicycle",
+   "price": 95.24
+  },
+  "12700358": {
+   "brand": "nokian",
+   "category_code": null,
+   "price": 98.84
+  },
+  "12700765": {
+   "brand": "michelin",
+   "category_code": null,
+   "price": 93.31
+  },
+  "12703015": {
+   "brand": "cordiant",
+   "category_code": null,
+   "price": 42.99
+  },
+  "12703498": {
+   "brand": "cordiant",
+   "category_code": null,
+   "price": 38.35
+  },
+  "12703629": {
+   "brand": "cordiant",
+   "category_code": null,
+   "price": 84.69
+  },
+  "12705187": {
+   "brand": null,
+   "category_code": null,
+   "price": 46.26
+  },
+  "12705587": {
+   "brand": null,
+   "category_code": null,
+   "price": 43.68
+  },
+  "12705850": {
+   "brand": "viatti",
+   "category_code": null,
+   "price": 115.83
+  },
+  "12707874": {
+   "brand": "cordiant",
+   "category_code": null,
+   "price": 132.56
+  },
+  "12709953": {
+   "brand": "triangle",
+   "category_code": null,
+   "price": 46.33
+  },
+  "12710449": {
+   "brand": "triangle",
+   "category_code": null,
+   "price": 42.21
+  },
+  "12711462": {
+   "brand": "maxxis",
+   "category_code": null,
+   "price": 82.84
+  },
+  "12711950": {
+   "brand": "triangle",
+   "category_code": null,
+   "price": 54.06
+  },
+  "12712691": {
+   "brand": "bridgestone",
+   "category_code": null,
+   "price": 45.43
+  },
+  "12714350": {
+   "brand": "viatti",
+   "category_code": null,
+   "price": 39.77
+  },
+  "12714640": {
+   "brand": "triangle",
+   "category_code": null,
+   "price": 32.18
+  },
+  "12800668": {
+   "brand": "kingston",
+   "category_code": null,
+   "price": 15.26
+  },
+  "13101203": {
+   "brand": "xxr",
+   "category_code": null,
+   "price": 1029.63
+  },
+  "13104928": {
+   "brand": "kipardo",
+   "category_code": null,
+   "price": 362.43
+  },
+  "13200955": {
+   "brand": null,
+   "category_code": "furniture.bedroom.bed",
+   "price": 514.81
+  },
+  "14300025": {
+   "brand": "kurzweil",
+   "category_code": null,
+   "price": 910.71
+  },
+  "15100009": {
+   "brand": null,
+   "category_code": null,
+   "price": 321.73
+  },
+  "15100148": {
+   "brand": "lider",
+   "category_code": null,
+   "price": 378.36
+  },
+  "15100384": {
+   "brand": "bts",
+   "category_code": null,
+   "price": 554.43
+  },
+  "15200496": {
+   "brand": "uragan",
+   "category_code": null,
+   "price": 38.87
+  },
+  "15400258": {
+   "brand": "bestway",
+   "category_code": null,
+   "price": 1003.08
+  },
+  "15800048": {
+   "brand": "huter",
+   "category_code": null,
+   "price": 91.61
+  },
+  "16900229": {
+   "brand": "homeart",
+   "category_code": "furniture.kitchen.table",
+   "price": 26.9
+  },
+  "17301157": {
+   "brand": null,
+   "category_code": null,
+   "price": 41.93
+  },
+  "17302999": {
+   "brand": null,
+   "category_code": null,
+   "price": 875.18
+  },
+  "19100207": {
+   "brand": "dewalt",
+   "category_code": "construction.tools.saw",
+   "price": 296.25
+  },
+  "21404141": {
+   "brand": null,
+   "category_code": "electronics.clocks",
+   "price": 95.76
+  },
+  "21404610": {
+   "brand": null,
+   "category_code": "electronics.clocks",
+   "price": 143.89
+  },
+  "21410065": {
+   "brand": null,
+   "category_code": "electronics.clocks",
+   "price": 29.34
+  },
+  "21900309": {
+   "brand": null,
+   "category_code": null,
+   "price": 4.89
+  },
+  "21900313": {
+   "brand": null,
+   "category_code": null,
+   "price": 4.89
+  },
+  "22700062": {
+   "brand": "aeroforce",
+   "category_code": null,
+   "price": 226.52
+  },
+  "22700068": {
+   "brand": "force",
+   "category_code": null,
+   "price": 86.99
+  },
+  "22700078": {
+   "brand": "stels",
+   "category_code": null,
+   "price": 180.18
+  },
+  "22700084": {
+   "brand": "force",
+   "category_code": null,
+   "price": 239.36
+  },
+  "22700128": {
+   "brand": "stels",
+   "category_code": null,
+   "price": 65.64
+  },
+  "22700129": {
+   "brand": "stels",
+   "category_code": null,
+   "price": 66.93
+  },
+  "22700193": {
+   "brand": "stels",
+   "category_code": null,
+   "price": 77.22
+  },
+  "22700205": {
+   "brand": "matrix",
+   "category_code": null,
+   "price": 20.78
+  },
+  "22700325": {
+   "brand": "force",
+   "category_code": null,
+   "price": 102.71
+  },
+  "22700462": {
+   "brand": "bosch",
+   "category_code": null,
+   "price": 60.49
+  },
+  "22700466": {
+   "brand": null,
+   "category_code": null,
+   "price": 53.03
+  },
+  "22700524": {
+   "brand": "force",
+   "category_code": null,
+   "price": 239.38
+  },
+  "22700528": {
+   "brand": "force",
+   "category_code": null,
+   "price": 97.81
+  },
+  "22700674": {
+   "brand": "bosch",
+   "category_code": null,
+   "price": 25.23
+  },
+  "23300538": {
+   "brand": null,
+   "category_code": null,
+   "price": 16.53
+  },
+  "23301014": {
+   "brand": null,
+   "category_code": null,
+   "price": 36.04
+  },
+  "23700056": {
+   "brand": null,
+   "category_code": "furniture.bedroom.blanket",
+   "price": 14.13
+  },
+  "23900049": {
+   "brand": "barokko",
+   "category_code": null,
+   "price": 13.13
+  },
+  "24000017": {
+   "brand": "kativa",
+   "category_code": null,
+   "price": 20.59
+  },
+  "24601146": {
+   "brand": "shiseido",
+   "category_code": null,
+   "price": 22.07
+  },
+  "25001618": {
+   "brand": "lidonet",
+   "category_code": "furniture.universal.light",
+   "price": 29.6
+  },
+  "25200026": {
+   "brand": null,
+   "category_code": null,
+   "price": 25.71
+  },
+  "25300307": {
+   "brand": "citilux",
+   "category_code": null,
+   "price": 28.57
+  },
+  "25700145": {
+   "brand": null,
+   "category_code": null,
+   "price": 62.29
+  },
+  "26000614": {
+   "brand": null,
+   "category_code": null,
+   "price": 12.12
+  },
+  "26012636": {
+   "brand": null,
+   "category_code": null,
+   "price": 3.06
+  },
+  "26100004": {
+   "brand": "sulu",
+   "category_code": null,
+   "price": 128.7
+  },
+  "26200097": {
+   "brand": null,
+   "category_code": null,
+   "price": 105.28
+  },
+  "26200211": {
+   "brand": null,
+   "category_code": null,
+   "price": 277.74
+  },
+  "26201858": {
+   "brand": null,
+   "category_code": null,
+   "price": 235.01
+  },
+  "26203727": {
+   "brand": "lucente",
+   "category_code": null,
+   "price": 317.38
+  },
+  "26204362": {
+   "brand": null,
+   "category_code": null,
+   "price": 82.63
+  },
+  "26300093": {
+   "brand": "lucente",
+   "category_code": null,
+   "price": 507.86
+  },
+  "26300094": {
+   "brand": "lucente",
+   "category_code": null,
+   "price": 583.28
+  },
+  "26300095": {
+   "brand": "lucente",
+   "category_code": null,
+   "price": 634.51
+  },
+  "26300187": {
+   "brand": "lucente",
+   "category_code": null,
+   "price": 607.48
+  },
+  "26300304": {
+   "brand": "lucente",
+   "category_code": null,
+   "price": 22.39
+  },
+  "26300354": {
+   "brand": "lucente",
+   "category_code": null,
+   "price": 724.86
+  },
+  "26400619": {
+   "brand": null,
+   "category_code": null,
+   "price": 239.65
+  },
+  "26400770": {
+   "brand": "lucente",
+   "category_code": null,
+   "price": 341.58
+  },
+  "26402365": {
+   "brand": "lucente",
+   "category_code": null,
+   "price": 103.73
+  },
+  "26403271": {
+   "brand": null,
+   "category_code": null,
+   "price": 210.04
+  },
+  "26403393": {
+   "brand": null,
+   "category_code": null,
+   "price": 55.09
+  },
+  "26403394": {
+   "brand": null,
+   "category_code": null,
+   "price": 52.25
+  },
+  "26403421": {
+   "brand": null,
+   "category_code": null,
+   "price": 65.64
+  },
+  "26500145": {
+   "brand": "lucente",
+   "category_code": null,
+   "price": 70.79
+  },
+  "26500544": {
+   "brand": null,
+   "category_code": null,
+   "price": 392.38
+  },
+  "26800026": {
+   "brand": "hygge",
+   "category_code": null,
+   "price": 625.5
+  },
+  "28100871": {
+   "brand": null,
+   "category_code": null,
+   "price": 33.21
+  },
+  "28101192": {
+   "brand": "karmen",
+   "category_code": null,
+   "price": 109.91
+  },
+  "28101260": {
+   "brand": "karmen",
+   "category_code": null,
+   "price": 530.0
+  },
+  "28704042": {
+   "brand": "nike",
+   "category_code": "apparel.shoes.keds",
+   "price": 67.75
+  },
+  "28717067": {
+   "brand": "strobbs",
+   "category_code": "apparel.shoes.keds",
+   "price": 51.22
+  },
+  "28717859": {
+   "brand": null,
+   "category_code": "apparel.shoes",
+   "price": 111.97
+  },
+  "28717923": {
+   "brand": "rieker",
+   "category_code": "apparel.shoes",
+   "price": 73.36
+  },
+  "28718630": {
+   "brand": "rieker",
+   "category_code": "apparel.shoes",
+   "price": 94.98
+  },
+  "28719310": {
+   "brand": "fila",
+   "category_code": "apparel.shoes.keds",
+   "price": 203.09
+  },
+  "29900010": {
+   "brand": "racer",
+   "category_code": null,
+   "price": 707.87
+  },
+  "29900054": {
+   "brand": "peda",
+   "category_code": null,
+   "price": 2557.59
+  },
+  "29900055": {
+   "brand": "peda",
+   "category_code": null,
+   "price": 2331.85
+  },
+  "29900056": {
+   "brand": "peda",
+   "category_code": null,
+   "price": 1271.59
+  },
+  "29900058": {
+   "brand": null,
+   "category_code": null,
+   "price": 1788.98
+  },
+  "29900065": {
+   "brand": "imperia",
+   "category_code": null,
+   "price": 977.89
+  },
+  "29900071": {
+   "brand": "peda",
+   "category_code": null,
+   "price": 1158.33
+  },
+  "29900075": {
+   "brand": "peda",
+   "category_code": null,
+   "price": 1415.74
+  },
+  "29900076": {
+   "brand": "peda",
+   "category_code": null,
+   "price": 1081.11
+  },
+  "29900107": {
+   "brand": "peda",
+   "category_code": null,
+   "price": 1899.66
+  },
+  "30600097": {
+   "brand": "stanley",
+   "category_code": "appliances.environment.vacuum",
+   "price": 62.43
+  },
+  "31000211": {
+   "brand": "deeper",
+   "category_code": null,
+   "price": 359.85
+  },
+  "31000511": {
+   "brand": "garmin",
+   "category_code": null,
+   "price": 669.18
+  },
+  "32400583": {
+   "brand": null,
+   "category_code": null,
+   "price": 18.92
+  },
+  "32400708": {
+   "brand": "wallberry",
+   "category_code": null,
+   "price": 9.76
+  },
+  "32400825": {
+   "brand": null,
+   "category_code": null,
+   "price": 6.74
+  },
+  "32800510": {
+   "brand": "kolibri",
+   "category_code": null,
+   "price": 347.47
+  },
+  "32801042": {
+   "brand": null,
+   "category_code": null,
+   "price": 411.83
+  },
+  "32900134": {
+   "brand": "plano",
+   "category_code": "accessories.bag",
+   "price": 60.12
+  },
+  "34000009": {
+   "brand": "kovea",
+   "category_code": null,
+   "price": 118.38
+  },
+  "34800097": {
+   "brand": null,
+   "category_code": null,
+   "price": 34.79
+  },
+  "34800111": {
+   "brand": null,
+   "category_code": null,
+   "price": 43.32
+  },
+  "34800118": {
+   "brand": null,
+   "category_code": null,
+   "price": 39.38
+  },
+  "34800124": {
+   "brand": null,
+   "category_code": null,
+   "price": 87.26
+  },
+  "34800130": {
+   "brand": null,
+   "category_code": null,
+   "price": 72.64
+  },
+  "34800145": {
+   "brand": null,
+   "category_code": null,
+   "price": 56.45
+  },
+  "34800283": {
+   "brand": "cantra",
+   "category_code": null,
+   "price": 128.7
+  },
+  "38900019": {
+   "brand": null,
+   "category_code": null,
+   "price": 95.24
+  },
+  "39500027": {
+   "brand": null,
+   "category_code": null,
+   "price": 608.77
+  },
+  "39600015": {
+   "brand": "bestway",
+   "category_code": null,
+   "price": 53.8
+  },
+  "40300015": {
+   "brand": "norfin",
+   "category_code": null,
+   "price": 77.2
+  },
+  "44600078": {
+   "brand": "bioderma",
+   "category_code": null,
+   "price": 9.78
+  },
+  "45800008": {
+   "brand": null,
+   "category_code": "apparel.costume",
+   "price": 46.33
+  },
+  "46900030": {
+   "brand": "dometic",
+   "category_code": "accessories.bag",
+   "price": 173.75
+  },
+  "48300047": {
+   "brand": "silverlit",
+   "category_code": null,
+   "price": 28.2
+  },
+  "49500005": {
+   "brand": "omabelle",
+   "category_code": null,
+   "price": 720.74
+  },
+  "50100045": {
+   "brand": null,
+   "category_code": null,
+   "price": 58.17
+  },
+  "50700005": {
+   "brand": "agl",
+   "category_code": null,
+   "price": 114.55
+  },
+  "51200008": {
+   "brand": null,
+   "category_code": null,
+   "price": 41.19
+  },
+  "54900005": {
+   "brand": null,
+   "category_code": "apparel.costume",
+   "price": 77.22
   }
+ }
 }

@@ -1,0 +1,2272 @@
+{
+  "schema": "tv4-official-results/v1",
+  "package_id": "tv2-20261124",
+  "confirmed_by_tv2": true,
+  "data_kind": "real",
+  "team_commit": "88f7e02",
+  "generated_at": "2026-11-26",
+  "known_checksum_exceptions": [
+    {
+      "file": "environment/README.md",
+      "reason": "TV3 doc edit after packaging (team commit 88f7e02), log links only"
+    }
+  ],
+  "run_registry_summary": {
+    "passed": 11,
+    "derived_from_verified_E2": 4,
+    "excluded": 2
+  },
+  "limits": [
+    "single run/seed",
+    "sampled RSS descriptive",
+    "E2 changing eval/catalog",
+    "E4 warm cache",
+    "pre-split workflow fit"
+  ],
+  "dictionary": {
+    "accuracy_units": "Recall@20/NDCG@20 fractions [0,1], single target per valid session",
+    "time_units": "seconds unless named ms_per_session",
+    "memory_units": "bytes; missing is null, not measured zero",
+    "inference_protocol": "full_evaluation_wall_v1; complete evaluation including I/O and metrics",
+    "train_seconds_including_sequence_io": "training only, excludes daily validation",
+    "process_wall_seconds": "whole model process; not added to component timings",
+    "sampled_rss_bytes_descriptive_only": "may double-count shared pages/miss short peaks; no cross-config RAM conclusion",
+    "sampled_gpu_process_bytes": "sampled process GPU memory, not CUDA allocated/reserved or total GPU used",
+    "sampled_gpu_status": "observed_legacy_flag from observation_available=true; unavailable -> null bytes",
+    "raw_week_users": "before product deduplication: raw_subset_counts.csv",
+    "cleaned_week_users": "after cuDF product deduplication: selected E2 profile",
+    "E2_accuracy": "different eval/catalog across subsets; not isolated train-size gain",
+    "E3_accuracy": "validation; do not compare directly with E1/E2 test",
+    "E4_preprocessing_wall": "includes its own read; do not add standalone read",
+    "E5_composed": "raw read + preprocess excluding raw read/first-seen + train with sequence I/O + final eval; not observed E2E wall",
+    "first_seen_shared": "add once per complete scenario; separate shared build cost"
+  },
+  "excluded": {
+    "e4-010-csv": "smoke pair, superseded by full E4",
+    "e4-010-parquet": "smoke pair, superseded by full E4"
+  },
+  "tables": {
+    "E1": [
+      {
+        "run_id": "e1-popularity-010",
+        "model": "Popularity",
+        "subset": 10,
+        "split": "test",
+        "n_sessions": 1337,
+        "Recall@20": 0.08676140613313388,
+        "NDCG@20": 0.03476648339460129,
+        "train_seconds_including_sequence_io": 6.5520770249999885,
+        "final_evaluation_seconds": 0.07596332700001085,
+        "eval_ms_per_session": 0.05681625056096548,
+        "process_wall_seconds": 9.335651151999997,
+        "sampled_rss_bytes_descriptive_only": 110678016,
+        "sampled_gpu_process_bytes": null,
+        "sampled_gpu_status": "unavailable",
+        "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-popularity-010/run.json",
+        "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-popularity-010/artifacts/metrics.json"
+      },
+      {
+        "run_id": "e1-gru-010",
+        "model": "gru",
+        "subset": 10,
+        "split": "test",
+        "n_sessions": 1337,
+        "Recall@20": 0.08825729244577413,
+        "NDCG@20": 0.03804320278602695,
+        "train_seconds_including_sequence_io": 28.13264710800007,
+        "final_evaluation_seconds": 0.7025829149999936,
+        "eval_ms_per_session": 0.5254920830216856,
+        "process_wall_seconds": 50.71620606299999,
+        "sampled_rss_bytes_descriptive_only": 1502588928,
+        "sampled_gpu_process_bytes": 7977566208,
+        "sampled_gpu_status": "observed_legacy_flag",
+        "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-gru-010/run.json",
+        "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-gru-010/artifacts/metrics.json"
+      },
+      {
+        "run_id": "e1-xlnet-010",
+        "model": "xlnet",
+        "subset": 10,
+        "split": "test",
+        "n_sessions": 1337,
+        "Recall@20": 0.12490650710545999,
+        "NDCG@20": 0.05133183399511177,
+        "train_seconds_including_sequence_io": 30.65435696999998,
+        "final_evaluation_seconds": 0.8580624610000314,
+        "eval_ms_per_session": 0.6417819454001731,
+        "process_wall_seconds": 45.872700355999996,
+        "sampled_rss_bytes_descriptive_only": 1567543296,
+        "sampled_gpu_process_bytes": 3630170112,
+        "sampled_gpu_status": "observed_legacy_flag",
+        "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-xlnet-010/run.json",
+        "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-xlnet-010/artifacts/metrics.json"
+      }
+    ],
+    "E2": [
+      {
+        "run_id": "e2-gru-010",
+        "model": "gru",
+        "subset": 10,
+        "split": "test",
+        "n_sessions": 1337,
+        "Recall@20": 0.08825729244577413,
+        "NDCG@20": 0.03804320278602695,
+        "train_seconds_including_sequence_io": 27.590925735000383,
+        "final_evaluation_seconds": 0.7019494080004733,
+        "eval_ms_per_session": 0.5250182557969135,
+        "process_wall_seconds": 41.77022658900023,
+        "sampled_rss_bytes_descriptive_only": 1492635648,
+        "sampled_gpu_process_bytes": 7977566208,
+        "sampled_gpu_status": "observed_legacy_flag",
+        "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-010/run.json",
+        "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-010/artifacts/metrics.json",
+        "n_events": 882808,
+        "raw_read_seconds": 0.1725569339996582,
+        "preprocessing_seconds": 30.449049160999493,
+        "first_seen_shared_seconds": 1.5164737080049235,
+        "total_sequence_sessions": 96433,
+        "vocabulary_items": 63398,
+        "raw_week_users": 163847,
+        "cleaned_week_users": 163846
+      },
+      {
+        "run_id": "e2-gru-025",
+        "model": "gru",
+        "subset": 25,
+        "split": "test",
+        "n_sessions": 3266,
+        "Recall@20": 0.15737905695039803,
+        "NDCG@20": 0.07156953474506007,
+        "train_seconds_including_sequence_io": 89.22829858099885,
+        "final_evaluation_seconds": 2.243796507999832,
+        "eval_ms_per_session": 0.6870166895284238,
+        "process_wall_seconds": 118.18261974399957,
+        "sampled_rss_bytes_descriptive_only": 1548365824,
+        "sampled_gpu_process_bytes": 14327742464,
+        "sampled_gpu_status": "observed_legacy_flag",
+        "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-025/run.json",
+        "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-025/artifacts/metrics.json",
+        "n_events": 2213138,
+        "raw_read_seconds": 0.36686747099975037,
+        "preprocessing_seconds": 34.093408106001334,
+        "first_seen_shared_seconds": 1.5164737080049235,
+        "total_sequence_sessions": 241715,
+        "vocabulary_items": 87247,
+        "raw_week_users": 356271,
+        "cleaned_week_users": 356266
+      },
+      {
+        "run_id": "e2-gru-050",
+        "model": "gru",
+        "subset": 50,
+        "split": "test",
+        "n_sessions": 6427,
+        "Recall@20": 0.27477827913489966,
+        "NDCG@20": 0.12148368074443924,
+        "train_seconds_including_sequence_io": 203.10789924799974,
+        "final_evaluation_seconds": 5.128254403000028,
+        "eval_ms_per_session": 0.7979235106581652,
+        "process_wall_seconds": 258.71616461900066,
+        "sampled_rss_bytes_descriptive_only": 1587884032,
+        "sampled_gpu_process_bytes": 13755219968,
+        "sampled_gpu_status": "observed_legacy_flag",
+        "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-050/run.json",
+        "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-050/artifacts/metrics.json",
+        "n_events": 4421037,
+        "raw_read_seconds": 0.7350254970006063,
+        "preprocessing_seconds": 37.860843321000175,
+        "first_seen_shared_seconds": 1.5164737080049235,
+        "total_sequence_sessions": 482239,
+        "vocabulary_items": 103940,
+        "raw_week_users": 601608,
+        "cleaned_week_users": 601598
+      },
+      {
+        "run_id": "e2-gru-100",
+        "model": "gru",
+        "subset": 100,
+        "split": "test",
+        "n_sessions": 13052,
+        "Recall@20": 0.38990193073858415,
+        "NDCG@20": 0.1803755829750735,
+        "train_seconds_including_sequence_io": 432.5792361840022,
+        "final_evaluation_seconds": 11.88824238000052,
+        "eval_ms_per_session": 0.910836835734027,
+        "process_wall_seconds": 546.3950088989995,
+        "sampled_rss_bytes_descriptive_only": 1635422208,
+        "sampled_gpu_process_bytes": 14904459264,
+        "sampled_gpu_status": "observed_legacy_flag",
+        "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-100/run.json",
+        "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-100/artifacts/metrics.json",
+        "n_events": 8829314,
+        "raw_read_seconds": 1.3597353340001064,
+        "preprocessing_seconds": 45.41139295700032,
+        "first_seen_shared_seconds": 1.5164737080049235,
+        "total_sequence_sessions": 965304,
+        "vocabulary_items": 118333,
+        "raw_week_users": 957543,
+        "cleaned_week_users": 957537
+      }
+    ],
+    "E3": [
+      {
+        "run_id": "e3-gru-010-b32",
+        "model": "gru",
+        "subset": 10,
+        "split": "validation",
+        "n_sessions": 1324,
+        "Recall@20": 0.19637462235649547,
+        "NDCG@20": 0.09061635825363464,
+        "train_seconds_including_sequence_io": 51.657279751001624,
+        "final_evaluation_seconds": 0.7155545870000424,
+        "eval_ms_per_session": 0.54044908383689,
+        "process_wall_seconds": 65.94311637600003,
+        "sampled_rss_bytes_descriptive_only": 1492623360,
+        "sampled_gpu_process_bytes": 2388656128,
+        "sampled_gpu_status": "observed_legacy_flag",
+        "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e3-gru-010-b32/run.json",
+        "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e3-gru-010-b32/artifacts/metrics.json",
+        "train_batch_size": 32
+      },
+      {
+        "run_id": "e3-gru-010-b128",
+        "model": "gru",
+        "subset": 10,
+        "split": "validation",
+        "n_sessions": 1324,
+        "Recall@20": 0.1299093655589124,
+        "NDCG@20": 0.05908318361917487,
+        "train_seconds_including_sequence_io": 30.592868874001397,
+        "final_evaluation_seconds": 0.7083099780002158,
+        "eval_ms_per_session": 0.5349773247735768,
+        "process_wall_seconds": 44.7698482299993,
+        "sampled_rss_bytes_descriptive_only": 1487417344,
+        "sampled_gpu_process_bytes": 4167041024,
+        "sampled_gpu_status": "observed_legacy_flag",
+        "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e3-gru-010-b128/run.json",
+        "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e3-gru-010-b128/artifacts/metrics.json",
+        "train_batch_size": 128
+      }
+    ],
+    "E4": [
+      {
+        "run_id": "e4-full-010-csv",
+        "format": "csv",
+        "n_events": 882808,
+        "bytes": 134004153,
+        "read_seconds": 0.45413743600011003,
+        "preprocessing_wall_seconds_including_read": 34.987556843999755,
+        "sampled_rss_bytes_descriptive_only": 2383167488,
+        "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data-e4/metrics/raw/e4-full-010-csv/metrics.json"
+      },
+      {
+        "run_id": "e4-full-010-parquet",
+        "format": "parquet",
+        "n_events": 882808,
+        "bytes": 25382745,
+        "read_seconds": 0.1085011539998959,
+        "preprocessing_wall_seconds_including_read": 33.57124894300023,
+        "sampled_rss_bytes_descriptive_only": 2314313728,
+        "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data-e4/metrics/raw/e4-full-010-parquet/metrics.json"
+      }
+    ],
+    "E5": [
+      {
+        "run_id": "e2-gru-010",
+        "subset": 10,
+        "n_events": 882808,
+        "trained_partition_count": 6,
+        "eval_day": 7,
+        "raw_read": 0.1725569339996582,
+        "preprocessing_excluding_raw_read_and_first_seen": 30.449049160999493,
+        "train_including_sequence_io": 27.590925735000383,
+        "final_evaluation_including_io": 0.7019494080004733,
+        "composed_seconds_excluding_first_seen": 58.91448123800001,
+        "seconds_per_million_events": 66.73532777002474,
+        "bottleneck": "preprocessing_excluding_raw_read_and_first_seen",
+        "first_seen_seconds_shared": 1.5164737080049235,
+        "composed_seconds_with_first_seen": 60.43095494600493,
+        "process_wall_seconds": 41.77022658900023,
+        "peak_model_process_tree_rss_bytes": 1492635648,
+        "source_log": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-010/run.json"
+      },
+      {
+        "run_id": "e2-gru-025",
+        "subset": 25,
+        "n_events": 2213138,
+        "trained_partition_count": 6,
+        "eval_day": 7,
+        "raw_read": 0.36686747099975037,
+        "preprocessing_excluding_raw_read_and_first_seen": 34.093408106001334,
+        "train_including_sequence_io": 89.22829858099885,
+        "final_evaluation_including_io": 2.243796507999832,
+        "composed_seconds_excluding_first_seen": 125.93237066599977,
+        "seconds_per_million_events": 56.90217720991631,
+        "bottleneck": "train_including_sequence_io",
+        "first_seen_seconds_shared": 1.5164737080049235,
+        "composed_seconds_with_first_seen": 127.4488443740047,
+        "process_wall_seconds": 118.18261974399957,
+        "peak_model_process_tree_rss_bytes": 1548365824,
+        "source_log": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-025/run.json"
+      },
+      {
+        "run_id": "e2-gru-050",
+        "subset": 50,
+        "n_events": 4421037,
+        "trained_partition_count": 6,
+        "eval_day": 7,
+        "raw_read": 0.7350254970006063,
+        "preprocessing_excluding_raw_read_and_first_seen": 37.860843321000175,
+        "train_including_sequence_io": 203.10789924799974,
+        "final_evaluation_including_io": 5.128254403000028,
+        "composed_seconds_excluding_first_seen": 246.83202246900055,
+        "seconds_per_million_events": 55.83125010467014,
+        "bottleneck": "train_including_sequence_io",
+        "first_seen_seconds_shared": 1.5164737080049235,
+        "composed_seconds_with_first_seen": 248.34849617700547,
+        "process_wall_seconds": 258.71616461900066,
+        "peak_model_process_tree_rss_bytes": 1587884032,
+        "source_log": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-050/run.json"
+      },
+      {
+        "run_id": "e2-gru-100",
+        "subset": 100,
+        "n_events": 8829314,
+        "trained_partition_count": 6,
+        "eval_day": 7,
+        "raw_read": 1.3597353340001064,
+        "preprocessing_excluding_raw_read_and_first_seen": 45.41139295700032,
+        "train_including_sequence_io": 432.5792361840022,
+        "final_evaluation_including_io": 11.88824238000052,
+        "composed_seconds_excluding_first_seen": 491.2386068550031,
+        "seconds_per_million_events": 55.637233748284764,
+        "bottleneck": "train_including_sequence_io",
+        "first_seen_seconds_shared": 1.5164737080049235,
+        "composed_seconds_with_first_seen": 492.75508056300805,
+        "process_wall_seconds": 546.3950088989995,
+        "peak_model_process_tree_rss_bytes": 1635422208,
+        "source_log": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-100/run.json"
+      }
+    ]
+  },
+  "E5_aggregation_only": true,
+  "stage_shares": {
+    "source": "reports/tables/tv2-20261124/stage_shares.csv",
+    "unit": "percent of composed_seconds_excluding_first_seen",
+    "rows": [
+      {
+        "subset": 10,
+        "raw_read": 0.29289392077063475,
+        "preprocessing": 51.68347156956679,
+        "train": 46.83216274711786,
+        "final_eval": 1.1914717625447138
+      },
+      {
+        "subset": 25,
+        "raw_read": 0.2913210233870394,
+        "preprocessing": 27.072791471880187,
+        "train": 70.85414028903803,
+        "final_eval": 1.7817472156947414
+      },
+      {
+        "subset": 50,
+        "raw_read": 0.2977836869172506,
+        "preprocessing": 15.338708058333513,
+        "train": 82.28587896187899,
+        "final_eval": 2.077629292870248
+      },
+      {
+        "subset": 100,
+        "raw_read": 0.27679732721037004,
+        "preprocessing": 9.244263851274257,
+        "train": 88.05888424638515,
+        "final_eval": 2.4200545751302327
+      }
+    ]
+  },
+  "configs": {
+    "e1-popularity-010": {
+      "planned": {
+        "run_id": "e1-popularity-010",
+        "experiment": "E1",
+        "kind": "model",
+        "model": "popularity",
+        "subset": "10",
+        "batch_size": null,
+        "split": "test",
+        "input_format": "session Parquet",
+        "seed": 1,
+        "epochs": 3,
+        "sequence_length": 20,
+        "resource_config": {
+          "device": "cuda",
+          "change_only": null
+        },
+        "train_partitions": "1..D-1",
+        "eval_partition": "D",
+        "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+        "output_path": "metrics/raw/e1-popularity-010",
+        "command": "python -m scripts.runs.run_experiments --run-id e1-popularity-010 --site configs/site.local.json --execute"
+      },
+      "actual": {
+        "sessions": "/workspace/data/clean/e2-weekly/10/splits",
+        "catalog": "/workspace/data/clean/e2-weekly/10/workflow/catalog.json",
+        "train_through": 6,
+        "eval_split": "test",
+        "subset": "10",
+        "run_id": "e1-popularity-010",
+        "output": "metrics/raw/e1-popularity-010/artifacts"
+      },
+      "training_config": null,
+      "split_counts": [
+        {
+          "day_index": 1,
+          "split": "train",
+          "n_sessions": 11128,
+          "n_items": 19157
+        },
+        {
+          "day_index": 1,
+          "split": "validation",
+          "n_sessions": 1404,
+          "n_items": 4416
+        },
+        {
+          "day_index": 1,
+          "split": "test",
+          "n_sessions": 1403,
+          "n_items": 4589
+        },
+        {
+          "day_index": 2,
+          "split": "train",
+          "n_sessions": 10549,
+          "n_items": 18304
+        },
+        {
+          "day_index": 2,
+          "split": "validation",
+          "n_sessions": 1315,
+          "n_items": 4187
+        },
+        {
+          "day_index": 2,
+          "split": "test",
+          "n_sessions": 1328,
+          "n_items": 4142
+        },
+        {
+          "day_index": 3,
+          "split": "train",
+          "n_sessions": 9768,
+          "n_items": 17542
+        },
+        {
+          "day_index": 3,
+          "split": "validation",
+          "n_sessions": 1214,
+          "n_items": 3878
+        },
+        {
+          "day_index": 3,
+          "split": "test",
+          "n_sessions": 1221,
+          "n_items": 4027
+        },
+        {
+          "day_index": 4,
+          "split": "train",
+          "n_sessions": 12344,
+          "n_items": 18808
+        },
+        {
+          "day_index": 4,
+          "split": "validation",
+          "n_sessions": 1554,
+          "n_items": 4363
+        },
+        {
+          "day_index": 4,
+          "split": "test",
+          "n_sessions": 1573,
+          "n_items": 4533
+        },
+        {
+          "day_index": 5,
+          "split": "train",
+          "n_sessions": 11432,
+          "n_items": 18551
+        },
+        {
+          "day_index": 5,
+          "split": "validation",
+          "n_sessions": 1442,
+          "n_items": 4378
+        },
+        {
+          "day_index": 5,
+          "split": "test",
+          "n_sessions": 1444,
+          "n_items": 4235
+        },
+        {
+          "day_index": 6,
+          "split": "train",
+          "n_sessions": 11223,
+          "n_items": 18646
+        },
+        {
+          "day_index": 6,
+          "split": "validation",
+          "n_sessions": 1418,
+          "n_items": 4161
+        },
+        {
+          "day_index": 6,
+          "split": "test",
+          "n_sessions": 1415,
+          "n_items": 4383
+        },
+        {
+          "day_index": 7,
+          "split": "train",
+          "n_sessions": 10597,
+          "n_items": 18367
+        },
+        {
+          "day_index": 7,
+          "split": "validation",
+          "n_sessions": 1324,
+          "n_items": 3879
+        },
+        {
+          "day_index": 7,
+          "split": "test",
+          "n_sessions": 1337,
+          "n_items": 4378
+        }
+      ],
+      "versions": {
+        "workflow_version": "tv1-cuDF-workflow:sha256:330ec447530a307cd43e15157ca259063071d2cf4c25d1c85435732189168edc",
+        "mapping_version": "961f9c06619d334eee73ddbc3b7609d7bd91da5214a491625f81192654d8b8ec",
+        "catalog_version": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6"
+      },
+      "catalog_sha256": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6",
+      "runtime": {
+        "python": "3.10.12",
+        "packages": null,
+        "device": null,
+        "gpu": null,
+        "cuda": null
+      },
+      "warmup": "none",
+      "cache": "no cache flush; inherited OS cache state",
+      "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-popularity-010/run.json",
+      "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-popularity-010/artifacts/metrics.json"
+    },
+    "e1-gru-010": {
+      "planned": {
+        "run_id": "e1-gru-010",
+        "experiment": "E1",
+        "kind": "model",
+        "model": "gru",
+        "subset": "10",
+        "batch_size": 256,
+        "split": "test",
+        "input_format": "session Parquet",
+        "seed": 1,
+        "epochs": 3,
+        "sequence_length": 20,
+        "resource_config": {
+          "device": "cuda",
+          "change_only": null
+        },
+        "train_partitions": "1..D-1",
+        "eval_partition": "D",
+        "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+        "output_path": "metrics/raw/e1-gru-010",
+        "command": "python -m scripts.runs.run_experiments --run-id e1-gru-010 --site configs/site.local.json --execute"
+      },
+      "actual": {
+        "model": "gru",
+        "data": "/workspace/data/clean/e2-weekly/10/splits",
+        "schema": "/workspace/data/clean/e2-weekly/10/workflow/processed_nvt/schema.pbtxt",
+        "catalog": "/workspace/data/clean/e2-weekly/10/workflow/catalog.json",
+        "split": "test",
+        "train_through": 6,
+        "batch_size": 256,
+        "eval_batch_size": 32,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071,
+        "device": "cuda",
+        "subset": "10",
+        "run_id": "e1-gru-010",
+        "output": "metrics/raw/e1-gru-010/artifacts",
+        "config_frozen": true,
+        "check_inputs": false,
+        "checkpoint": null
+      },
+      "training_config": {
+        "model": "gru",
+        "batch_size": 256,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071
+      },
+      "split_counts": [
+        {
+          "day_index": 1,
+          "split": "train",
+          "n_sessions": 11128,
+          "n_items": 19157
+        },
+        {
+          "day_index": 1,
+          "split": "validation",
+          "n_sessions": 1404,
+          "n_items": 4416
+        },
+        {
+          "day_index": 1,
+          "split": "test",
+          "n_sessions": 1403,
+          "n_items": 4589
+        },
+        {
+          "day_index": 2,
+          "split": "train",
+          "n_sessions": 10549,
+          "n_items": 18304
+        },
+        {
+          "day_index": 2,
+          "split": "validation",
+          "n_sessions": 1315,
+          "n_items": 4187
+        },
+        {
+          "day_index": 2,
+          "split": "test",
+          "n_sessions": 1328,
+          "n_items": 4142
+        },
+        {
+          "day_index": 3,
+          "split": "train",
+          "n_sessions": 9768,
+          "n_items": 17542
+        },
+        {
+          "day_index": 3,
+          "split": "validation",
+          "n_sessions": 1214,
+          "n_items": 3878
+        },
+        {
+          "day_index": 3,
+          "split": "test",
+          "n_sessions": 1221,
+          "n_items": 4027
+        },
+        {
+          "day_index": 4,
+          "split": "train",
+          "n_sessions": 12344,
+          "n_items": 18808
+        },
+        {
+          "day_index": 4,
+          "split": "validation",
+          "n_sessions": 1554,
+          "n_items": 4363
+        },
+        {
+          "day_index": 4,
+          "split": "test",
+          "n_sessions": 1573,
+          "n_items": 4533
+        },
+        {
+          "day_index": 5,
+          "split": "train",
+          "n_sessions": 11432,
+          "n_items": 18551
+        },
+        {
+          "day_index": 5,
+          "split": "validation",
+          "n_sessions": 1442,
+          "n_items": 4378
+        },
+        {
+          "day_index": 5,
+          "split": "test",
+          "n_sessions": 1444,
+          "n_items": 4235
+        },
+        {
+          "day_index": 6,
+          "split": "train",
+          "n_sessions": 11223,
+          "n_items": 18646
+        },
+        {
+          "day_index": 6,
+          "split": "validation",
+          "n_sessions": 1418,
+          "n_items": 4161
+        },
+        {
+          "day_index": 6,
+          "split": "test",
+          "n_sessions": 1415,
+          "n_items": 4383
+        },
+        {
+          "day_index": 7,
+          "split": "train",
+          "n_sessions": 10597,
+          "n_items": 18367
+        },
+        {
+          "day_index": 7,
+          "split": "validation",
+          "n_sessions": 1324,
+          "n_items": 3879
+        },
+        {
+          "day_index": 7,
+          "split": "test",
+          "n_sessions": 1337,
+          "n_items": 4378
+        }
+      ],
+      "versions": {
+        "workflow_version": "tv1-cuDF-workflow:sha256:330ec447530a307cd43e15157ca259063071d2cf4c25d1c85435732189168edc",
+        "mapping_version": "961f9c06619d334eee73ddbc3b7609d7bd91da5214a491625f81192654d8b8ec",
+        "catalog_version": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6"
+      },
+      "catalog_sha256": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6",
+      "runtime": {
+        "python": "3.10.12",
+        "packages": {
+          "torch": "2.1.0a0+4136153",
+          "transformers": "4.27.1",
+          "transformers4rec": "23.12.0",
+          "merlin-core": "23.8.0",
+          "pyarrow": "10.0.1.dev0+ga6eabc2b.d20230428"
+        },
+        "device": "cuda",
+        "gpu": "Tesla T4",
+        "cuda": "12.1"
+      },
+      "warmup": "none",
+      "cache": "no cache flush; inherited OS cache state",
+      "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-gru-010/run.json",
+      "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-gru-010/artifacts/metrics.json"
+    },
+    "e1-xlnet-010": {
+      "planned": {
+        "run_id": "e1-xlnet-010",
+        "experiment": "E1",
+        "kind": "model",
+        "model": "xlnet",
+        "subset": "10",
+        "batch_size": 256,
+        "split": "test",
+        "input_format": "session Parquet",
+        "seed": 1,
+        "epochs": 3,
+        "sequence_length": 20,
+        "resource_config": {
+          "device": "cuda",
+          "change_only": null
+        },
+        "train_partitions": "1..D-1",
+        "eval_partition": "D",
+        "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+        "output_path": "metrics/raw/e1-xlnet-010",
+        "command": "python -m scripts.runs.run_experiments --run-id e1-xlnet-010 --site configs/site.local.json --execute"
+      },
+      "actual": {
+        "model": "xlnet",
+        "data": "/workspace/data/clean/e2-weekly/10/splits",
+        "schema": "/workspace/data/clean/e2-weekly/10/workflow/processed_nvt/schema.pbtxt",
+        "catalog": "/workspace/data/clean/e2-weekly/10/workflow/catalog.json",
+        "split": "test",
+        "train_through": 6,
+        "batch_size": 256,
+        "eval_batch_size": 32,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.000666,
+        "device": "cuda",
+        "subset": "10",
+        "run_id": "e1-xlnet-010",
+        "output": "metrics/raw/e1-xlnet-010/artifacts",
+        "config_frozen": true,
+        "check_inputs": false,
+        "checkpoint": null
+      },
+      "training_config": {
+        "model": "xlnet",
+        "batch_size": 256,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.000666
+      },
+      "split_counts": [
+        {
+          "day_index": 1,
+          "split": "train",
+          "n_sessions": 11128,
+          "n_items": 19157
+        },
+        {
+          "day_index": 1,
+          "split": "validation",
+          "n_sessions": 1404,
+          "n_items": 4416
+        },
+        {
+          "day_index": 1,
+          "split": "test",
+          "n_sessions": 1403,
+          "n_items": 4589
+        },
+        {
+          "day_index": 2,
+          "split": "train",
+          "n_sessions": 10549,
+          "n_items": 18304
+        },
+        {
+          "day_index": 2,
+          "split": "validation",
+          "n_sessions": 1315,
+          "n_items": 4187
+        },
+        {
+          "day_index": 2,
+          "split": "test",
+          "n_sessions": 1328,
+          "n_items": 4142
+        },
+        {
+          "day_index": 3,
+          "split": "train",
+          "n_sessions": 9768,
+          "n_items": 17542
+        },
+        {
+          "day_index": 3,
+          "split": "validation",
+          "n_sessions": 1214,
+          "n_items": 3878
+        },
+        {
+          "day_index": 3,
+          "split": "test",
+          "n_sessions": 1221,
+          "n_items": 4027
+        },
+        {
+          "day_index": 4,
+          "split": "train",
+          "n_sessions": 12344,
+          "n_items": 18808
+        },
+        {
+          "day_index": 4,
+          "split": "validation",
+          "n_sessions": 1554,
+          "n_items": 4363
+        },
+        {
+          "day_index": 4,
+          "split": "test",
+          "n_sessions": 1573,
+          "n_items": 4533
+        },
+        {
+          "day_index": 5,
+          "split": "train",
+          "n_sessions": 11432,
+          "n_items": 18551
+        },
+        {
+          "day_index": 5,
+          "split": "validation",
+          "n_sessions": 1442,
+          "n_items": 4378
+        },
+        {
+          "day_index": 5,
+          "split": "test",
+          "n_sessions": 1444,
+          "n_items": 4235
+        },
+        {
+          "day_index": 6,
+          "split": "train",
+          "n_sessions": 11223,
+          "n_items": 18646
+        },
+        {
+          "day_index": 6,
+          "split": "validation",
+          "n_sessions": 1418,
+          "n_items": 4161
+        },
+        {
+          "day_index": 6,
+          "split": "test",
+          "n_sessions": 1415,
+          "n_items": 4383
+        },
+        {
+          "day_index": 7,
+          "split": "train",
+          "n_sessions": 10597,
+          "n_items": 18367
+        },
+        {
+          "day_index": 7,
+          "split": "validation",
+          "n_sessions": 1324,
+          "n_items": 3879
+        },
+        {
+          "day_index": 7,
+          "split": "test",
+          "n_sessions": 1337,
+          "n_items": 4378
+        }
+      ],
+      "versions": {
+        "workflow_version": "tv1-cuDF-workflow:sha256:330ec447530a307cd43e15157ca259063071d2cf4c25d1c85435732189168edc",
+        "mapping_version": "961f9c06619d334eee73ddbc3b7609d7bd91da5214a491625f81192654d8b8ec",
+        "catalog_version": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6"
+      },
+      "catalog_sha256": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6",
+      "runtime": {
+        "python": "3.10.12",
+        "packages": {
+          "torch": "2.1.0a0+4136153",
+          "transformers": "4.27.1",
+          "transformers4rec": "23.12.0",
+          "merlin-core": "23.8.0",
+          "pyarrow": "10.0.1.dev0+ga6eabc2b.d20230428"
+        },
+        "device": "cuda",
+        "gpu": "Tesla T4",
+        "cuda": "12.1"
+      },
+      "warmup": "none",
+      "cache": "no cache flush; inherited OS cache state",
+      "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-xlnet-010/run.json",
+      "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e1-xlnet-010/artifacts/metrics.json"
+    },
+    "e2-gru-010": {
+      "planned": {
+        "run_id": "e2-gru-010",
+        "experiment": "E2",
+        "kind": "model",
+        "model": "gru",
+        "subset": "10",
+        "batch_size": 256,
+        "split": "test",
+        "input_format": "session Parquet",
+        "seed": 1,
+        "epochs": 3,
+        "sequence_length": 20,
+        "resource_config": {
+          "device": "cuda",
+          "change_only": null
+        },
+        "train_partitions": "1..D-1",
+        "eval_partition": "D",
+        "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+        "output_path": "metrics/raw/e2-gru-010",
+        "command": "python -m scripts.runs.run_experiments --run-id e2-gru-010 --site configs/site.local.json --execute"
+      },
+      "actual": {
+        "model": "gru",
+        "data": "/workspace/data/clean/e2-weekly/10/splits",
+        "schema": "/workspace/data/clean/e2-weekly/10/workflow/processed_nvt/schema.pbtxt",
+        "catalog": "/workspace/data/clean/e2-weekly/10/workflow/catalog.json",
+        "split": "test",
+        "train_through": 6,
+        "batch_size": 256,
+        "eval_batch_size": 32,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071,
+        "device": "cuda",
+        "subset": "10",
+        "run_id": "e2-gru-010",
+        "output": "metrics/raw/e2-gru-010/artifacts",
+        "config_frozen": true,
+        "check_inputs": false,
+        "checkpoint": null
+      },
+      "training_config": {
+        "model": "gru",
+        "batch_size": 256,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071
+      },
+      "split_counts": [
+        {
+          "day_index": 1,
+          "split": "train",
+          "n_sessions": 11128,
+          "n_items": 19157
+        },
+        {
+          "day_index": 1,
+          "split": "validation",
+          "n_sessions": 1404,
+          "n_items": 4416
+        },
+        {
+          "day_index": 1,
+          "split": "test",
+          "n_sessions": 1403,
+          "n_items": 4589
+        },
+        {
+          "day_index": 2,
+          "split": "train",
+          "n_sessions": 10549,
+          "n_items": 18304
+        },
+        {
+          "day_index": 2,
+          "split": "validation",
+          "n_sessions": 1315,
+          "n_items": 4187
+        },
+        {
+          "day_index": 2,
+          "split": "test",
+          "n_sessions": 1328,
+          "n_items": 4142
+        },
+        {
+          "day_index": 3,
+          "split": "train",
+          "n_sessions": 9768,
+          "n_items": 17542
+        },
+        {
+          "day_index": 3,
+          "split": "validation",
+          "n_sessions": 1214,
+          "n_items": 3878
+        },
+        {
+          "day_index": 3,
+          "split": "test",
+          "n_sessions": 1221,
+          "n_items": 4027
+        },
+        {
+          "day_index": 4,
+          "split": "train",
+          "n_sessions": 12344,
+          "n_items": 18808
+        },
+        {
+          "day_index": 4,
+          "split": "validation",
+          "n_sessions": 1554,
+          "n_items": 4363
+        },
+        {
+          "day_index": 4,
+          "split": "test",
+          "n_sessions": 1573,
+          "n_items": 4533
+        },
+        {
+          "day_index": 5,
+          "split": "train",
+          "n_sessions": 11432,
+          "n_items": 18551
+        },
+        {
+          "day_index": 5,
+          "split": "validation",
+          "n_sessions": 1442,
+          "n_items": 4378
+        },
+        {
+          "day_index": 5,
+          "split": "test",
+          "n_sessions": 1444,
+          "n_items": 4235
+        },
+        {
+          "day_index": 6,
+          "split": "train",
+          "n_sessions": 11223,
+          "n_items": 18646
+        },
+        {
+          "day_index": 6,
+          "split": "validation",
+          "n_sessions": 1418,
+          "n_items": 4161
+        },
+        {
+          "day_index": 6,
+          "split": "test",
+          "n_sessions": 1415,
+          "n_items": 4383
+        },
+        {
+          "day_index": 7,
+          "split": "train",
+          "n_sessions": 10597,
+          "n_items": 18367
+        },
+        {
+          "day_index": 7,
+          "split": "validation",
+          "n_sessions": 1324,
+          "n_items": 3879
+        },
+        {
+          "day_index": 7,
+          "split": "test",
+          "n_sessions": 1337,
+          "n_items": 4378
+        }
+      ],
+      "versions": {
+        "workflow_version": "tv1-cuDF-workflow:sha256:330ec447530a307cd43e15157ca259063071d2cf4c25d1c85435732189168edc",
+        "mapping_version": "961f9c06619d334eee73ddbc3b7609d7bd91da5214a491625f81192654d8b8ec",
+        "catalog_version": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6"
+      },
+      "catalog_sha256": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6",
+      "runtime": {
+        "python": "3.10.12",
+        "packages": {
+          "torch": "2.1.0a0+4136153",
+          "transformers": "4.27.1",
+          "transformers4rec": "23.12.0",
+          "merlin-core": "23.8.0",
+          "pyarrow": "10.0.1.dev0+ga6eabc2b.d20230428"
+        },
+        "device": "cuda",
+        "gpu": "Tesla T4",
+        "cuda": "12.1"
+      },
+      "warmup": "none",
+      "cache": "no cache flush; inherited OS cache state",
+      "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-010/run.json",
+      "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-010/artifacts/metrics.json"
+    },
+    "e2-gru-025": {
+      "planned": {
+        "run_id": "e2-gru-025",
+        "experiment": "E2",
+        "kind": "model",
+        "model": "gru",
+        "subset": "25",
+        "batch_size": 256,
+        "split": "test",
+        "input_format": "session Parquet",
+        "seed": 1,
+        "epochs": 3,
+        "sequence_length": 20,
+        "resource_config": {
+          "device": "cuda",
+          "change_only": null
+        },
+        "train_partitions": "1..D-1",
+        "eval_partition": "D",
+        "artifact_versions": "site.subsets.25.workflow_version/mapping_version/catalog_version",
+        "output_path": "metrics/raw/e2-gru-025",
+        "command": "python -m scripts.runs.run_experiments --run-id e2-gru-025 --site configs/site.local.json --execute"
+      },
+      "actual": {
+        "model": "gru",
+        "data": "/workspace/data/clean/e2-weekly/25/splits",
+        "schema": "/workspace/data/clean/e2-weekly/25/workflow/processed_nvt/schema.pbtxt",
+        "catalog": "/workspace/data/clean/e2-weekly/25/workflow/catalog.json",
+        "split": "test",
+        "train_through": 6,
+        "batch_size": 256,
+        "eval_batch_size": 32,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071,
+        "device": "cuda",
+        "subset": "25",
+        "run_id": "e2-gru-025",
+        "output": "metrics/raw/e2-gru-025/artifacts",
+        "config_frozen": true,
+        "check_inputs": false,
+        "checkpoint": null
+      },
+      "training_config": {
+        "model": "gru",
+        "batch_size": 256,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071
+      },
+      "split_counts": [
+        {
+          "day_index": 1,
+          "split": "train",
+          "n_sessions": 27913,
+          "n_items": 32319
+        },
+        {
+          "day_index": 1,
+          "split": "validation",
+          "n_sessions": 3517,
+          "n_items": 9056
+        },
+        {
+          "day_index": 1,
+          "split": "test",
+          "n_sessions": 3421,
+          "n_items": 8770
+        },
+        {
+          "day_index": 2,
+          "split": "train",
+          "n_sessions": 26550,
+          "n_items": 31184
+        },
+        {
+          "day_index": 2,
+          "split": "validation",
+          "n_sessions": 3357,
+          "n_items": 8463
+        },
+        {
+          "day_index": 2,
+          "split": "test",
+          "n_sessions": 3256,
+          "n_items": 8024
+        },
+        {
+          "day_index": 3,
+          "split": "train",
+          "n_sessions": 24462,
+          "n_items": 30207
+        },
+        {
+          "day_index": 3,
+          "split": "validation",
+          "n_sessions": 3114,
+          "n_items": 8247
+        },
+        {
+          "day_index": 3,
+          "split": "test",
+          "n_sessions": 3006,
+          "n_items": 7848
+        },
+        {
+          "day_index": 4,
+          "split": "train",
+          "n_sessions": 31016,
+          "n_items": 31702
+        },
+        {
+          "day_index": 4,
+          "split": "validation",
+          "n_sessions": 3915,
+          "n_items": 9049
+        },
+        {
+          "day_index": 4,
+          "split": "test",
+          "n_sessions": 3787,
+          "n_items": 8192
+        },
+        {
+          "day_index": 5,
+          "split": "train",
+          "n_sessions": 28768,
+          "n_items": 31595
+        },
+        {
+          "day_index": 5,
+          "split": "validation",
+          "n_sessions": 3625,
+          "n_items": 8617
+        },
+        {
+          "day_index": 5,
+          "split": "test",
+          "n_sessions": 3529,
+          "n_items": 8416
+        },
+        {
+          "day_index": 6,
+          "split": "train",
+          "n_sessions": 28201,
+          "n_items": 31939
+        },
+        {
+          "day_index": 6,
+          "split": "validation",
+          "n_sessions": 3556,
+          "n_items": 8780
+        },
+        {
+          "day_index": 6,
+          "split": "test",
+          "n_sessions": 3457,
+          "n_items": 8387
+        },
+        {
+          "day_index": 7,
+          "split": "train",
+          "n_sessions": 26633,
+          "n_items": 31129
+        },
+        {
+          "day_index": 7,
+          "split": "validation",
+          "n_sessions": 3366,
+          "n_items": 8509
+        },
+        {
+          "day_index": 7,
+          "split": "test",
+          "n_sessions": 3266,
+          "n_items": 8231
+        }
+      ],
+      "versions": {
+        "workflow_version": "tv1-cuDF-workflow:sha256:3678fda9d35d1401f67614560bb613714ea147bac87f5bddbf0fad66ad10630f",
+        "mapping_version": "c82c30a87431128e15d515abc79763a6352e3d9ad8d397c7938b8f657f2af905",
+        "catalog_version": "709e748afe5bea55d9b47b60555cbe51adec7261977ccda13e77ab4dd331f86b"
+      },
+      "catalog_sha256": "709e748afe5bea55d9b47b60555cbe51adec7261977ccda13e77ab4dd331f86b",
+      "runtime": {
+        "python": "3.10.12",
+        "packages": {
+          "torch": "2.1.0a0+4136153",
+          "transformers": "4.27.1",
+          "transformers4rec": "23.12.0",
+          "merlin-core": "23.8.0",
+          "pyarrow": "10.0.1.dev0+ga6eabc2b.d20230428"
+        },
+        "device": "cuda",
+        "gpu": "Tesla T4",
+        "cuda": "12.1"
+      },
+      "warmup": "none",
+      "cache": "no cache flush; inherited OS cache state",
+      "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-025/run.json",
+      "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-025/artifacts/metrics.json"
+    },
+    "e2-gru-050": {
+      "planned": {
+        "run_id": "e2-gru-050",
+        "experiment": "E2",
+        "kind": "model",
+        "model": "gru",
+        "subset": "50",
+        "batch_size": 256,
+        "split": "test",
+        "input_format": "session Parquet",
+        "seed": 1,
+        "epochs": 3,
+        "sequence_length": 20,
+        "resource_config": {
+          "device": "cuda",
+          "change_only": null
+        },
+        "train_partitions": "1..D-1",
+        "eval_partition": "D",
+        "artifact_versions": "site.subsets.50.workflow_version/mapping_version/catalog_version",
+        "output_path": "metrics/raw/e2-gru-050",
+        "command": "python -m scripts.runs.run_experiments --run-id e2-gru-050 --site configs/site.local.json --execute"
+      },
+      "actual": {
+        "model": "gru",
+        "data": "/workspace/data/clean/e2-weekly/50/splits",
+        "schema": "/workspace/data/clean/e2-weekly/50/workflow/processed_nvt/schema.pbtxt",
+        "catalog": "/workspace/data/clean/e2-weekly/50/workflow/catalog.json",
+        "split": "test",
+        "train_through": 6,
+        "batch_size": 256,
+        "eval_batch_size": 32,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071,
+        "device": "cuda",
+        "subset": "50",
+        "run_id": "e2-gru-050",
+        "output": "metrics/raw/e2-gru-050/artifacts",
+        "config_frozen": true,
+        "check_inputs": false,
+        "checkpoint": null
+      },
+      "training_config": {
+        "model": "gru",
+        "batch_size": 256,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071
+      },
+      "split_counts": [
+        {
+          "day_index": 1,
+          "split": "train",
+          "n_sessions": 55964,
+          "n_items": 45603
+        },
+        {
+          "day_index": 1,
+          "split": "validation",
+          "n_sessions": 7044,
+          "n_items": 14377
+        },
+        {
+          "day_index": 1,
+          "split": "test",
+          "n_sessions": 6809,
+          "n_items": 13870
+        },
+        {
+          "day_index": 2,
+          "split": "train",
+          "n_sessions": 53047,
+          "n_items": 44068
+        },
+        {
+          "day_index": 2,
+          "split": "validation",
+          "n_sessions": 6662,
+          "n_items": 13585
+        },
+        {
+          "day_index": 2,
+          "split": "test",
+          "n_sessions": 6459,
+          "n_items": 13489
+        },
+        {
+          "day_index": 3,
+          "split": "train",
+          "n_sessions": 49002,
+          "n_items": 42581
+        },
+        {
+          "day_index": 3,
+          "split": "validation",
+          "n_sessions": 6158,
+          "n_items": 13211
+        },
+        {
+          "day_index": 3,
+          "split": "test",
+          "n_sessions": 5938,
+          "n_items": 13154
+        },
+        {
+          "day_index": 4,
+          "split": "train",
+          "n_sessions": 61974,
+          "n_items": 44230
+        },
+        {
+          "day_index": 4,
+          "split": "validation",
+          "n_sessions": 7794,
+          "n_items": 14482
+        },
+        {
+          "day_index": 4,
+          "split": "test",
+          "n_sessions": 7574,
+          "n_items": 13710
+        },
+        {
+          "day_index": 5,
+          "split": "train",
+          "n_sessions": 57335,
+          "n_items": 44689
+        },
+        {
+          "day_index": 5,
+          "split": "validation",
+          "n_sessions": 7224,
+          "n_items": 13930
+        },
+        {
+          "day_index": 5,
+          "split": "test",
+          "n_sessions": 6984,
+          "n_items": 13402
+        },
+        {
+          "day_index": 6,
+          "split": "train",
+          "n_sessions": 56436,
+          "n_items": 44633
+        },
+        {
+          "day_index": 6,
+          "split": "validation",
+          "n_sessions": 7101,
+          "n_items": 14093
+        },
+        {
+          "day_index": 6,
+          "split": "test",
+          "n_sessions": 6870,
+          "n_items": 13803
+        },
+        {
+          "day_index": 7,
+          "split": "train",
+          "n_sessions": 52806,
+          "n_items": 44033
+        },
+        {
+          "day_index": 7,
+          "split": "validation",
+          "n_sessions": 6631,
+          "n_items": 13566
+        },
+        {
+          "day_index": 7,
+          "split": "test",
+          "n_sessions": 6427,
+          "n_items": 13362
+        }
+      ],
+      "versions": {
+        "workflow_version": "tv1-cuDF-workflow:sha256:fe7c99e90684ae23e75343f70479ee75ba4c015569a63dc0484a180bc30075af",
+        "mapping_version": "fcce041879b8ba68cd12697aa0f3cf65588ccadbd810a066e565b6baff53f4de",
+        "catalog_version": "93893125409cd5acdb27ff607113113e4737e576c65c7cbc68a679e9d860abfb"
+      },
+      "catalog_sha256": "93893125409cd5acdb27ff607113113e4737e576c65c7cbc68a679e9d860abfb",
+      "runtime": {
+        "python": "3.10.12",
+        "packages": {
+          "torch": "2.1.0a0+4136153",
+          "transformers": "4.27.1",
+          "transformers4rec": "23.12.0",
+          "merlin-core": "23.8.0",
+          "pyarrow": "10.0.1.dev0+ga6eabc2b.d20230428"
+        },
+        "device": "cuda",
+        "gpu": "Tesla T4",
+        "cuda": "12.1"
+      },
+      "warmup": "none",
+      "cache": "no cache flush; inherited OS cache state",
+      "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-050/run.json",
+      "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-050/artifacts/metrics.json"
+    },
+    "e2-gru-100": {
+      "planned": {
+        "run_id": "e2-gru-100",
+        "experiment": "E2",
+        "kind": "model",
+        "model": "gru",
+        "subset": "100",
+        "batch_size": 256,
+        "split": "test",
+        "input_format": "session Parquet",
+        "seed": 1,
+        "epochs": 3,
+        "sequence_length": 20,
+        "resource_config": {
+          "device": "cuda",
+          "change_only": null
+        },
+        "train_partitions": "1..D-1",
+        "eval_partition": "D",
+        "artifact_versions": "site.subsets.100.workflow_version/mapping_version/catalog_version",
+        "output_path": "metrics/raw/e2-gru-100",
+        "command": "python -m scripts.runs.run_experiments --run-id e2-gru-100 --site configs/site.local.json --execute"
+      },
+      "actual": {
+        "model": "gru",
+        "data": "/workspace/data/clean/e2-weekly/100/splits",
+        "schema": "/workspace/data/clean/e2-weekly/100/workflow/processed_nvt/schema.pbtxt",
+        "catalog": "/workspace/data/clean/e2-weekly/100/workflow/catalog.json",
+        "split": "test",
+        "train_through": 6,
+        "batch_size": 256,
+        "eval_batch_size": 32,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071,
+        "device": "cuda",
+        "subset": "100",
+        "run_id": "e2-gru-100",
+        "output": "metrics/raw/e2-gru-100/artifacts",
+        "config_frozen": true,
+        "check_inputs": false,
+        "checkpoint": null
+      },
+      "training_config": {
+        "model": "gru",
+        "batch_size": 256,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071
+      },
+      "split_counts": [
+        {
+          "day_index": 1,
+          "split": "train",
+          "n_sessions": 112048,
+          "n_items": 59985
+        },
+        {
+          "day_index": 1,
+          "split": "validation",
+          "n_sessions": 13988,
+          "n_items": 21912
+        },
+        {
+          "day_index": 1,
+          "split": "test",
+          "n_sessions": 13824,
+          "n_items": 21885
+        },
+        {
+          "day_index": 2,
+          "split": "train",
+          "n_sessions": 106024,
+          "n_items": 58802
+        },
+        {
+          "day_index": 2,
+          "split": "validation",
+          "n_sessions": 13261,
+          "n_items": 20839
+        },
+        {
+          "day_index": 2,
+          "split": "test",
+          "n_sessions": 13100,
+          "n_items": 20909
+        },
+        {
+          "day_index": 3,
+          "split": "train",
+          "n_sessions": 97736,
+          "n_items": 57664
+        },
+        {
+          "day_index": 3,
+          "split": "validation",
+          "n_sessions": 12262,
+          "n_items": 19877
+        },
+        {
+          "day_index": 3,
+          "split": "test",
+          "n_sessions": 11971,
+          "n_items": 19645
+        },
+        {
+          "day_index": 4,
+          "split": "train",
+          "n_sessions": 124395,
+          "n_items": 58883
+        },
+        {
+          "day_index": 4,
+          "split": "validation",
+          "n_sessions": 15524,
+          "n_items": 21231
+        },
+        {
+          "day_index": 4,
+          "split": "test",
+          "n_sessions": 15382,
+          "n_items": 21790
+        },
+        {
+          "day_index": 5,
+          "split": "train",
+          "n_sessions": 114585,
+          "n_items": 59643
+        },
+        {
+          "day_index": 5,
+          "split": "validation",
+          "n_sessions": 14296,
+          "n_items": 21274
+        },
+        {
+          "day_index": 5,
+          "split": "test",
+          "n_sessions": 14125,
+          "n_items": 21348
+        },
+        {
+          "day_index": 6,
+          "split": "train",
+          "n_sessions": 112845,
+          "n_items": 59694
+        },
+        {
+          "day_index": 6,
+          "split": "validation",
+          "n_sessions": 14106,
+          "n_items": 21647
+        },
+        {
+          "day_index": 6,
+          "split": "test",
+          "n_sessions": 13912,
+          "n_items": 21066
+        },
+        {
+          "day_index": 7,
+          "split": "train",
+          "n_sessions": 105647,
+          "n_items": 59374
+        },
+        {
+          "day_index": 7,
+          "split": "validation",
+          "n_sessions": 13221,
+          "n_items": 20925
+        },
+        {
+          "day_index": 7,
+          "split": "test",
+          "n_sessions": 13052,
+          "n_items": 21098
+        }
+      ],
+      "versions": {
+        "workflow_version": "tv1-cuDF-workflow:sha256:538d29ae8da316bd852fd97bd372ecdbd3acf50067fec93fff7f401bfda29344",
+        "mapping_version": "1ec17d673f456924a518b321738c1a43d2942fb7ea74ac666bd14af6dbda052c",
+        "catalog_version": "dc7dc3f665d1ebb0df7a2cf533d7c0051e19cc1fee90c6ba16a9c7ba4f4c7b63"
+      },
+      "catalog_sha256": "dc7dc3f665d1ebb0df7a2cf533d7c0051e19cc1fee90c6ba16a9c7ba4f4c7b63",
+      "runtime": {
+        "python": "3.10.12",
+        "packages": {
+          "torch": "2.1.0a0+4136153",
+          "transformers": "4.27.1",
+          "transformers4rec": "23.12.0",
+          "merlin-core": "23.8.0",
+          "pyarrow": "10.0.1.dev0+ga6eabc2b.d20230428"
+        },
+        "device": "cuda",
+        "gpu": "Tesla T4",
+        "cuda": "12.1"
+      },
+      "warmup": "none",
+      "cache": "no cache flush; inherited OS cache state",
+      "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-100/run.json",
+      "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e2-gru-100/artifacts/metrics.json"
+    },
+    "e3-gru-010-b32": {
+      "planned": {
+        "run_id": "e3-gru-010-b32",
+        "experiment": "E3",
+        "kind": "model",
+        "model": "gru",
+        "subset": "10",
+        "batch_size": 32,
+        "split": "validation",
+        "input_format": "session Parquet",
+        "seed": 1,
+        "epochs": 3,
+        "sequence_length": 20,
+        "resource_config": {
+          "device": "cuda",
+          "change_only": "train_batch_size"
+        },
+        "train_partitions": "1..D-1",
+        "eval_partition": "D",
+        "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+        "output_path": "metrics/raw/e3-gru-010-b32",
+        "command": "python -m scripts.runs.run_experiments --run-id e3-gru-010-b32 --site configs/site.local.json --execute"
+      },
+      "actual": {
+        "model": "gru",
+        "data": "/workspace/data/clean/e2-weekly/10/splits",
+        "schema": "/workspace/data/clean/e2-weekly/10/workflow/processed_nvt/schema.pbtxt",
+        "catalog": "/workspace/data/clean/e2-weekly/10/workflow/catalog.json",
+        "split": "validation",
+        "train_through": 6,
+        "batch_size": 32,
+        "eval_batch_size": 32,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071,
+        "device": "cuda",
+        "subset": "10",
+        "run_id": "e3-gru-010-b32",
+        "output": "metrics/raw/e3-gru-010-b32/artifacts",
+        "config_frozen": false,
+        "check_inputs": false,
+        "checkpoint": null
+      },
+      "training_config": {
+        "model": "gru",
+        "batch_size": 32,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071
+      },
+      "split_counts": [
+        {
+          "day_index": 1,
+          "split": "train",
+          "n_sessions": 11128,
+          "n_items": 19157
+        },
+        {
+          "day_index": 1,
+          "split": "validation",
+          "n_sessions": 1404,
+          "n_items": 4416
+        },
+        {
+          "day_index": 1,
+          "split": "test",
+          "n_sessions": 1403,
+          "n_items": 4589
+        },
+        {
+          "day_index": 2,
+          "split": "train",
+          "n_sessions": 10549,
+          "n_items": 18304
+        },
+        {
+          "day_index": 2,
+          "split": "validation",
+          "n_sessions": 1315,
+          "n_items": 4187
+        },
+        {
+          "day_index": 2,
+          "split": "test",
+          "n_sessions": 1328,
+          "n_items": 4142
+        },
+        {
+          "day_index": 3,
+          "split": "train",
+          "n_sessions": 9768,
+          "n_items": 17542
+        },
+        {
+          "day_index": 3,
+          "split": "validation",
+          "n_sessions": 1214,
+          "n_items": 3878
+        },
+        {
+          "day_index": 3,
+          "split": "test",
+          "n_sessions": 1221,
+          "n_items": 4027
+        },
+        {
+          "day_index": 4,
+          "split": "train",
+          "n_sessions": 12344,
+          "n_items": 18808
+        },
+        {
+          "day_index": 4,
+          "split": "validation",
+          "n_sessions": 1554,
+          "n_items": 4363
+        },
+        {
+          "day_index": 4,
+          "split": "test",
+          "n_sessions": 1573,
+          "n_items": 4533
+        },
+        {
+          "day_index": 5,
+          "split": "train",
+          "n_sessions": 11432,
+          "n_items": 18551
+        },
+        {
+          "day_index": 5,
+          "split": "validation",
+          "n_sessions": 1442,
+          "n_items": 4378
+        },
+        {
+          "day_index": 5,
+          "split": "test",
+          "n_sessions": 1444,
+          "n_items": 4235
+        },
+        {
+          "day_index": 6,
+          "split": "train",
+          "n_sessions": 11223,
+          "n_items": 18646
+        },
+        {
+          "day_index": 6,
+          "split": "validation",
+          "n_sessions": 1418,
+          "n_items": 4161
+        },
+        {
+          "day_index": 6,
+          "split": "test",
+          "n_sessions": 1415,
+          "n_items": 4383
+        },
+        {
+          "day_index": 7,
+          "split": "train",
+          "n_sessions": 10597,
+          "n_items": 18367
+        },
+        {
+          "day_index": 7,
+          "split": "validation",
+          "n_sessions": 1324,
+          "n_items": 3879
+        },
+        {
+          "day_index": 7,
+          "split": "test",
+          "n_sessions": 1337,
+          "n_items": 4378
+        }
+      ],
+      "versions": {
+        "workflow_version": "tv1-cuDF-workflow:sha256:330ec447530a307cd43e15157ca259063071d2cf4c25d1c85435732189168edc",
+        "mapping_version": "961f9c06619d334eee73ddbc3b7609d7bd91da5214a491625f81192654d8b8ec",
+        "catalog_version": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6"
+      },
+      "catalog_sha256": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6",
+      "runtime": {
+        "python": "3.10.12",
+        "packages": {
+          "torch": "2.1.0a0+4136153",
+          "transformers": "4.27.1",
+          "transformers4rec": "23.12.0",
+          "merlin-core": "23.8.0",
+          "pyarrow": "10.0.1.dev0+ga6eabc2b.d20230428"
+        },
+        "device": "cuda",
+        "gpu": "Tesla T4",
+        "cuda": "12.1"
+      },
+      "warmup": "none",
+      "cache": "no cache flush; inherited OS cache state",
+      "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e3-gru-010-b32/run.json",
+      "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e3-gru-010-b32/artifacts/metrics.json"
+    },
+    "e3-gru-010-b128": {
+      "planned": {
+        "run_id": "e3-gru-010-b128",
+        "experiment": "E3",
+        "kind": "model",
+        "model": "gru",
+        "subset": "10",
+        "batch_size": 128,
+        "split": "validation",
+        "input_format": "session Parquet",
+        "seed": 1,
+        "epochs": 3,
+        "sequence_length": 20,
+        "resource_config": {
+          "device": "cuda",
+          "change_only": "train_batch_size"
+        },
+        "train_partitions": "1..D-1",
+        "eval_partition": "D",
+        "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+        "output_path": "metrics/raw/e3-gru-010-b128",
+        "command": "python -m scripts.runs.run_experiments --run-id e3-gru-010-b128 --site configs/site.local.json --execute"
+      },
+      "actual": {
+        "model": "gru",
+        "data": "/workspace/data/clean/e2-weekly/10/splits",
+        "schema": "/workspace/data/clean/e2-weekly/10/workflow/processed_nvt/schema.pbtxt",
+        "catalog": "/workspace/data/clean/e2-weekly/10/workflow/catalog.json",
+        "split": "validation",
+        "train_through": 6,
+        "batch_size": 128,
+        "eval_batch_size": 32,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071,
+        "device": "cuda",
+        "subset": "10",
+        "run_id": "e3-gru-010-b128",
+        "output": "metrics/raw/e3-gru-010-b128/artifacts",
+        "config_frozen": false,
+        "check_inputs": false,
+        "checkpoint": null
+      },
+      "training_config": {
+        "model": "gru",
+        "batch_size": 128,
+        "epochs": 3,
+        "seed": 1,
+        "learning_rate": 0.00071
+      },
+      "split_counts": [
+        {
+          "day_index": 1,
+          "split": "train",
+          "n_sessions": 11128,
+          "n_items": 19157
+        },
+        {
+          "day_index": 1,
+          "split": "validation",
+          "n_sessions": 1404,
+          "n_items": 4416
+        },
+        {
+          "day_index": 1,
+          "split": "test",
+          "n_sessions": 1403,
+          "n_items": 4589
+        },
+        {
+          "day_index": 2,
+          "split": "train",
+          "n_sessions": 10549,
+          "n_items": 18304
+        },
+        {
+          "day_index": 2,
+          "split": "validation",
+          "n_sessions": 1315,
+          "n_items": 4187
+        },
+        {
+          "day_index": 2,
+          "split": "test",
+          "n_sessions": 1328,
+          "n_items": 4142
+        },
+        {
+          "day_index": 3,
+          "split": "train",
+          "n_sessions": 9768,
+          "n_items": 17542
+        },
+        {
+          "day_index": 3,
+          "split": "validation",
+          "n_sessions": 1214,
+          "n_items": 3878
+        },
+        {
+          "day_index": 3,
+          "split": "test",
+          "n_sessions": 1221,
+          "n_items": 4027
+        },
+        {
+          "day_index": 4,
+          "split": "train",
+          "n_sessions": 12344,
+          "n_items": 18808
+        },
+        {
+          "day_index": 4,
+          "split": "validation",
+          "n_sessions": 1554,
+          "n_items": 4363
+        },
+        {
+          "day_index": 4,
+          "split": "test",
+          "n_sessions": 1573,
+          "n_items": 4533
+        },
+        {
+          "day_index": 5,
+          "split": "train",
+          "n_sessions": 11432,
+          "n_items": 18551
+        },
+        {
+          "day_index": 5,
+          "split": "validation",
+          "n_sessions": 1442,
+          "n_items": 4378
+        },
+        {
+          "day_index": 5,
+          "split": "test",
+          "n_sessions": 1444,
+          "n_items": 4235
+        },
+        {
+          "day_index": 6,
+          "split": "train",
+          "n_sessions": 11223,
+          "n_items": 18646
+        },
+        {
+          "day_index": 6,
+          "split": "validation",
+          "n_sessions": 1418,
+          "n_items": 4161
+        },
+        {
+          "day_index": 6,
+          "split": "test",
+          "n_sessions": 1415,
+          "n_items": 4383
+        },
+        {
+          "day_index": 7,
+          "split": "train",
+          "n_sessions": 10597,
+          "n_items": 18367
+        },
+        {
+          "day_index": 7,
+          "split": "validation",
+          "n_sessions": 1324,
+          "n_items": 3879
+        },
+        {
+          "day_index": 7,
+          "split": "test",
+          "n_sessions": 1337,
+          "n_items": 4378
+        }
+      ],
+      "versions": {
+        "workflow_version": "tv1-cuDF-workflow:sha256:330ec447530a307cd43e15157ca259063071d2cf4c25d1c85435732189168edc",
+        "mapping_version": "961f9c06619d334eee73ddbc3b7609d7bd91da5214a491625f81192654d8b8ec",
+        "catalog_version": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6"
+      },
+      "catalog_sha256": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6",
+      "runtime": {
+        "python": "3.10.12",
+        "packages": {
+          "torch": "2.1.0a0+4136153",
+          "transformers": "4.27.1",
+          "transformers4rec": "23.12.0",
+          "merlin-core": "23.8.0",
+          "pyarrow": "10.0.1.dev0+ga6eabc2b.d20230428"
+        },
+        "device": "cuda",
+        "gpu": "Tesla T4",
+        "cuda": "12.1"
+      },
+      "warmup": "none",
+      "cache": "no cache flush; inherited OS cache state",
+      "source_run": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e3-gru-010-b128/run.json",
+      "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data/metrics/raw/e3-gru-010-b128/artifacts/metrics.json"
+    },
+    "e4-full-010-csv": {
+      "planned": null,
+      "actual": null,
+      "training_config": null,
+      "split_counts": null,
+      "versions": null,
+      "catalog_sha256": null,
+      "runtime": null,
+      "warmup": null,
+      "cache": "OS cache warm after pair verification; no privileged cache drop",
+      "source_run": null,
+      "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data-e4/metrics/raw/e4-full-010-csv/metrics.json",
+      "e4_config": {
+        "program": "pipeline/preprocess_weekly.py",
+        "input_format": "csv",
+        "subset": 10,
+        "n_events": 882808,
+        "fingerprint_match": true,
+        "read_scope": "streaming full decode, all rows consumed; excludes pair verification",
+        "schema_policy": "all nine fields strings; isolates format, excludes dtype conversion",
+        "cache": "OS cache warm after pair verification; no privileged cache drop",
+        "events_after_repeat_removal": 638089,
+        "product_vocabulary_size": 63398,
+        "cudf_version": "23.04.00",
+        "nvtabular_version": "23.08.00",
+        "notebook_commit": "f0ca2b5343dd1e40b5d2422b942f014b224f5c20",
+        "split_seed": 1,
+        "requested_ratios": {
+          "train": 0.8,
+          "valid": 0.1,
+          "test": 0.1
+        },
+        "partition_col": "day_index",
+        "source": "metrics/releases/tv2-20261124/configs.json"
+      }
+    },
+    "e4-full-010-parquet": {
+      "planned": null,
+      "actual": null,
+      "training_config": null,
+      "split_counts": null,
+      "versions": null,
+      "catalog_sha256": null,
+      "runtime": null,
+      "warmup": null,
+      "cache": "OS cache warm after pair verification; no privileged cache drop",
+      "source_run": null,
+      "source_metrics": "metrics/tv2-analysis-20261124/evidence/Big-Data-e4/metrics/raw/e4-full-010-parquet/metrics.json",
+      "e4_config": {
+        "program": "pipeline/preprocess_weekly.py",
+        "input_format": "parquet",
+        "subset": 10,
+        "n_events": 882808,
+        "fingerprint_match": true,
+        "read_scope": "streaming full decode, all rows consumed; excludes pair verification",
+        "schema_policy": "all nine fields strings; isolates format, excludes dtype conversion",
+        "cache": "OS cache warm after pair verification; no privileged cache drop",
+        "events_after_repeat_removal": 638089,
+        "product_vocabulary_size": 63398,
+        "cudf_version": "23.04.00",
+        "nvtabular_version": "23.08.00",
+        "notebook_commit": "f0ca2b5343dd1e40b5d2422b942f014b224f5c20",
+        "split_seed": 1,
+        "requested_ratios": {
+          "train": 0.8,
+          "valid": 0.1,
+          "test": 0.1
+        },
+        "partition_col": "day_index",
+        "source": "metrics/releases/tv2-20261124/configs.json"
+      }
+    }
+  },
+  "vm_environment": {
+    "cloud": "VM AWS Ubuntu 22.04",
+    "gpu": "Tesla T4 (compute capability 7.5)",
+    "vram": "15360 MiB",
+    "cpu": "Intel Xeon Platinum 8259CL @ 2.50GHz",
+    "vcpu": "8 vCPU",
+    "ram": "30,98 GiB",
+    "os": "Ubuntu 22.04.5 LTS",
+    "kernel": "6.8.0-1036-aws",
+    "driver": "570.172.08",
+    "cuda_toolkit": "12.1.105",
+    "docker": "28.4.0",
+    "image": "merlin-pytorch:23.12",
+    "source": "environment/README.md (team 88f7e02)",
+    "checksum_note": "file edited by TV3 after packaging; links only, values unchanged"
+  }
+}

@@ -1,5 +1,0 @@
-team_commit,generated_at,run_id,series,status,metric,value,unit,scope
-43841c9,2026-11-21,e3-gru-010-b32,planned,,train_with_input_scan_seconds,,s,Training stages including input scan
-43841c9,2026-11-21,e3-gru-010-b128,planned,,train_with_input_scan_seconds,,s,Training stages including input scan
-43841c9,2026-11-21,smoke-e3-gru-010-b128,toy,passed,train_with_input_scan_seconds,1.6890396559999772,s,Training stages including input scan
-43841c9,2026-11-21,smoke-e3-gru-010-b32,toy,passed,train_with_input_scan_seconds,1.262052311000005,s,Training stages including input scan

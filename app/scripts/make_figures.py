@@ -1,195 +1,212 @@
-"""Render SVG figures from the TV2 package and delivered cuDF weekly manifest."""
+"""Build official E1–E5 figures from public/official-results.json."""
 
 import argparse
-from dataclasses import dataclass
 import json
 from math import isfinite
 from pathlib import Path
 
 from matplotlib import rc_context
 from matplotlib.figure import Figure
-from matplotlib.patches import Patch
 from matplotlib.ticker import FuncFormatter
 
-from export_figures import ROOT, figure_runs
-
-WEEKLY_MANIFEST = ROOT.parent / "Big-Data/data/manifests/e2_preprocessing_verified.json"
-MISSING = "Not available yet — awaiting the TV2 metrics package"
-COLORS = ("#27577a", "#9d511f")
-
-
-@dataclass(frozen=True)
-class FigureSpec:
-    name: str
-    experiment: str
-    title: str
-    x_label: str
-    y_label: str
-    metrics: tuple[str, ...]
-    unit: str
-
-
-SPECS = (
-    FigureSpec("e1-ranking", "E1", "E1 · Ranking quality by model", "Model (category)", "Ranking quality (ratio)", ("Recall@20", "NDCG@20"), "ratio"),
-    FigureSpec("e1-training", "E1", "E1 · Training time by model", "Model (category)", "Training time (s)", ("train_with_input_scan_seconds",), "s"),
-    FigureSpec("e2-runtime", "E2", "E2 · Runtime by weekly event count", "Weekly volume (events)", "Collector runtime (s)", ("elapsed_seconds",), "s"),
-    FigureSpec("e2-rss", "E2", "E2 · Peak RSS by weekly event count", "Weekly volume (events)", "Peak process-tree RSS (bytes)", ("peak_process_tree_rss_bytes",), "bytes"),
-    FigureSpec("e3-training", "E3", "E3 · Training time by batch size", "Training batch (sessions/batch)", "Training time (s)", ("train_with_input_scan_seconds",), "s"),
-    FigureSpec("e3-throughput", "E3", "E3 · Evaluation throughput by batch size", "Training batch (sessions/batch)", "Evaluation throughput (sessions/s)", ("inference_sessions_per_second",), "sessions/s"),
-    FigureSpec("e3-cuda", "E3", "E3 · Peak CUDA reserved by batch size", "Training batch (sessions/batch)", "Peak CUDA reserved (bytes)", ("peak_cuda_reserved_bytes",), "bytes"),
-    FigureSpec("e4-size", "E4", "E4 · File size by format", "Input format (category)", "File size (bytes)", ("bytes",), "bytes"),
-    FigureSpec("e4-read", "E4", "E4 · Read time by format", "Input format (category)", "Read time (s)", ("read_seconds",), "s"),
-    FigureSpec("e5-scaling", "E5", "E5 · Runtime per million events", "Subset (share of weekly sessions, %)", "Runtime (s per million events)", ("seconds_per_million_events",), "s/million events"),
+ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_INPUT = ROOT / "public/official-results.json"
+DEFAULT_OUTPUT = ROOT / "figures"
+MIB = 1024 ** 2
+COLORS = ("#27577a", "#a75b25")
+MODEL_LABELS = {"popularity": "Popularity", "gru": "GRU", "xlnet": "XLNet"}
+FIGURES = (
+    "e1-ranking.svg", "e1-training.svg", "e2-training.svg",
+    "e3-tradeoff.svg", "e4-format.svg", "e5-scaling.svg",
 )
 
-MODEL_NAMES = {"popularity": "Popularity", "gru": "GRU", "xlnet": "XLNet"}
+
+def rows(payload, table):
+    result = payload.get("tables", {}).get(table)
+    if not isinstance(result, list) or not result:
+        raise ValueError(f"official-results.json has no {table} rows")
+    return result
 
 
-def configuration(run, field):
-    actual = run.get("actual", {}).get(field)
-    return actual if actual is not None else run.get("planned", {}).get(field)
-
-
-def metric_value(run, name, unit=None):
-    if run.get("status") in {"failed", "excluded"}:
+def value(row, field):
+    number = row.get(field)
+    if number is None:
         return None
-    entry = run.get("metrics", {}).get(name) or {}
-    value = entry.get("value")
-    if type(value) not in (float, int) or not isfinite(value):
-        return None
-    if unit is not None and entry.get("unit") != unit:
-        raise ValueError(f"{run['run_id']}: expected {name} in {unit}, found {entry.get('unit')}")
-    return value
+    if type(number) not in (int, float) or not isfinite(number):
+        raise ValueError(f"{row.get('run_id')}: {field} is not a finite number")
+    return number
 
 
-def weekly_data(manifest):
-    runs = manifest["runs"]
-    events = {str(run["subset"]): run["n_events"] for run in runs}
-    if len(events) != len(runs) or any(type(count) is not int or count <= 0 for count in events.values()):
-        raise ValueError("The cuDF manifest must give one positive event count per subset")
-    costs = {run["first_seen_seconds"] for run in runs if run.get("first_seen_seconds") is not None}
-    if len(costs) > 1:
-        raise ValueError("The cuDF manifest disagrees on the shared monthly first-seen cost")
-    return events, next(iter(costs), None)
+def require_real_package(payload):
+    if payload.get("schema") != "tv4-official-results/v1" or payload.get("package_id") != "tv2-20261124":
+        raise ValueError("Expected the official tv2-20261124 results package")
+    if payload.get("confirmed_by_tv2") is not True or payload.get("data_kind") != "real":
+        raise ValueError("Refusing to build figures from unconfirmed or non-real data")
+    if not payload.get("team_commit"):
+        raise ValueError("official-results.json has no team_commit")
 
 
-def axis_positions(spec, runs, events, *, toy):
-    if spec.experiment == "E2":
-        points = []
-        for run in runs:
-            subset = str(configuration(run, "subset"))
-            if toy:
-                count = metric_value(run, "n_events")
-                if count is None:
-                    continue
-                label = f"Toy · {count:,} events"
-            else:
-                if subset not in events:
-                    raise ValueError(f"{run['run_id']}: no cuDF weekly event count for subset {subset}")
-                count = events[subset]
-                label = f"{subset}% sessions · {count:,} events"
-            points.append((count, label, run))
-        return sorted(points, key=lambda point: point[0])
-
-    if spec.experiment == "E3":
-        runs = sorted(runs, key=lambda run: int(configuration(run, "train_batch_size") or 0))
-    elif spec.experiment == "E1":
-        models = list(MODEL_NAMES)
-        runs = sorted(runs, key=lambda run: models.index(str(run.get("model")).lower()) if str(run.get("model")).lower() in models else len(models))
-    points = []
-    for position, run in enumerate(runs):
-        if spec.experiment == "E1":
-            label = MODEL_NAMES.get(str(run.get("model")).lower(), run.get("model") or run["run_id"])
-        elif spec.experiment == "E3":
-            label = str(configuration(run, "train_batch_size") or run["run_id"])
-        elif spec.experiment == "E4":
-            label = {"csv": "CSV", "parquet": "Parquet"}.get(configuration(run, "input_format"), run["run_id"])
-        else:
-            subset = configuration(run, "subset")
-            label = f"{subset}%" if subset is not None else run["run_id"]
-        points.append((position, label, run))
-    return points
+def source_footer(payload, source_rows):
+    run_ids = ", ".join(row["run_id"] for row in source_rows)
+    return f"Source: {payload['package_id']} · {run_ids} · team {payload['team_commit']}"
 
 
-def render(spec, runs, events, first_seen, team_commit, destination, *, toy=False):
-    points = axis_positions(spec, runs, events, toy=toy)
-    values = [[metric_value(run, name, spec.unit) for _, _, run in points] for name in spec.metrics]
-    measured = any(value is not None for series in values for value in series)
-    title = spec.title + ("\nTOY DATA — not a benchmark result" if toy else "")
-    kind = "toy" if toy else "real" if measured else "unconfirmed"
-    source_ids = ", ".join(dict.fromkeys(run["run_id"] for run in runs)) or "no delivered runs"
-    source = f"Source: {source_ids} · team commit {team_commit} · {kind}"
+def label_points(axis, bars, formatter):
+    for bar in bars:
+        height = bar.get_height()
+        axis.annotate(formatter(height), (bar.get_x() + bar.get_width() / 2, height),
+                      xytext=(0, 4), textcoords="offset points", ha="center", va="bottom", fontsize=8)
 
-    with rc_context({"svg.fonttype": "none", "svg.hashsalt": destination.stem}):
-        figure = Figure(figsize=(10.8, 4.6), facecolor="white")
+
+def bars(axis, labels, values, ylabel, formatter, color=COLORS[0]):
+    positions = list(range(len(labels)))
+    valid = [(position, number) for position, number in zip(positions, values) if number is not None]
+    axis.set_xticks(positions, labels)
+    axis.set_ylabel(ylabel)
+    axis.spines[["top", "right"]].set_visible(False)
+    axis.grid(axis="y", alpha=0.22)
+    axis.set_axisbelow(True)
+    axis.set_ylim(bottom=0)
+    drawn = axis.bar([position for position, _ in valid], [number for _, number in valid], color=color, width=0.62)
+    label_points(axis, drawn, formatter)
+    if valid:
+        axis.set_ylim(0, max(number for _, number in valid) * 1.18)
+    for position, number in zip(positions, values):
+        if number is None:
+            axis.text(position, 0.04, "Not available yet", transform=axis.get_xaxis_transform(), ha="center", fontsize=8)
+    return drawn
+
+
+def line_values(axis, x_values, y_values, ylabel, formatter, color=COLORS[0]):
+    axis.plot(x_values, y_values, color=color, marker="o", linewidth=2)
+    shown = [y for y in y_values if y is not None]
+    # Headroom so the top point label clears the subplot title.
+    axis.set_ylim(bottom=0, top=max(shown) * 1.15 if shown else None)
+    axis.set_xlabel("Events (n_events)")
+    axis.set_ylabel(ylabel)
+    axis.spines[["top", "right"]].set_visible(False)
+    axis.grid(alpha=0.22)
+    for x, y in zip(x_values, y_values):
+        if y is not None:
+            axis.annotate(formatter(y), (x, y), xytext=(0, 7), textcoords="offset points", ha="center", fontsize=8)
+    axis.xaxis.set_major_formatter(FuncFormatter(lambda number, _: f"{number:,.0f}"))
+
+
+def make_figure(name, payload):
+    require_real_package(payload)
+    if name == "e1-ranking":
+        data = rows(payload, "E1")
+        figure = Figure(figsize=(8.6, 4.9), facecolor="white")
         axis = figure.subplots()
-        figure.subplots_adjust(left=0.14, right=0.98, top=0.82 if toy else 0.88, bottom=0.29)
-        axis.set_title(title, loc="left", fontweight="bold", pad=12)
-        axis.set_xlabel(spec.x_label)
-        axis.set_ylabel(spec.y_label)
+        positions = list(range(len(data)))
+        width = 0.34
+        series = (("Recall@20", COLORS[0], -width / 2), ("NDCG@20", COLORS[1], width / 2))
+        for metric, color, offset in series:
+            measurements = [value(row, metric) for row in data]
+            valid = [(x + offset, y) for x, y in zip(positions, measurements) if y is not None]
+            drawn = axis.bar([x for x, _ in valid], [y for _, y in valid], width=width, color=color, label=metric)
+            label_points(axis, drawn, lambda number: f"{number:.4f}")
+        axis.set_xticks(positions, [MODEL_LABELS.get(str(row["model"]).lower(), row["model"]) for row in data])
+        axis.set_ylabel("Ranking score (ratio)")
+        axis.set_title("E1 · Recall@20 and NDCG@20 by model", loc="left", fontweight="bold")
+        axis.legend(frameon=False)
         axis.spines[["top", "right"]].set_visible(False)
-        x_values = [x for x, _, _ in points]
-        labels = [label for _, label, _ in points]
-        axis.set_xticks(x_values, labels, rotation=12 if spec.experiment == "E2" else 0)
-        if x_values:
-            gaps = [right - left for left, right in zip(x_values, x_values[1:]) if right > left]
-            spacing = min(gaps, default=max(abs(x_values[0]) * 0.25, 1) if spec.experiment == "E2" else 1)
-            axis.set_xlim(min(x_values) - spacing * 0.58, max(x_values) + spacing * 0.58)
-        else:
-            spacing = 1
+        axis.grid(axis="y", alpha=0.22)
+        axis.set_axisbelow(True)
+        axis.set_ylim(0, max(value(row, metric) for row in data for metric, _, _ in series) * 1.18)
+        source_rows = data
+    elif name == "e1-training":
+        data = rows(payload, "E1")
+        figure = Figure(figsize=(8.6, 4.9), facecolor="white")
+        axis = figure.subplots()
+        bars(axis, [row["model"] for row in data], [value(row, "train_seconds_including_sequence_io") for row in data],
+             "Train time (s)", lambda number: f"{number:.2f}")
+        axis.set_title("E1 · Training time by model", loc="left", fontweight="bold")
+        source_rows = data
+    elif name == "e2-training":
+        data = rows(payload, "E2")
+        events = [value(row, "n_events") for row in data]
+        training = [value(row, "train_seconds_including_sequence_io") for row in data]
+        figure = Figure(figsize=(9.2, 5.0), facecolor="white")
+        axis = figure.subplots()
+        line_values(axis, events, training, "Train time (s)", lambda number: f"{number:.1f}")
+        axis.set_title("E2 · Train time by weekly event volume", loc="left", fontweight="bold")
+        source_rows = data
+    elif name == "e3-tradeoff":
+        data = rows(payload, "E3")
+        labels = [str(row["train_batch_size"]) for row in data]
+        figure = Figure(figsize=(9.4, 4.9), facecolor="white")
+        left, right = figure.subplots(1, 2)
+        bars(left, labels, [value(row, "Recall@20") for row in data], "Recall@20 (ratio)", lambda number: f"{number:.4f}")
+        bars(right, labels, [value(row, "process_wall_seconds") for row in data], "Process wall time (s)", lambda number: f"{number:.2f}", COLORS[1])
+        left.set_title("Validation Recall@20", fontsize=10)
+        right.set_title("Process wall time", fontsize=10)
+        figure.suptitle("E3 · Validation accuracy and process wall time by training batch", x=0.04, ha="left", fontweight="bold")
+        figure.text(0.04, 0.07, payload["dictionary"]["E3_accuracy"], fontsize=8, color="#505862")
+        source_rows = data
+    elif name == "e4-format":
+        data = rows(payload, "E4")
+        labels = [row["format"].upper() for row in data]
+        figure = Figure(figsize=(9.4, 4.9), facecolor="white")
+        left, right = figure.subplots(1, 2)
+        sizes_mib = [value(row, "bytes") / MIB if value(row, "bytes") is not None else None for row in data]
+        bars(left, labels, sizes_mib, "File size (MiB)", lambda number: f"{number:.1f}")
+        bars(right, labels, [value(row, "read_seconds") for row in data], "Read time (s)", lambda number: f"{number:.3f}", COLORS[1])
+        left.set_title("File size", fontsize=10)
+        right.set_title("Read time", fontsize=10)
+        figure.suptitle("E4 · File size and read time by format", x=0.04, ha="left", fontweight="bold")
+        source_rows = data
+    elif name == "e5-scaling":
+        data = rows(payload, "E5")
+        events = [value(row, "n_events") for row in data]
+        figure = Figure(figsize=(9.4, 5.2), facecolor="white")
+        left, right = figure.subplots(1, 2)
+        line_values(left, events, [value(row, "composed_seconds_excluding_first_seen") for row in data],
+                    "Composed time (s)", lambda number: f"{number:.1f}")
+        line_values(right, events, [value(row, "seconds_per_million_events") for row in data],
+                    "Seconds per million events", lambda number: f"{number:.1f}", COLORS[1])
+        left.set_title("Composed time", fontsize=10)
+        right.set_title("Seconds per million events", fontsize=10)
+        figure.suptitle("E5 · Composed time and normalized time by event volume", x=0.04, ha="left", fontweight="bold")
+        figure.text(0.04, 0.07, payload["dictionary"]["E5_composed"], fontsize=8, color="#505862")
+        source_rows = data
+    else:
+        raise ValueError(f"Unknown official figure: {name}")
 
-        if measured:
-            width = spacing * 0.72 / len(spec.metrics)
-            for index, series in enumerate(values):
-                for x, value in zip(x_values, series):
-                    position = x + (index - (len(values) - 1) / 2) * width
-                    if value is None:
-                        axis.text(position, 0.03, "n/a", transform=axis.get_xaxis_transform(), ha="center", color="#555555")
-                    else:
-                        bar = axis.bar(position, value, width=width, color=COLORS[index])[0]
-                        bar.set_gid(f"metric-bar-{index}-{x}")
-            axis.set_ylim(bottom=0)
-            axis.yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:,.6g}" if abs(value) < 1 else f"{value:,.6f}".rstrip("0").rstrip(".")))
-            axis.grid(axis="y", alpha=0.25)
-            axis.set_axisbelow(True)
-        else:
-            axis.set_yticks([])
-            axis.text(0.5, 0.5, MISSING, transform=axis.transAxes, ha="center", va="center", color="#505862")
+    figure.text(0.04, 0.025, source_footer(payload, source_rows), fontsize=7.5, color="#505862")
+    figure.tight_layout(rect=(0.04, 0.11, 0.98, 0.91))
+    return figure
 
-        if len(spec.metrics) > 1:
-            axis.legend(handles=[Patch(color=COLORS[i], label=name) for i, name in enumerate(spec.metrics)], loc="upper right")
-        if spec.experiment == "E5" and not toy:
-            cost = f"{first_seen} s" if first_seen is not None else "Not available yet"
-            figure.text(0.06, 0.11, f"First-seen lookup: shared monthly cost, counted once, not per subset · {cost}",
-                        fontsize=9, color="#505862")
-            figure.text(0.06, 0.077, "Preliminary value from the TV1 cuDF weekly manifest.", fontsize=8, color="#505862")
-        elif spec.experiment == "E2" and not toy:
-            figure.text(0.06, 0.08, "Weekly event counts: TV1 cuDF E2 preprocessing manifest.", fontsize=8, color="#505862")
-        figure.text(0.06, 0.035, source, fontsize=8, color="#505862", wrap=True)
-        figure.savefig(destination, format="svg", metadata={"Date": None, "Title": title, "Description": source})
+
+def render(name, payload, destination):
+    figure = make_figure(name, payload)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    title = next((text.get_text() for axis in figure.axes for text in axis.texts if text.get_text().startswith("E")), name)
+    with rc_context({"svg.fonttype": "none", "svg.hashsalt": name}):
+        figure.savefig(destination, format="svg", metadata={"Date": None, "Title": title, "Description": source_footer(payload, rows(payload, name[:2].upper()))})
     svg = destination.read_text(encoding="utf-8")
     destination.write_text("\n".join(line.rstrip() for line in svg.splitlines()) + "\n", encoding="utf-8")
 
 
+def build_all(payload, output):
+    require_real_package(payload)
+    output.mkdir(parents=True, exist_ok=True)
+    for path in output.glob("*.svg"):
+        path.unlink()
+    for filename in FIGURES:
+        name = filename.removesuffix(".svg")
+        path = output / filename
+        render(name, payload, path)
+        print(path.name)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", type=Path, default=ROOT / "public/run-results.json")
-    parser.add_argument("--weekly-manifest", type=Path, default=WEEKLY_MANIFEST)
-    parser.add_argument("--output", type=Path, default=ROOT / "figures")
+    parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
     payload = json.loads(args.input.read_text(encoding="utf-8"))
-    events, first_seen = weekly_data(json.loads(args.weekly_manifest.read_text(encoding="utf-8")))
-    args.output.mkdir(parents=True, exist_ok=True)
-    for spec in SPECS:
-        runs = figure_runs(payload, spec.experiment)
-        official = [run for run in runs if run["data_kind"] != "toy"]
-        toy = [run for run in runs if run["data_kind"] == "toy"]
-        for records, is_toy in ((official, False), (toy, True)):
-            if is_toy and not records:
-                continue
-            output = args.output / f"{spec.name}{'-toy' if is_toy else ''}.svg"
-            render(spec, records, events, first_seen, payload["team_commit"], output, toy=is_toy)
-            print(output.name)
+    build_all(payload, args.output)
 
 
 if __name__ == "__main__":

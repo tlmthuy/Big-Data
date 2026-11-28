@@ -2,7 +2,7 @@
 
 ## 1. Purpose and scope
 
-Pending TV2 approval. Part A defines session predictions. Part B defines run-level results for E1–E5. The demo shows both views and reads artifacts only. Neither view triggers training. Evidence is from `main` at `86bc1c8`. All checked-in model and experiment runs referenced here use toy data.
+Approved by TV2 on 24/11/2026 (`docs/handoff.md`, commits `c41f191` and `5a6545e`). Part A defines session predictions. Part B defines run-level results for E1–E5. The demo shows both views and reads artifacts only. Neither view triggers training. Evidence is from `main` at `86bc1c8`. All checked-in model and experiment runs referenced here use toy data.
 
 ## 2. Missing data rules
 

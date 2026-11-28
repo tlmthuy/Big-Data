@@ -14,18 +14,21 @@ Rules applied (see AGENTS.md):
 - IDs are mapped to original product IDs with the run's own catalog, verified by SHA-256.
 - Recommendation order is the artifact order; `rank` is the 1-based position.
 - `score` is always null: TV2 has not exported per-item scores yet.
-- Nothing is recomputed. Metrics are not copied here; they belong to run-results.json.
+- Nothing is recomputed. Experiment metrics belong to public/official-results.json.
 """
 
 import argparse
 import csv
+import csv
 from datetime import date
 import hashlib
 import json
-import subprocess
+import tempfile
 from pathlib import Path
+from pathlib import PurePosixPath
 
 from evaluation.data import Catalog, encoded_id
+from team_repo import team_commit
 
 K = 20
 CSV_RUN_FIELDS = ("run_id", "model", "subset", "split", "data_kind", "catalog_sha256")
@@ -98,14 +101,19 @@ def export_run(run_dir, catalog_path, allow_missing_total=False):
     catalog = Catalog.load(catalog_path)
 
     sessions, seen = [], set()
-    for line in (artifact_dir / "predictions.jsonl").read_text(encoding="utf-8").splitlines():
+    predictions_path = artifact_dir / "predictions.jsonl"
+    predictions_bytes = predictions_path.read_bytes()
+    for line in predictions_bytes.decode("utf-8").splitlines():
         if not line.strip():
             continue
         row = json.loads(line)
         if set(row) != PREDICTION_KEYS:
             raise ValueError(f"{run_dir}: unexpected prediction keys {sorted(row)}")
         session_id = row["user_session"]
-        if not isinstance(session_id, str) or not session_id.strip() or session_id in seen:
+        if isinstance(session_id, bool) or not isinstance(session_id, (str, int)) or not str(session_id).strip():
+            raise ValueError(f"{run_dir}: expected unique nonempty session IDs")
+        session_id = str(session_id)
+        if session_id in seen:
             raise ValueError(f"{run_dir}: expected unique nonempty session IDs")
         seen.add(session_id)
 
@@ -157,6 +165,9 @@ def export_run(run_dir, catalog_path, allow_missing_total=False):
             "experiment": (collector or {}).get("metadata", {}).get("run", {}).get("experiment"),
             "catalog_path": catalog_path.as_posix(),
             "catalog_match": match,
+            "predictions_sha256": sha256_bytes(predictions_bytes),
+            "catalog_sha256": recorded_sha,
+            "catalog_size": len(catalog.products),
             "score_available": False,
         },
     }
@@ -177,11 +188,98 @@ def sample_runs(runs, limit, seed):
             metrics = json.loads((artifact_dir / "metrics.json").read_text(encoding="utf-8"))
             run["sessions"] = [index[session] for session in selected]
             run["provenance"]["sample"] = {
-                "rule": "sha256(seed:user_session)",
+                "rule": "SHA-256 of \"<seed>:<user_session>\", ascending; first N",
                 "seed": seed,
                 "n_selected": len(selected),
                 "n_total": metrics.get("n_sessions"),
             }
+
+
+def subset_catalogs(runs):
+    for run in runs:
+        full_catalog = run["catalog"]
+        full_size = len(full_catalog)
+        used = {item for session in run["sessions"]
+                for item in (*session["prefix"], session["target"], *session["top20"])}
+        run["catalog"] = [item for item in full_catalog if item in used]
+        run["catalog_size"] = full_size
+        run["provenance"]["catalog_size"] = full_size
+
+
+def real_e1_runs(bundle, metrics_path, configs_path, checks_path, split_population_path):
+    """Prepare checksum-verified delivered E1 artifacts in the adapter's normal input shape."""
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    configs = json.loads(configs_path.read_text(encoding="utf-8"))
+    checks = {row["run_id"]: row for row in json.loads(checks_path.read_text(encoding="utf-8"))}
+    table = {row["run_id"]: row for row in metrics["tables"]["E1"]}
+    catalog_path = bundle / "catalog.json"
+    catalog_bytes = catalog_path.read_bytes()
+    catalog_sha = sha256_bytes(catalog_bytes)
+    verified_catalog_hashes = {
+        configs[run]["run_metadata"]["versions"]["catalog_version"]
+        for run in ("e1-popularity-010", "e1-gru-010", "e1-xlnet-010")
+    }
+    if verified_catalog_hashes != {catalog_sha}:
+        raise ValueError("Real catalog SHA-256 does not match the official configs")
+    with split_population_path.open(newline="", encoding="utf-8-sig") as file:
+        partition = next((int(row["last_partition_D"]) for row in csv.DictReader(file) if int(row["subset"]) == 10), None)
+    if partition is None:
+        raise ValueError("split_population.csv has no subset 10 last_partition_D")
+    prepared = []
+    for run_id in ("e1-popularity-010", "e1-gru-010", "e1-xlnet-010"):
+        prediction_path = bundle / f"{run_id}.predictions.jsonl"
+        raw = prediction_path.read_bytes()
+        checksum = sha256_bytes(raw)
+        expected = checks[run_id]["predictions_sha256"]
+        if checksum != expected or sha256_bytes(raw.replace(b"\r\n", b"\n")) != expected:
+            raise ValueError(f"{run_id}: predictions SHA-256 does not match prediction_checks.json")
+        row = table[run_id]
+        if row["n_sessions"] != checks[run_id]["sessions"]:
+            raise ValueError(f"{run_id}: metrics session count differs from prediction_checks.json")
+        prepared.append((run_id, prediction_path, row, checksum))
+    session_sets = []
+    catalog = Catalog.load(catalog_path)
+    for run_id, path, row, _ in prepared:
+        seen = set()
+        count = 0
+        with path.open(encoding="utf-8") as source:
+            for line in source:
+                if not line.strip():
+                    continue
+                item = json.loads(line)
+                if set(item) != PREDICTION_KEYS:
+                    raise ValueError(f"{run_id}: prediction keys do not match the contract")
+                if [catalog.products[i] for i in item["top20"]] != item["product_ids"]:
+                    raise ValueError(f"{run_id}/{item['user_session']}: top20/product_ids mismatch")
+                if item["user_session"] in seen:
+                    raise ValueError(f"{run_id}: duplicate user_session")
+                seen.add(item["user_session"])
+                count += 1
+        if count != row["n_sessions"]:
+            raise ValueError(f"{run_id}: expected {row['n_sessions']} JSONL rows, found {count}")
+        session_sets.append(seen)
+    if not (session_sets[0] == session_sets[1] == session_sets[2]):
+        raise ValueError("E1 prediction files do not have identical user_session sets")
+
+    temporary = tempfile.TemporaryDirectory(prefix="tv4-real-e1-")
+    root = Path(temporary.name)
+    runs = []
+    for run_id, prediction_path, row, checksum in prepared:
+        run_dir = root / run_id
+        artifacts = run_dir / "artifacts"
+        artifacts.mkdir(parents=True)
+        (run_dir / "run.json").write_text(json.dumps({"metadata": {"data_kind": "real"}}), encoding="utf-8")
+        metadata = {"K": 20, "model": row["model"], "subset": row["subset"],
+                    "eval_split": row["split"], "run_id": run_id, "n_sessions": row["n_sessions"],
+                    "eval_day": partition, "artifacts": {"catalog": {"sha256": catalog_sha}}}
+        (artifacts / "metrics.json").write_text(json.dumps(metadata), encoding="utf-8")
+        (artifacts / "predictions.jsonl").write_bytes(prediction_path.read_bytes())
+        run = export_run(run_dir, catalog_path)
+        run["provenance"]["predictions_sha256"] = checksum
+        run["provenance"]["catalog_sha256"] = catalog_sha
+        run["provenance"]["n_total"] = row["n_sessions"]
+        runs.append(run)
+    return temporary, runs
 
 
 def write_sample_csv(path, runs):
@@ -196,37 +294,82 @@ def write_sample_csv(path, runs):
                     writer.writerow((*run_values, *session_values, recommendation["rank"], recommendation["product_id"], recommendation["score"]))
 
 
-def team_commit():
-    try:
-        return subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True,
-                              text=True, check=True).stdout.strip()
-    except (OSError, subprocess.CalledProcessError):
+def public_product_lookup_path(value):
+    if value is None:
         return None
+    clean_value = value.strip()
+    path = PurePosixPath(clean_value)
+    if (
+        not path.parts
+        or path.is_absolute()
+        or ".." in path.parts
+        or any(char in clean_value for char in "\\?#")
+        or path.suffix.lower() != ".json"
+    ):
+        raise ValueError("--product-lookup must be a relative JSON path within public/")
+    return path.as_posix()
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--run", action="append", required=True, metavar="RUN_DIR=CATALOG")
+    parser.add_argument("--run", action="append", metavar="RUN_DIR=CATALOG")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--stamp", action="store_true", help="Include export date and file-level data kind")
     parser.add_argument("--sample", type=int, metavar="N")
     parser.add_argument("--sample-seed", type=int, default=0, metavar="S")
     parser.add_argument("--team-commit", help="Source revision when exporting from a Git archive")
+    parser.add_argument("--product-lookup", type=public_product_lookup_path, metavar="PUBLIC_PATH",
+                        help="Optional relative JSON path for the public product lookup")
+    parser.add_argument("--real-e1-bundle", type=Path, help="Verified delivered real E1 bundle directory")
+    parser.add_argument("--metrics", type=Path, help="Official metrics.json for real E1 export")
+    parser.add_argument("--configs", type=Path, help="Official configs.json for real E1 export")
+    parser.add_argument("--prediction-checks", type=Path, help="Official prediction_checks.json")
+    parser.add_argument("--split-population", type=Path, help="TV2 split_population.csv for test partition D")
     args = parser.parse_args()
     if args.sample is not None and args.sample <= 0:
         parser.error("--sample must be positive")
     try:
-        runs = []
-        for spec in args.run:
-            run_dir, sep, catalog = spec.partition("=")
-            if not sep:
-                raise ValueError(f"--run needs RUN_DIR=CATALOG, got {spec!r}")
-            runs.append(export_run(Path(run_dir), Path(catalog), allow_missing_total=args.sample is not None))
+        temporary = None
+        if args.real_e1_bundle:
+            if args.run or not (args.metrics and args.configs and args.prediction_checks and args.split_population):
+                raise ValueError("--real-e1-bundle requires --metrics, --configs, --prediction-checks, --split-population and no --run")
+            temporary, runs = real_e1_runs(args.real_e1_bundle, args.metrics, args.configs, args.prediction_checks, args.split_population)
+        else:
+            if not args.run:
+                raise ValueError("provide --run or --real-e1-bundle")
+            runs = []
+            for spec in args.run:
+                run_dir, sep, catalog = spec.partition("=")
+                if not sep:
+                    raise ValueError(f"--run needs RUN_DIR=CATALOG, got {spec!r}")
+                runs.append(export_run(Path(run_dir), Path(catalog), allow_missing_total=args.sample is not None))
         if len({run["run_id"] for run in runs}) != len(runs):
             raise ValueError("Duplicate run_id")
         if args.sample is not None:
             sample_runs(runs, args.sample, args.sample_seed)
-        payload = {"schema": "tv4-demo-data/v2", "team_commit": args.team_commit or team_commit(), "runs": runs}
+        subset_catalogs(runs)
+        if args.real_e1_bundle:
+            for run in runs:
+                run_id = run["run_id"]
+                provenance = run["provenance"]
+                run["provenance"] = {
+                    "predictions_path": (args.real_e1_bundle / f"{run_id}.predictions.jsonl").as_posix(),
+                    "predictions_sha256": provenance["predictions_sha256"],
+                    "catalog_path": (args.real_e1_bundle / "catalog.json").as_posix(),
+                    "catalog_sha256": run["catalog_sha256"],
+                    "catalog_size": run["catalog_size"],
+                    "catalog_match": "exact",
+                    "eval_day": provenance["eval_day"],
+                    "score_available": False,
+                    "n_total": provenance["n_total"],
+                    "sample": provenance["sample"],
+                }
+        payload = {
+            "schema": "tv4-demo-data/v2",
+            "team_commit": args.team_commit or team_commit(),
+            "provenance": {"product_lookup": args.product_lookup},
+            "runs": runs,
+        }
         if args.stamp or args.sample is not None:
             kinds = {run["data_kind"] for run in runs}
             payload.update(generated_at=date.today().isoformat(),
@@ -234,12 +377,18 @@ def main():
         csv_path = args.output.with_name("sample-predictions.csv")
         if args.output == csv_path:
             raise ValueError("--output must be a JSON path distinct from sample-predictions.csv")
-        args.output.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         write_sample_csv(csv_path, runs)
+        # Keep contract top20; recommendations is the UI adapter's expanded duplicate.
+        for run in runs:
+            for session in run["sessions"]:
+                session.pop("recommendations", None)
+        args.output.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         for run in runs:
             print(f"{run['run_id']}: {run['model']}, {len(run['sessions'])} sessions, "
                   f"data_kind={run['data_kind']}, catalog {run['provenance']['catalog_match']}")
         print(f"Wrote {args.output} and {csv_path}")
+        if temporary is not None:
+            temporary.cleanup()
     except (OSError, KeyError, TypeError, ValueError) as error:
         parser.exit(1, f"Export failed: {error}\n")
 

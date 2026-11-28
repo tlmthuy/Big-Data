@@ -1,12 +1,14 @@
 import { readLanguage, setLanguage, t } from "./i18n.js";
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { loadJson, normalizeDemo, normalizeProductInfo, normalizeResults } from "./data.js";
+import { loadDeclaredProductInfo, loadJson, normalizeDemo, normalizeProductInfo } from "./data.js";
 import Recommendation from "./Recommendation.jsx";
 import { routeFromHash } from "./navigation.js";
 import Dataset from "./Dataset.jsx";
 import { normalizeDataset } from "./dataset.js";
 import Experiments from "./Experiments.jsx";
+import { AboutDemo, LanguageSwitch, MainNav, PresenterToggle } from "./Nav.jsx";
+import { PresenterContext, readPresenter, savePresenter } from "./presenter.js";
 import "./styles.css";
 
 const branding = import.meta.glob(["./branding/logo.png", "./branding/cover.jpg"], {
@@ -14,12 +16,6 @@ const branding = import.meta.glob(["./branding/logo.png", "./branding/cover.jpg"
 });
 const logo = branding["./branding/logo.png"];
 const cover = branding["./branding/cover.jpg"];
-
-const TABS = () => [
-  { id: "recommendation", label: t("recommendations") },
-  { id: "data", label: t("dataset") },
-  { id: "experiments", label: t("experiments_e1_e5") },
-];
 
 // Optional overrides for testing broken files, e.g. ?demo=/tests/fixtures/empty.json
 // Only same-origin absolute paths are accepted.
@@ -30,9 +26,12 @@ function source(param, fallback) {
 }
 const base = import.meta.env.BASE_URL;
 const DEMO_URL = source("demo", `${base}demo-data.json`);
-const PRODUCTS_URL = source("products", `${base}product-info.json`);
 const DATASET_URL = source("dataset", `${base}dataset-overview.json`);
-const RESULTS_URL = source("results", `${base}run-results.json`);
+const OFFICIAL_RESULTS_URL = `${base}official-results.json`;
+
+function normalizeOfficialResults(data) {
+  return { results: data };
+}
 
 function useData(url, normalize, language) {
   const [state, setState] = useState({ loading: true });
@@ -41,11 +40,38 @@ function useData(url, normalize, language) {
     loadJson(url).then(({ data, error }) => {
       if (!alive) return;
       setState(error ? { error } : { ...normalize(data), provenance: {
-        team_commit: data?.team_commit, generated_at: data?.generated_at, data_kind: data?.data_kind,
+        team_commit: data?.team_commit,
+        generated_at: data?.generated_at,
+        data_kind: data?.data_kind,
+        product_lookup: data?.provenance?.product_lookup,
       } });
     });
     return () => { alive = false; };
   }, [url, normalize, language]);
+  return state;
+}
+
+function useOptionalProductInfo(url, language) {
+  const [state, setState] = useState({});
+  useEffect(() => {
+    let alive = true;
+    setState(url ? { loading: true } : {});
+    loadDeclaredProductInfo(url).then(({ data, error, requested }) => {
+      if (!alive) return;
+      if (!requested) {
+        setState({});
+        return;
+      }
+      setState(error ? { error } : { ...normalizeProductInfo(data), provenance: {
+        source_file: data?.source_file,
+        source_sha256: data?.source_sha256,
+        team_commit: data?.team_commit,
+        generated_at: data?.generated_at,
+        data_kind: data?.data_kind,
+      } });
+    });
+    return () => { alive = false; };
+  }, [url, language]);
   return state;
 }
 
@@ -65,11 +91,23 @@ function App() {
     try { localStorage.setItem("tv4-language", next); } catch { /* Storage is optional. */ }
     updateLanguage(next);
   }
-  const [{ tab, experiment }, setRoute] = useState(currentRoute);
+  const [{ tab, experiment, select, section }, setRoute] = useState(currentRoute);
+  const [presenter, setPresenter] = useState(() => readPresenter());
+  useEffect(() => {
+    document.documentElement.classList.toggle("presenter", presenter);
+  }, [presenter]);
+  function choosePresenter(on) {
+    savePresenter(on);
+    setPresenter(on);
+  }
   const demo = useData(DEMO_URL, normalizeDemo, language);
-  const products = useData(PRODUCTS_URL, normalizeProductInfo, language);
+  const productLookup = demo.provenance?.product_lookup;
+  const productsUrl = typeof productLookup === "string" && productLookup.trim()
+    ? source("products", `${base}${productLookup}`)
+    : null;
+  const products = useOptionalProductInfo(productsUrl, language);
   const dataset = useData(DATASET_URL, normalizeDataset, language);
-  const results = useData(RESULTS_URL, normalizeResults, language);
+  const officialResults = useData(OFFICIAL_RESULTS_URL, normalizeOfficialResults, language);
 
   useEffect(() => {
     const onHash = () => setRoute(currentRoute());
@@ -77,49 +115,46 @@ function App() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
-  const state = { recommendation: demo, data: dataset, experiments: results }[tab];
+  const state = { recommendation: demo, dataset, experiments: officialResults }[tab];
 
   return (
-    <main className="shell">
-      <header className="topbar">
-        <div className="header-utility">
-          <div className="language-switch" role="group" aria-label={t("language")}>
-            {["en", "vi"].map((code) => <button type="button" key={code}
-              aria-pressed={language === code} onClick={() => chooseLanguage(code)}>{code.toUpperCase()}</button>)}
-          </div>
-        </div>
+    <PresenterContext.Provider value={presenter}>
+      <header className="topbar glass">
+        <div className="topbar-inner">
         <div className="brand">
           {logo && <img className="brand-logo" src={logo} alt="" />}
-          <h1>{siteName}</h1>
+          <span className="brand-name"><span className="brand-full">{siteName}</span><span className="brand-short">{t("site_name_short")}</span></span>
         </div>
-        <nav className="tabs" role="tablist" aria-label={t("views_2")}>
-          {TABS().map(({ id, label }) => (
-            <a key={id} href={`#${id}`} role="tab" aria-selected={tab === id} className={tab === id ? "active" : ""}>{label}</a>
-          ))}
-        </nav>
+        <MainNav tab={tab} />
+        <div className="header-utility">
+          <AboutDemo />
+          <PresenterToggle on={presenter} onToggle={choosePresenter} />
+          <LanguageSwitch language={language} onChoose={chooseLanguage} />
+        </div>
+        </div>
       </header>
+      <main className="shell">
       {cover && <img className="brand-cover" src={cover} alt="" />}
-      <section className="site-intro" aria-label={t("demo_intro")}>
-        <p className="lede">{t("a_session_is_one_visit_an")}</p>
-        <p className="definition">{t("recall_20_measures_how_often_the")}</p>
-        <p className="definition">{t("popularity_is_the_baseline_all_three")}</p>
-        <p className="definition">{t("the_demo_replays_saved_predictions_see")}</p>
-      </section>
-      <div role="tabpanel">
+      <div className="view" id="view">
         {state.loading ? <p className="loading">{t("loading_data")}</p>
-          : tab === "recommendation" ? <Recommendation state={state} productInfo={products} protocol={dataset.overview?.evaluation_protocol} /> : tab === "data" ? <Dataset state={state} /> : <Experiments state={state} active={experiment} />}
+          : tab === "recommendation" ? <Recommendation state={state} productInfo={products} protocol={dataset.overview?.evaluation_protocol} official={officialResults.results} />
+            : tab === "dataset" ? <Dataset state={state} section={section ?? null} e2Levels={(officialResults.results?.tables?.E2 ?? []).map((row) => row.subset)} />
+              : <Experiments key={`${experiment}/${select ?? ""}`} state={state} active={experiment} select={select} />}
       </div>
 
       <footer>
         <p>{t("values_pending_delivery_show_not_available")}</p>
         <ul>{[
           ["demo-data.json", demo], ["product-info.json", products],
-          ["dataset-overview.json", dataset], ["run-results.json", results],
-        ].map(([name, file]) => <li key={name}>
-          <code>{name}</code> {t("commit")} {file.provenance?.team_commit ?? t("not_available_yet")} {t("exported")} {file.provenance?.generated_at ?? t("not_available_yet")} · {file.provenance?.data_kind ?? t("not_available_yet")}
+          ["dataset-overview.json", dataset], ["official-results.json", officialResults],
+        ].filter(([name, file]) => name !== "product-info.json" || file.provenance?.data_kind === "real").map(([name, file]) => <li key={name}>
+          <code>{name}</code> {file.provenance?.source_sha256
+            ? t("footer_source_sha", file.provenance.source_file ?? t("not_available_yet"), file.provenance.source_sha256.slice(0, 8), file.provenance.generated_at ?? t("not_available_yet"))
+            : <>{t("commit")} {file.provenance?.team_commit ?? t("not_available_yet")} {t("exported")} {file.provenance?.generated_at ?? t("not_available_yet")}</>} · {file.provenance?.data_kind ?? t("not_available_yet")}
         </li>)}</ul>
       </footer>
-    </main>
+      </main>
+    </PresenterContext.Provider>
   );
 }
 

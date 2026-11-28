@@ -1,5 +1,0 @@
-team_commit,generated_at,run_id,series,status,metric,value,unit,scope
-43841c9,2026-11-21,e3-gru-010-b32,planned,,inference_sessions_per_second,,sessions/s,full_evaluation_wall_v1 (includes I/O)
-43841c9,2026-11-21,e3-gru-010-b128,planned,,inference_sessions_per_second,,sessions/s,full_evaluation_wall_v1 (includes I/O)
-43841c9,2026-11-21,smoke-e3-gru-010-b128,toy,passed,inference_sessions_per_second,19.28443893689376,sessions/s,full_evaluation_wall_v1 (includes I/O)
-43841c9,2026-11-21,smoke-e3-gru-010-b32,toy,passed,inference_sessions_per_second,15.35257880413514,sessions/s,full_evaluation_wall_v1 (includes I/O)

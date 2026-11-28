@@ -1,53 +1,24 @@
 import { t } from "./i18n.js";
 import { INVALID_PRODUCT_ID } from "./data.js";
+import { formatPrice, isMissing } from "./format.js";
 
-const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
-const titleCase = (value) => value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-
-function topCategory(product) {
-  return product?.category_code?.split(".")[0] || null;
-}
-
-export function productDisplay(id, products) {
-  if (id === INVALID_PRODUCT_ID) return { name: t("invalid_id") };
-
+/**
+ * Product card lines from public/product-info.json (brand, category_code, last weekly price).
+ * The dataset has no product names, so none is built: line 1 is the original ID, line 2 the brand as in
+ * the data and the category path ("electronics › camera › video"), line 3 "Price 308.86" (no currency:
+ * the dataset does not state one). Missing parts are omitted; with no entry only the ID is shown.
+ */
+export function productCardDisplay(id, products) {
+  if (id === INVALID_PRODUCT_ID) return { id: null, invalid: t("invalid_id"), meta: null, price: null, priceRaw: null };
   const product = products?.get(id);
-  const category = product?.category_code?.split(".").map(titleCase) ?? [];
-  const leaf = category.at(-1);
-  const brand = product?.brand && titleCase(product.brand);
-  const name = brand && leaf ? `${brand} ${leaf}`
-    : leaf ? t("0_brand_unknown", leaf)
-      : brand ? t("0_category_unknown", brand) : t("product_0", id);
-
+  const category = product?.category_code ? product.category_code.split(".").filter(Boolean).join(" › ") : null;
+  const meta = [product?.brand || null, category].filter(Boolean).join(" · ") || null;
+  const hasPrice = product && !isMissing(product.price);
   return {
-    name,
-    breadcrumb: category.join(" › "),
-    price: product?.price == null ? t("price_unavailable") : usd.format(product.price),
+    id,
+    invalid: null,
+    meta,
+    price: hasPrice ? t("product_price", formatPrice(product.price).text) : null,
+    priceRaw: hasPrice ? String(product.price) : null,
   };
-}
-
-export function categoryHighlights(prefix, prefixCatalog, recommendations, products) {
-  const categoryOf = (id) => topCategory(products?.get(id));
-  const historyCategories = new Set();
-  for (const id of prefix ?? []) {
-    const category = prefixCatalog?.has(id) && categoryOf(id);
-    if (category) historyCategories.add(category);
-  }
-
-  const matchingIds = new Set();
-  let categorizedCount = 0;
-  let matchingCount = 0;
-  for (const { product_id: id } of recommendations ?? []) {
-    const category = categoryOf(id);
-    if (!category) continue;
-    categorizedCount++;
-    if (historyCategories.has(category)) {
-      matchingIds.add(id);
-      matchingCount++;
-    }
-  }
-  const summary = historyCategories.size && categorizedCount
-    ? t("history_categories_0_1_2_categorized", [...historyCategories].join(", "), matchingCount, categorizedCount)
-    : null;
-  return { matchingIds, summary };
 }
