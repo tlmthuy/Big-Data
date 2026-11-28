@@ -1,0 +1,15 @@
+{
+  "python_3_10_syntax": "PASS",
+  "handoff_checksums": "PASS",
+  "local_markdown_links": "PASS",
+  "matrix_run_count": 11,
+  "unit_tests": "25/25 PASS",
+  "cli_plans": {
+    "E1": 3,
+    "E2": 4,
+    "E3": 2,
+    "E4": 2
+  },
+  "review_findings": "checkpoint provenance and E5 effective-config/code comparison fixed and regression-tested",
+  "full_neural_runtime": "NOT VERIFIED: local build fails because transformers4rec is missing"
+}

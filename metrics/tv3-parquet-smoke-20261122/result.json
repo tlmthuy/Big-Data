@@ -1,0 +1,68 @@
+{
+  "status": "passed",
+  "task": "TV3 smoke test doc Parquet",
+  "checked_at": "2026-11-22",
+  "git_commit": "fc389554d998ec1bca578199a7f8fb75673b72e4",
+  "runtime": {
+    "host": "bigdata-ec2",
+    "docker_image": "big-data-recsys:smoke",
+    "cudf": "23.04.00"
+  },
+  "subset": 10,
+  "processed_parquet": {
+    "path": "/workspace/data/clean/e2-weekly/10/workflow/processed_nvt/part_0.parquet",
+    "sha256": "cd47404183beb71ddef79881d114a08f2268349ab2bb7d02489000d5c070d57b",
+    "rows": 96433,
+    "columns": [
+      "user_session",
+      "product_id-count",
+      "product_id-list",
+      "category_code-list",
+      "brand-list",
+      "category_id-list",
+      "et_dayofweek_sin-list",
+      "et_dayofweek_cos-list",
+      "price_log_norm-list",
+      "relative_price_to_avg_categ_id-list",
+      "product_recency_days_log_norm-list",
+      "day_index"
+    ]
+  },
+  "schema": {
+    "path": "/workspace/data/clean/e2-weekly/10/workflow/processed_nvt/schema.pbtxt",
+    "sha256": "2dbae5364c9955ec90e7b0c098e28f78a0565677d1887c7ed53b3a45ee45c6c8",
+    "product_id_list_present": true
+  },
+  "catalog": {
+    "path": "/workspace/data/clean/e2-weekly/10/workflow/catalog.json",
+    "sha256": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6",
+    "item_count": 63398,
+    "encoded_id_min": 3,
+    "encoded_id_max": 63400,
+    "technical_ids": {
+      "padding": 0,
+      "null": 1,
+      "oov": 2
+    },
+    "technical_ids_excluded": true
+  },
+  "mapping": {
+    "path": "/workspace/data/clean/e2-weekly/10/workflow/product_mapping.parquet",
+    "sha256": "961f9c06619d334eee73ddbc3b7609d7bd91da5214a491625f81192654d8b8ec",
+    "rows": 63398,
+    "columns": [
+      "product_id",
+      "encoded_id"
+    ]
+  },
+  "split_manifest": {
+    "path": "/workspace/data/clean/e2-weekly/10/splits/manifest.json",
+    "sha256": "859142ba5d298d31d59fbbdb3a08a0e67537fc475ccc6f88a977aecea1bbf117",
+    "no_overlap_and_complete_coverage": true,
+    "input_sessions": 96433
+  },
+  "vm_output": [
+    "metrics/tv3-parquet-smoke-20261122/stdout.txt",
+    "metrics/tv3-parquet-smoke-20261122/smoke.py"
+  ]
+}

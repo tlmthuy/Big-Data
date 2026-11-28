@@ -1,0 +1,46 @@
+{
+  "e1_status": "all_three_passed",
+  "protocol": "full_evaluation_wall_v1",
+  "subset": "10",
+  "eval_partition": 7,
+  "eval_split": "test",
+  "k": 20,
+  "run_commit": "0fada5fa4e0102381cb29826c343162926e6ddf3",
+  "runs": {
+    "popularity": {
+      "run_id": "e1-popularity-010",
+      "status": "passed",
+      "exit_code": 0,
+      "recall_at_20": 0.08676140613313388,
+      "ndcg_at_20": 0.03476648339460129,
+      "n_sessions": 1337,
+      "path": "metrics/raw/e1-popularity-010"
+    },
+    "gru": {
+      "run_id": "e1-gru-010",
+      "status": "passed",
+      "exit_code": 0,
+      "recall_at_20": 0.08825729244577413,
+      "ndcg_at_20": 0.03804320278602695,
+      "n_sessions": 1337,
+      "checkpoint": "metrics/raw/e1-gru-010/artifacts/checkpoint.pt",
+      "path": "metrics/raw/e1-gru-010"
+    },
+    "xlnet": {
+      "run_id": "e1-xlnet-010",
+      "status": "passed",
+      "exit_code": 0,
+      "recall_at_20": 0.12490650710545999,
+      "ndcg_at_20": 0.05133183399511177,
+      "n_sessions": 1337,
+      "checkpoint": "metrics/raw/e1-xlnet-010/artifacts/checkpoint.pt",
+      "path": "metrics/raw/e1-xlnet-010"
+    }
+  },
+  "validation": {
+    "predictions_per_run": 1337,
+    "top20_per_prediction": 20,
+    "target_catalog_technical_ids_valid": true,
+    "checkpoints_loaded": true
+  }
+}

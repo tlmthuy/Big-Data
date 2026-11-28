@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="420" viewBox="0 0 820 420">
+<rect width="820" height="420" fill="white"/><g font-family="sans-serif" fill="#172554">
+<text x="70" y="25">E5 — composed measured stages; shared first-seen excluded</text>
+<path d="M70 55V335H745" fill="none" stroke="#475569"/>
+<polyline points="134.99,302.02 232.93,264.50 395.47,196.82 720.00,60.00" fill="none" stroke="#2563eb" stroke-width="3"/><text x="134.99" y="292.02" font-size="12">10% sessions</text><text x="232.93" y="254.50" font-size="12">25% sessions</text><text x="395.47" y="186.82" font-size="12">50% sessions</text><text x="720.00" y="50.00" font-size="12">100% sessions</text>
+<text x="270" y="390">Weekly events (0 to 8,829,314)</text>
+<text x="10" y="50">Seconds</text><text x="15" y="70">491.24</text><text x="40" y="335">0</text>
+</g></svg>

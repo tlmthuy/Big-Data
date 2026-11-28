@@ -1,0 +1,3 @@
+COMMAND: C:\Users\USER\miniconda3\python.exe -m evaluation.run_neural --model gru --data evaluation/tests/fixtures/sessions.jsonl --schema evaluation/tests/fixtures/schema.pbtxt --catalog evaluation/tests/fixtures/catalog.json --train-through 1 --epochs 1 --batch-size 2 --device cpu --subset toy --run-id gru-runtime-check --output metrics\tv2-model-scripts\gru-runtime
+EXIT_CODE: 1
+Neural run failed: No module named 'transformers4rec'

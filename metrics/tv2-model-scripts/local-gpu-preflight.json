@@ -1,0 +1,61 @@
+{
+  "checked_on": "2026-11-20",
+  "scope": "local laptop environment preflight only, no model run or benchmark",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "c_drive_free_bytes": 1135235072,
+  "checks": {
+    "gpu": {
+      "argv": [
+        "nvidia-smi",
+        "--query-gpu=name,memory.total,driver_version",
+        "--format=csv,noheader"
+      ],
+      "exit_code": 0,
+      "stdout": "NVIDIA GeForce RTX 3050 Laptop GPU, 4096 MiB, 610.78",
+      "stderr": ""
+    },
+    "docker": {
+      "argv": [
+        "docker",
+        "info",
+        "--format",
+        "{{.OSType}} | {{.ServerVersion}}"
+      ],
+      "exit_code": 0,
+      "stdout": "linux | 29.6.1",
+      "stderr": ""
+    },
+    "merlin_image_cache": {
+      "argv": [
+        "docker",
+        "image",
+        "ls",
+        "--filter",
+        "reference=nvcr.io/nvidia/merlin/*",
+        "--format",
+        "{{.Repository}}:{{.Tag}} {{.Size}}"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "wsl_python": {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "python3",
+        "-c",
+        "import importlib.util,json,sys; print(json.dumps({'python':sys.version,'torch':importlib.util.find_spec('torch') is not None,'transformers4rec':importlib.util.find_spec('transformers4rec') is not None,'merlin':importlib.util.find_spec('merlin') is not None}))"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"python\": \"3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]\", \"torch\": false, \"transformers4rec\": false, \"merlin\": false}",
+      "stderr": ""
+    }
+  },
+  "status": "awaiting_runtime_location",
+  "reason": "No cached Merlin image; C: lacks space to download/extract the selected runtime. Await TV3 VM or user-managed storage availability.",
+  "docker_desktop": "Started for this requested smoke check; engine is running",
+  "source_commit": "7277b65a0121f0f193fa046e33c37597f94561e7"
+}

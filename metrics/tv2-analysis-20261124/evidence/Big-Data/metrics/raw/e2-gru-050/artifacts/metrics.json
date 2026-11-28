@@ -1,0 +1,496 @@
+{
+  "run_id": "e2-gru-050",
+  "model": "gru",
+  "subset": "50",
+  "K": 20,
+  "train_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "eval_day": 7,
+  "eval_split": "test",
+  "final": {
+    "day_index": 7,
+    "split": "test",
+    "n_sessions": 6427,
+    "Recall@20": 0.27477827913489966,
+    "NDCG@20": 0.12148368074443924,
+    "recall_sum": 1766.0,
+    "ndcg_sum": 780.775616144511,
+    "inference_seconds": 5.128254403000028,
+    "inference_timing_protocol": "full_evaluation_wall_v1",
+    "inference_scope": "full evaluation split wall: input read/decode, sequence preparation/device transfer, prediction and Top-20, metric aggregation and prediction JSONL write/close; includes one-time Popularity ranking and native neural testing mask/labels/loss; excludes audit, model construction, training, checkpoint and metrics JSON write; single pass with no extra warmup or OS cache flush; not pure model latency",
+    "evaluation_with_io_seconds": 5.128254403000028,
+    "inference_ms_per_session": 0.7979235106581652,
+    "inference_sessions_per_second": 1253.2529580124196,
+    "prediction_compute_seconds": 4.856849278002301,
+    "prediction_compute_scope": "native testing forward (mask/labels/loss), catalog ranking and IDs transfer; excludes input packing and file IO; diagnostic, not cross-model latency"
+  },
+  "history": [
+    {
+      "train": {
+        "day_index": 1,
+        "n_sessions": 55964,
+        "updates": 657,
+        "mean_step_loss": 9.269909006638432,
+        "train_with_input_scan_seconds": 34.5239831279996
+      },
+      "validation": {
+        "day_index": 2,
+        "split": "validation",
+        "n_sessions": 6662,
+        "Recall@20": 0.09546682677874511,
+        "NDCG@20": 0.04003986043516949,
+        "recall_sum": 636.0,
+        "ndcg_sum": 266.74555021909913,
+        "inference_seconds": 5.367128590999528,
+        "inference_timing_protocol": "full_evaluation_wall_v1",
+        "inference_scope": "full evaluation split wall: input read/decode, sequence preparation/device transfer, prediction and Top-20, metric aggregation and prediction JSONL write/close; includes one-time Popularity ranking and native neural testing mask/labels/loss; excludes audit, model construction, training, checkpoint and metrics JSON write; single pass with no extra warmup or OS cache flush; not pure model latency",
+        "evaluation_with_io_seconds": 5.367128590999528,
+        "inference_ms_per_session": 0.8056332319122678,
+        "inference_sessions_per_second": 1241.2596208654145,
+        "prediction_compute_seconds": 5.099157088006905,
+        "prediction_compute_scope": "native testing forward (mask/labels/loss), catalog ranking and IDs transfer; excludes input packing and file IO; diagnostic, not cross-model latency"
+      }
+    },
+    {
+      "train": {
+        "day_index": 2,
+        "n_sessions": 53047,
+        "updates": 624,
+        "mean_step_loss": 8.865049806924967,
+        "train_with_input_scan_seconds": 32.066310883999904
+      },
+      "validation": {
+        "day_index": 3,
+        "split": "validation",
+        "n_sessions": 6158,
+        "Recall@20": 0.13868139006170835,
+        "NDCG@20": 0.06101929059368984,
+        "recall_sum": 854.0,
+        "ndcg_sum": 375.756791475942,
+        "inference_seconds": 4.9317849720000595,
+        "inference_timing_protocol": "full_evaluation_wall_v1",
+        "inference_scope": "full evaluation split wall: input read/decode, sequence preparation/device transfer, prediction and Top-20, metric aggregation and prediction JSONL write/close; includes one-time Popularity ranking and native neural testing mask/labels/loss; excludes audit, model construction, training, checkpoint and metrics JSON write; single pass with no extra warmup or OS cache flush; not pure model latency",
+        "evaluation_with_io_seconds": 4.9317849720000595,
+        "inference_ms_per_session": 0.8008744676843228,
+        "inference_sessions_per_second": 1248.6351361549032,
+        "prediction_compute_seconds": 4.681015892006144,
+        "prediction_compute_scope": "native testing forward (mask/labels/loss), catalog ranking and IDs transfer; excludes input packing and file IO; diagnostic, not cross-model latency"
+      }
+    },
+    {
+      "train": {
+        "day_index": 3,
+        "n_sessions": 49002,
+        "updates": 576,
+        "mean_step_loss": 8.472430055340132,
+        "train_with_input_scan_seconds": 29.83071213400035
+      },
+      "validation": {
+        "day_index": 4,
+        "split": "validation",
+        "n_sessions": 7794,
+        "Recall@20": 0.15845522196561457,
+        "NDCG@20": 0.07001763743145682,
+        "recall_sum": 1235.0,
+        "ndcg_sum": 545.7174661407745,
+        "inference_seconds": 6.206774610999673,
+        "inference_timing_protocol": "full_evaluation_wall_v1",
+        "inference_scope": "full evaluation split wall: input read/decode, sequence preparation/device transfer, prediction and Top-20, metric aggregation and prediction JSONL write/close; includes one-time Popularity ranking and native neural testing mask/labels/loss; excludes audit, model construction, training, checkpoint and metrics JSON write; single pass with no extra warmup or OS cache flush; not pure model latency",
+        "evaluation_with_io_seconds": 6.206774610999673,
+        "inference_ms_per_session": 0.7963529139080926,
+        "inference_sessions_per_second": 1255.7246699739087,
+        "prediction_compute_seconds": 5.888289873000758,
+        "prediction_compute_scope": "native testing forward (mask/labels/loss), catalog ranking and IDs transfer; excludes input packing and file IO; diagnostic, not cross-model latency"
+      }
+    },
+    {
+      "train": {
+        "day_index": 4,
+        "n_sessions": 61974,
+        "updates": 729,
+        "mean_step_loss": 7.968590404761671,
+        "train_with_input_scan_seconds": 36.97064924000006
+      },
+      "validation": {
+        "day_index": 5,
+        "split": "validation",
+        "n_sessions": 7224,
+        "Recall@20": 0.2111018826135105,
+        "NDCG@20": 0.09324241743238934,
+        "recall_sum": 1525.0,
+        "ndcg_sum": 673.5832235315806,
+        "inference_seconds": 5.750027742000384,
+        "inference_timing_protocol": "full_evaluation_wall_v1",
+        "inference_scope": "full evaluation split wall: input read/decode, sequence preparation/device transfer, prediction and Top-20, metric aggregation and prediction JSONL write/close; includes one-time Popularity ranking and native neural testing mask/labels/loss; excludes audit, model construction, training, checkpoint and metrics JSON write; single pass with no extra warmup or OS cache flush; not pure model latency",
+        "evaluation_with_io_seconds": 5.750027742000384,
+        "inference_ms_per_session": 0.795961758305701,
+        "inference_sessions_per_second": 1256.341764620223,
+        "prediction_compute_seconds": 5.451857551000103,
+        "prediction_compute_scope": "native testing forward (mask/labels/loss), catalog ranking and IDs transfer; excludes input packing and file IO; diagnostic, not cross-model latency"
+      }
+    },
+    {
+      "train": {
+        "day_index": 5,
+        "n_sessions": 57335,
+        "updates": 672,
+        "mean_step_loss": 7.5389935821294785,
+        "train_with_input_scan_seconds": 35.121348605000094
+      },
+      "validation": {
+        "day_index": 6,
+        "split": "validation",
+        "n_sessions": 7101,
+        "Recall@20": 0.24883819180397126,
+        "NDCG@20": 0.1100081050510194,
+        "recall_sum": 1767.0,
+        "ndcg_sum": 781.1675539672888,
+        "inference_seconds": 5.649424017999991,
+        "inference_timing_protocol": "full_evaluation_wall_v1",
+        "inference_scope": "full evaluation split wall: input read/decode, sequence preparation/device transfer, prediction and Top-20, metric aggregation and prediction JSONL write/close; includes one-time Popularity ranking and native neural testing mask/labels/loss; excludes audit, model construction, training, checkpoint and metrics JSON write; single pass with no extra warmup or OS cache flush; not pure model latency",
+        "evaluation_with_io_seconds": 5.649424017999991,
+        "inference_ms_per_session": 0.7955814699338108,
+        "inference_sessions_per_second": 1256.94229666158,
+        "prediction_compute_seconds": 5.352194810993751,
+        "prediction_compute_scope": "native testing forward (mask/labels/loss), catalog ranking and IDs transfer; excludes input packing and file IO; diagnostic, not cross-model latency"
+      }
+    },
+    {
+      "train": {
+        "day_index": 6,
+        "n_sessions": 56436,
+        "updates": 663,
+        "mean_step_loss": 7.205260459474129,
+        "train_with_input_scan_seconds": 34.594895256999735
+      },
+      "validation": {
+        "day_index": 7,
+        "split": "validation",
+        "n_sessions": 6631,
+        "Recall@20": 0.27763534911778015,
+        "NDCG@20": 0.1224469210914384,
+        "recall_sum": 1841.0,
+        "ndcg_sum": 811.945533757328,
+        "inference_seconds": 5.422635355000239,
+        "inference_timing_protocol": "full_evaluation_wall_v1",
+        "inference_scope": "full evaluation split wall: input read/decode, sequence preparation/device transfer, prediction and Top-20, metric aggregation and prediction JSONL write/close; includes one-time Popularity ranking and native neural testing mask/labels/loss; excludes audit, model construction, training, checkpoint and metrics JSON write; single pass with no extra warmup or OS cache flush; not pure model latency",
+        "evaluation_with_io_seconds": 5.422635355000239,
+        "inference_ms_per_session": 0.8177703747549749,
+        "inference_sessions_per_second": 1222.8371568236691,
+        "prediction_compute_seconds": 5.128691088999403,
+        "prediction_compute_scope": "native testing forward (mask/labels/loss), catalog ranking and IDs transfer; excludes input packing and file IO; diagnostic, not cross-model latency"
+      }
+    }
+  ],
+  "n_sessions": 6427,
+  "Recall@20": 0.27477827913489966,
+  "NDCG@20": 0.12148368074443924,
+  "recall_sum": 1766.0,
+  "ndcg_sum": 780.775616144511,
+  "train_with_input_scan_seconds": 203.10789924799974,
+  "inference_seconds": 5.128254403000028,
+  "inference_timing_protocol": "full_evaluation_wall_v1",
+  "inference_scope": "full evaluation split wall: input read/decode, sequence preparation/device transfer, prediction and Top-20, metric aggregation and prediction JSONL write/close; includes one-time Popularity ranking and native neural testing mask/labels/loss; excludes audit, model construction, training, checkpoint and metrics JSON write; single pass with no extra warmup or OS cache flush; not pure model latency",
+  "evaluation_with_io_seconds": 5.128254403000028,
+  "inference_ms_per_session": 0.7979235106581652,
+  "inference_sessions_per_second": 1253.2529580124196,
+  "prediction_compute_seconds": 4.856849278002301,
+  "prediction_compute_scope": "native testing forward (mask/labels/loss), catalog ranking and IDs transfer; excludes input packing and file IO; diagnostic, not cross-model latency",
+  "peak_cuda_allocated_bytes": 2509984256,
+  "peak_cuda_reserved_bytes": 15210643456,
+  "parameter_bytes": 27072256,
+  "config": {
+    "model": "gru",
+    "data": "/workspace/data/clean/e2-weekly/50/splits",
+    "schema": "/workspace/data/clean/e2-weekly/50/workflow/processed_nvt/schema.pbtxt",
+    "catalog": "/workspace/data/clean/e2-weekly/50/workflow/catalog.json",
+    "split": "test",
+    "train_through": 6,
+    "batch_size": 256,
+    "eval_batch_size": 32,
+    "epochs": 3,
+    "seed": 1,
+    "learning_rate": 0.00071,
+    "device": "cuda",
+    "subset": "50",
+    "run_id": "e2-gru-050",
+    "output": "metrics/raw/e2-gru-050/artifacts",
+    "config_frozen": true,
+    "check_inputs": false,
+    "checkpoint": null
+  },
+  "artifacts": {
+    "sessions": {
+      "path": "/workspace/data/clean/e2-weekly/50/splits",
+      "files": [
+        {
+          "path": "1/test.parquet",
+          "sha256": "8e7a0cd5933484ca4342847ae94b6b14f437190e4f67a16a14af484607d1f1c9"
+        },
+        {
+          "path": "1/train.parquet",
+          "sha256": "22ccf534e868e40835e36dd632dfb717fb638e8757076a44e917ddbbc67f5bd8"
+        },
+        {
+          "path": "1/valid.parquet",
+          "sha256": "0a4793995fc4192c38f58f58b22fd4f6c519575fa35dda0c1989cedc01454d4e"
+        },
+        {
+          "path": "2/test.parquet",
+          "sha256": "ace6e4e8bccc9e442d8ac55ce5db7eccd3ef0cf00cf4505744255ca398eeb1df"
+        },
+        {
+          "path": "2/train.parquet",
+          "sha256": "365f4eae6c6e6fcab25af600bd9428b2de4ec72251d9ba5f6ebbee4f887ba14e"
+        },
+        {
+          "path": "2/valid.parquet",
+          "sha256": "e09e09c50c7390c526124f4d06b77eae1df98e63b25310a6354b300c992df042"
+        },
+        {
+          "path": "3/test.parquet",
+          "sha256": "481b71bdb1216ffadea6f12e533e8f5df423c92a8150b75487b46685fd000f31"
+        },
+        {
+          "path": "3/train.parquet",
+          "sha256": "75672c41153631c48f9ade8ffae049d3aa8d2546850cd7e7febe22584c0f1456"
+        },
+        {
+          "path": "3/valid.parquet",
+          "sha256": "7afdabc8289b6515847be08ea00e89acc0954adb3f07be4202483f91927807e7"
+        },
+        {
+          "path": "4/test.parquet",
+          "sha256": "a142af7a15aff4b9e91d894fb200e93ddf5b8c038b191e5e8b96323a4720fc6b"
+        },
+        {
+          "path": "4/train.parquet",
+          "sha256": "6bcac522446d9cdfa9ff726cb534cc2eb7269ba4e36f04edac2787d7bb949fd8"
+        },
+        {
+          "path": "4/valid.parquet",
+          "sha256": "f1774247bbcc8f48f9a3d653c1cbd9b61e51ac0cd8c4531650315532cf23ffd5"
+        },
+        {
+          "path": "5/test.parquet",
+          "sha256": "4e72dcb8f30616b29a94c29403a71e8355aba0c64f3e307b5caf5a41b7b5c15e"
+        },
+        {
+          "path": "5/train.parquet",
+          "sha256": "e1ec9b9ae9754a4222c716d6f3f8431a6893773b03335ed55d87e1fe628ac37c"
+        },
+        {
+          "path": "5/valid.parquet",
+          "sha256": "51b71928564be421445a8efd7549eb7e1423761b42eb39495c6b26f8cac633f6"
+        },
+        {
+          "path": "6/test.parquet",
+          "sha256": "3b101f82deef004b1a7383e4c0bcc772fe013bdde51bc65c53820a721731ef33"
+        },
+        {
+          "path": "6/train.parquet",
+          "sha256": "2d2d2fbc5b3152ca8c7ccc17edc1529b2bc6b5b28dcd34df663caaf9309d0550"
+        },
+        {
+          "path": "6/valid.parquet",
+          "sha256": "061e3d293f4e6c43c61ba1eb1a967d1c7424298165b73264d816b34f85d731ae"
+        },
+        {
+          "path": "7/test.parquet",
+          "sha256": "c69e8c53ec156b6862f7c98f91c1e4380c5abfd3353eddead969afa3ca350a8f"
+        },
+        {
+          "path": "7/train.parquet",
+          "sha256": "3bf7b903317bef4f90bb67daca6f8ff567700b625acfcaed2cf83a0cf14997bf"
+        },
+        {
+          "path": "7/valid.parquet",
+          "sha256": "c8bd6a5ab1d0a0b721ecf559efba273456aa6441f0399a4b8f6ae5165b1a52f3"
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "726dec99703083c281bc5ce24134c0ce8a602295a8a57618b154288b1b663d1e"
+        },
+        {
+          "path": "membership.parquet",
+          "sha256": "f54d779ab7c1e890b6888e333789145f47502b6d75bd82080964b11ac6bb144b"
+        }
+      ]
+    },
+    "catalog": {
+      "path": "/workspace/data/clean/e2-weekly/50/workflow/catalog.json",
+      "sha256": "93893125409cd5acdb27ff607113113e4737e576c65c7cbc68a679e9d860abfb"
+    },
+    "schema": {
+      "path": "/workspace/data/clean/e2-weekly/50/workflow/processed_nvt/schema.pbtxt",
+      "sha256": "c7d0d1313eeb92ff073328f5b7bf447ee17d8dfb0060b9ea5b6fbd3b8dde8d08"
+    }
+  },
+  "split_counts": [
+    {
+      "day_index": 1,
+      "split": "train",
+      "n_sessions": 55964,
+      "n_items": 45603
+    },
+    {
+      "day_index": 1,
+      "split": "validation",
+      "n_sessions": 7044,
+      "n_items": 14377
+    },
+    {
+      "day_index": 1,
+      "split": "test",
+      "n_sessions": 6809,
+      "n_items": 13870
+    },
+    {
+      "day_index": 2,
+      "split": "train",
+      "n_sessions": 53047,
+      "n_items": 44068
+    },
+    {
+      "day_index": 2,
+      "split": "validation",
+      "n_sessions": 6662,
+      "n_items": 13585
+    },
+    {
+      "day_index": 2,
+      "split": "test",
+      "n_sessions": 6459,
+      "n_items": 13489
+    },
+    {
+      "day_index": 3,
+      "split": "train",
+      "n_sessions": 49002,
+      "n_items": 42581
+    },
+    {
+      "day_index": 3,
+      "split": "validation",
+      "n_sessions": 6158,
+      "n_items": 13211
+    },
+    {
+      "day_index": 3,
+      "split": "test",
+      "n_sessions": 5938,
+      "n_items": 13154
+    },
+    {
+      "day_index": 4,
+      "split": "train",
+      "n_sessions": 61974,
+      "n_items": 44230
+    },
+    {
+      "day_index": 4,
+      "split": "validation",
+      "n_sessions": 7794,
+      "n_items": 14482
+    },
+    {
+      "day_index": 4,
+      "split": "test",
+      "n_sessions": 7574,
+      "n_items": 13710
+    },
+    {
+      "day_index": 5,
+      "split": "train",
+      "n_sessions": 57335,
+      "n_items": 44689
+    },
+    {
+      "day_index": 5,
+      "split": "validation",
+      "n_sessions": 7224,
+      "n_items": 13930
+    },
+    {
+      "day_index": 5,
+      "split": "test",
+      "n_sessions": 6984,
+      "n_items": 13402
+    },
+    {
+      "day_index": 6,
+      "split": "train",
+      "n_sessions": 56436,
+      "n_items": 44633
+    },
+    {
+      "day_index": 6,
+      "split": "validation",
+      "n_sessions": 7101,
+      "n_items": 14093
+    },
+    {
+      "day_index": 6,
+      "split": "test",
+      "n_sessions": 6870,
+      "n_items": 13803
+    },
+    {
+      "day_index": 7,
+      "split": "train",
+      "n_sessions": 52806,
+      "n_items": 44033
+    },
+    {
+      "day_index": 7,
+      "split": "validation",
+      "n_sessions": 6631,
+      "n_items": 13566
+    },
+    {
+      "day_index": 7,
+      "split": "test",
+      "n_sessions": 6427,
+      "n_items": 13362
+    }
+  ],
+  "training_config": {
+    "model": "gru",
+    "batch_size": 256,
+    "epochs": 3,
+    "seed": 1,
+    "learning_rate": 0.00071
+  },
+  "training_source_sha256": {
+    "models/session_models.py": "5e6c6ab87cc7f1959b86d01452ee391fab14f0ba6649f4a112e43b94b96e4c6c",
+    "evaluation/run_neural.py": "705814761d588fa89918ce29fcddf3e9a2a538c4783981504f23a69971d557f4",
+    "evaluation/data.py": "dd8540317fdd5b86b5451bbb1cbaee345392f889434ecfa2d7a81d0473492edf"
+  },
+  "source_commit": "f0ca2b5343dd1e40b5d2422b942f014b224f5c20",
+  "loader": "fixed-order streaming PyArrow/JSONL; no shuffle",
+  "git_commit": "f936984558ee98331899c316eca312ab84442563",
+  "source_sha256": {
+    "models/session_models.py": "5e6c6ab87cc7f1959b86d01452ee391fab14f0ba6649f4a112e43b94b96e4c6c",
+    "evaluation/run_neural.py": "705814761d588fa89918ce29fcddf3e9a2a538c4783981504f23a69971d557f4",
+    "evaluation/data.py": "dd8540317fdd5b86b5451bbb1cbaee345392f889434ecfa2d7a81d0473492edf",
+    "evaluation/ranking.py": "8c744e95d50cc8d6425aad412e4bc3d80389e465d70dd1e4fde39b26fc0e151d",
+    "evaluation/timing.py": "238d7d1bb7696f28a52763edd331ecde9bef1611ca5aae12a635a686c2cff64e"
+  },
+  "python": "3.10.12",
+  "packages": {
+    "torch": "2.1.0a0+4136153",
+    "transformers": "4.27.1",
+    "transformers4rec": "23.12.0",
+    "merlin-core": "23.8.0",
+    "pyarrow": "10.0.1.dev0+ga6eabc2b.d20230428"
+  },
+  "device": "cuda",
+  "gpu": "Tesla T4",
+  "cuda": "12.1"
+}

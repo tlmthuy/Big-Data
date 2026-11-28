@@ -1,0 +1,95 @@
+{
+  "argv": [
+    "/usr/bin/python",
+    "-m",
+    "benchmark.format_io",
+    "--csv",
+    "/workspace/metrics/local/tv2-real-smoke-20261121/e4/raw.csv",
+    "--parquet",
+    "/workspace/metrics/local/tv2-real-smoke-20261121/e4/raw.parquet",
+    "--format",
+    "csv",
+    "--preprocess-argv",
+    "[\"python\", \"pipeline/preprocess_weekly.py\", \"--input\", \"{input_path}\", \"--input-format\", \"{input_format}\", \"--output-dir\", \"{output_dir}\", \"--subset\", \"10\", \"--first-seen\", \"/workspace/data/clean/monthly_first_seen/product_first_seen.parquet\"]",
+    "--run-id",
+    "e4-010-csv",
+    "--output",
+    "metrics/raw/e4-010-csv/artifacts"
+  ],
+  "metadata": {
+    "run": {
+      "run_id": "e4-010-csv",
+      "experiment": "E4",
+      "kind": "io",
+      "model": null,
+      "subset": "10",
+      "batch_size": null,
+      "split": null,
+      "input_format": "csv",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": null,
+      "eval_partition": null,
+      "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e4-010-csv",
+      "command": "python -m scripts.runs.run_experiments --run-id e4-010-csv --site configs/site.local.json --execute"
+    },
+    "versions": {
+      "workflow_version": "tv1-cuDF-workflow:sha256:330ec447530a307cd43e15157ca259063071d2cf4c25d1c85435732189168edc",
+      "mapping_version": "961f9c06619d334eee73ddbc3b7609d7bd91da5214a491625f81192654d8b8ec",
+      "catalog_version": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6"
+    },
+    "artifacts": {
+      "csv": {
+        "path": "/workspace/metrics/local/tv2-real-smoke-20261121/e4/raw.csv",
+        "sha256": "42b824e29c2dce4d37f6c6c18aa4ca3080f89f72dbb13ab86d0ab1b54caead75"
+      },
+      "parquet": {
+        "path": "/workspace/metrics/local/tv2-real-smoke-20261121/e4/raw.parquet",
+        "sha256": "db1dc19e28e582a9ba008122b999450553c9eba7cddbac5a0c506b8dffba8df3"
+      }
+    },
+    "site_config": {
+      "path": "configs/site.local.json",
+      "sha256": "fae663277d1038fe35763c960851eb4e338cb7836258c67fd9a7f860cbbd15b6"
+    },
+    "data_kind": "real",
+    "purpose": "benchmark",
+    "environment": {
+      "path": "/workspace/environment/logs/04-docker-image-inspect.json",
+      "sha256": "f73ebb427f430c7c82389a9e8ef0e3008b8982898c66a3caca7bb77019a5046d"
+    },
+    "pipeline_metrics": null,
+    "pipeline_timing_scope": "TV1 measured stages reused; model process timed fresh",
+    "git_commit": "16632cafa5e48d00713b291e746969d5d86fd2b6"
+  },
+  "run_id": "e4-010-csv",
+  "output_path": "/workspace/metrics/raw/e4-010-csv",
+  "started_at": "2026-11-22T06:36:29.998149+00:00",
+  "peak_process_tree_rss_bytes": 2210775040,
+  "cpu_memory_unit": "bytes",
+  "rss_sampling_seconds": 0.05,
+  "rss_scope": "sum of sampled parent/child RSS; shared pages may be counted twice",
+  "gpu_memory_bytes_peak": 249561088,
+  "gpu_memory_unit": "bytes",
+  "gpu_memory_scope": "nvidia-smi compute-app used_memory matched to sampled parent/child PIDs",
+  "gpu_memory_sampling_seconds": 0.05,
+  "gpu_memory_observation_available": true,
+  "gpu_memory_total_used_bytes_peak": 250609664,
+  "gpu_memory_total_scope": "sum of nvidia-smi memory.used across visible GPUs",
+  "elapsed_seconds_unit": "seconds",
+  "measurement_scope": "entire child process wall time and sampled process-tree RSS; excludes run.json write",
+  "warm_up_policy": "none",
+  "cache_policy": "no cache flush; inherited OS cache state",
+  "stdout": "/workspace/metrics/raw/e4-010-csv/stdout.txt",
+  "stderr": "/workspace/metrics/raw/e4-010-csv/stderr.txt",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 32.34081836800033,
+  "finished_at": "2026-11-22T06:37:02.339108+00:00"
+}

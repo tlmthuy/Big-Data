@@ -1,0 +1,12 @@
+docker run --rm --gpus all big-data-recsys:smoke python -c "import sys, cudf, cupy, nvtabular, torch, transformers4rec"
+Python: 3.10.12 (main, Nov 20 2023, 15:14:05) [GCC 11.4.0]
+cuDF: 23.04.00
+CuPy import: PASS
+NVTabular: 23.08.00
+PyTorch import runtime: 2.1.0a0+4136153
+PyTorch CUDA build: 12.1
+torch.cuda.is_available: True
+Transformers4Rec: 23.12.00
+Transformers: 4.27.1
+pip freeze metadata: torch==2.1.2
+Status: PASS

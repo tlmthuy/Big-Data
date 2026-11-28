@@ -59,3 +59,7 @@ mapped history, target, and rankings.
 
 GRU and XLNet are shown as unavailable. See the [output contract](output_contract.md)
 for the reviewed offline fields and the pending production handoff decisions.
+
+## Approved prediction samples
+
+See [samples/README.md](samples/README.md), [JSON](samples/demo-data.json) and [CSV](samples/sample-predictions.csv). TV2 format confirmation was reported by the project owner; these are toy samples, separate from the draft UI fixture.

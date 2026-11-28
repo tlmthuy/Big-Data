@@ -1,0 +1,2 @@
+# Archived raw evidence must preserve the VM bytes used by source_manifest.json.
+metrics/tv2-analysis-20261124/evidence/** -text

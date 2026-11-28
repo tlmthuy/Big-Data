@@ -16,7 +16,7 @@
   "runbook": "docs/modeling/tv2_runbook.md",
   "environment_guide": "environment/README.md",
   "python_minimum": "3.10",
-  "runtime_status": "Config/collector integrated; E1 (three models) and E3 (batch 32/128) passed GPU toy runs; 29 offline tests passed. Real data and official TV3 runtime unverified.",
+  "runtime_status": "Official TV3 Docker/T4 runtime verified. Popularity, GRU and XLNet passed real-data 10% cohort smoke; E3 batch 32/128 passed; E4 CSV/Parquet pair passed. E1/E2/E3 official benchmark and E5 scalability remain pending.",
   "files_sha256": {
     "evaluation/__init__.py": "47fe5c3c117acdeaee61a18885ff4e09d80d8c53d8f76cafcdb044d2775a6680",
     "evaluation/data.py": "dd8540317fdd5b86b5451bbb1cbaee345392f889434ecfa2d7a81d0473492edf",
@@ -35,15 +35,18 @@
     "scripts/runs/verify_neural_smoke.py": "2c41616112578e12c79a053245fbba96b40806ce1d58da7e76ec25d381e5c511",
     "evaluation/timing.py": "238d7d1bb7696f28a52763edd331ecde9bef1611ca5aae12a635a686c2cff64e",
     "evaluation/tests/test_inference_timing.py": "4fb52e457b18f195e92af9a6bb7d4659fac0b17bc73df48aaabda3bf004e2f9f",
-    "evaluation/tests/test_experiments.py": "c8bd7022bcb25f92c2f8884d7267ebb31ffc22e0cb9634a4fd71f3d13d23d124",
-    "benchmark/collect.py": "54f93049ed8e8c165725fc7b2f12374c5e685b5fb95dfa8ba008c3cdd27845ae",
+    "evaluation/tests/test_experiments.py": "6f60aaf2571af03ed4c740055a576cffa54bed98ca9791a2be08faf0997fec8b",
+    "benchmark/collect.py": "63aeec0bbe2726f8a5eb5f6f46fd2baeb952e90129fa274b520e1ef9462beb38",
     "benchmark/format_io.py": "a0761729d47666f035d916725027cbeb69ff5c6f7953dab3ed2257f746c6a9b0",
     "benchmark/scalability.py": "244c2a262b3ce146581c5f3c060b84224fd741cd9d5fc66c80a29fe93fefe6c7",
     "configs/experiments.json": "1d919a1e66b74560137cbef80b51ff9ebd88a05651db0a44bbab51e906996862",
     "configs/site.example.json": "238d97937fe8b60304d70ea86eaba4a9d896a9b6741fcb7a191d6c4fe4055c8f",
     "configs/pipeline_metrics.example.json": "c7b006bb7dd916d93c1f976dedcf68fafa90632fe6125f8841e3b3f6b7cd082e",
-    "scripts/runs/run_experiments.py": "c652906ce8618fe1a62d05ca11c2ea9d60983eb527a08e518c7b9f0e2410659b",
-    "scripts/runs/prepare_toy_site.py": "6ffc41b998fd791d7bc2a51f7aac2fcfe5e54045e7918ebb5acf51001e2cdd41"
+    "scripts/runs/run_experiments.py": "97e8501fff40b9275ea4d7e19df123f9c3e278c02c09df4519cc2b6786f8eecd",
+    "scripts/runs/prepare_toy_site.py": "6ffc41b998fd791d7bc2a51f7aac2fcfe5e54045e7918ebb5acf51001e2cdd41",
+    "scripts/analyze_results.py": "6690228106f830273de02b0de85b5791cd5962a8536578d27485363175bb611f",
+    "scripts/analyze_sampling.py": "06df4eb4228de8b9c2374e653ea4c03f1d64e1bcc14e23e0410e8098b150dcf9",
+    "scripts/package_metrics.py": "a517ee5025b32941480754c8b76bd35983e0a983f75d8e95c2b35aa7d115666e"
   },
   "commands": [
     {
@@ -265,58 +268,64 @@
     {
       "id": "real-data",
       "owner": "TV1 + TV2",
-      "status": "awaiting_handoff",
+      "status": "verified_in_real_runs_see_analysis_package",
       "needs": [
         "sequence Parquet",
         "split membership and counts",
         "schema/workflow/mapping/catalog",
         "seed/runtime/checksums",
         "TV2 acceptance"
-      ]
+      ],
+      "evidence": "metrics/releases/tv2-20261124/manifest.json"
     },
     {
       "id": "gpu-runtime",
       "owner": "TV3",
-      "status": "official_TV3_runtime_unverified_local_model_smoke_passed",
+      "status": "verified_in_real_runs_see_analysis_package",
       "needs": [
         "Merlin image tag/digest",
         "hardware and package snapshot",
         "GPU preprocessing/model smoke logs"
-      ]
+      ],
+      "evidence": "metrics/releases/tv2-20261124/manifest.json"
     },
     {
       "id": "E1-E4",
       "owner": "TV2 + TV3",
-      "status": "configured_toy_verified_awaiting_real_inputs_and_TV3_runtime",
+      "status": "verified_in_real_runs_see_analysis_package",
       "command": "scripts/runs/run_experiments.py",
       "needs": [
         "TV2 approved per-run config/command",
         "TV1 data acceptance",
         "TV3 runtime and collector"
-      ]
+      ],
+      "evidence": "metrics/releases/tv2-20261124/manifest.json"
     },
     {
       "id": "E5",
       "owner": "TV2",
-      "status": "synthetic_log_tests_passed_awaiting_real_E2_logs",
+      "status": "verified_in_real_runs_see_analysis_package",
       "command": "benchmark/scalability.py",
-      "note": "Analyze E2 logs; no separate model run"
+      "note": "Analyze E2 logs; no separate model run",
+      "evidence": "metrics/releases/tv2-20261124/manifest.json"
     },
     {
       "id": "E2",
       "owner": "TV1 + TV2",
-      "status": "awaiting_measured_pipeline_telemetry",
-      "template": "configs/pipeline_metrics.example.json"
+      "status": "verified_in_real_runs_see_analysis_package",
+      "template": "configs/pipeline_metrics.example.json",
+      "evidence": "metrics/releases/tv2-20261124/manifest.json"
     },
     {
       "id": "E4",
       "owner": "TV1 + TV2",
-      "status": "awaiting_shared_CSV_Parquet_preprocessing_entrypoint",
+      "status": "verified_in_real_runs_see_analysis_package",
       "needs": [
         "same raw string-schema pair",
         "one preprocessing argv template with input_path/input_format/output_dir bindings",
         "shared first-seen artifact"
-      ]
+      ],
+      "evidence": "metrics/releases/tv2-20261124/manifest.json"
     }
   ],
   "evidence": {
@@ -346,5 +355,56 @@
   "inference_timing_guide": "docs/modeling/inference_timing.md",
   "experiment_matrix": "configs/experiments.json",
   "site_template": "configs/site.example.json",
-  "real_data_verified": false
+  "real_data_verified": true,
+  "real_smoke": {
+    "status": "cohort_smoke_verified",
+    "date": "2026-11-22",
+    "git_commit": "ebd5f97b88515e4809d27ed4dd0275582751744e",
+    "subset": 10,
+    "train_sessions": 256,
+    "validation_sessions": 64,
+    "train_partition": 1,
+    "validation_partition": 2,
+    "cohort_manifest": "metrics/local/tv2-real-smoke-20261121/cohort/cohort.json",
+    "runs_root": "metrics/local/tv2-real-smoke-20261121/runs",
+    "popularity": "passed",
+    "gru": "passed",
+    "xlnet": "passed",
+    "e2_binding": "verified_four_subsets",
+    "e3_batch_32": "passed",
+    "e3_batch_128": "passed",
+    "e4_csv": "passed",
+    "e4_parquet": "passed",
+    "e5_separate_model_run": "not_required",
+    "regression_tests": "31 passed, 1 skipped",
+    "official_benchmarks_pending": []
+  },
+  "analysis": {
+    "date": "2026-11-24",
+    "status": "reviewed_TV4_checked",
+    "report": "reports/tables/tv2-20261124/analysis.md",
+    "tables": "reports/tables/tv2-20261124/",
+    "scaling_curve": "reports/figures/tv2-20261124/scalability/scalability.svg",
+    "raw_source_manifest": "metrics/tv2-analysis-20261124/source_manifest.json",
+    "prediction_verification": "metrics/tv2-analysis-20261124/prediction_checks.json",
+    "validation": "metrics/tv2-analysis-20261124/analysis_validation.json",
+    "reproduce_argv": [
+      "python",
+      "-m",
+      "scripts.analyze_results"
+    ],
+    "recipient_acceptance": {
+      "TV4": {
+        "date": "2026-11-24",
+        "status": "checked",
+        "source": "user confirmation in chat"
+      },
+      "TV5": null
+    },
+    "TV4_TV5_package_delivered": false,
+    "instructor_feedback_supplement": "reports/tables/tv2-20261124/instructor_feedback_analysis.md",
+    "supplement_validation": "metrics/tv2-analysis-20261124/supplement_validation.json",
+    "metrics_package": "metrics/releases/tv2-20261124/manifest.json",
+    "delivery_status": "TV4_confirmed_checked_TV5_pending"
+  }
 }

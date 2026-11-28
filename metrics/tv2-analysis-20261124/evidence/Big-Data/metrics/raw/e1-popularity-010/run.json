@@ -1,0 +1,198 @@
+{
+  "argv": [
+    "/usr/bin/python",
+    "-m",
+    "evaluation.run_popularity",
+    "--sessions",
+    "/workspace/data/clean/e2-weekly/10/splits",
+    "--catalog",
+    "/workspace/data/clean/e2-weekly/10/workflow/catalog.json",
+    "--train-through",
+    "6",
+    "--eval-split",
+    "test",
+    "--subset",
+    "10",
+    "--run-id",
+    "e1-popularity-010",
+    "--output",
+    "metrics/raw/e1-popularity-010/artifacts"
+  ],
+  "metadata": {
+    "run": {
+      "run_id": "e1-popularity-010",
+      "experiment": "E1",
+      "kind": "model",
+      "model": "popularity",
+      "subset": "10",
+      "batch_size": null,
+      "split": "test",
+      "input_format": "session Parquet",
+      "seed": 1,
+      "epochs": 3,
+      "sequence_length": 20,
+      "resource_config": {
+        "device": "cuda",
+        "change_only": null
+      },
+      "train_partitions": "1..D-1",
+      "eval_partition": "D",
+      "artifact_versions": "site.subsets.10.workflow_version/mapping_version/catalog_version",
+      "output_path": "metrics/raw/e1-popularity-010",
+      "command": "python -m scripts.runs.run_experiments --run-id e1-popularity-010 --site configs/site.local.json --execute"
+    },
+    "versions": {
+      "workflow_version": "tv1-cuDF-workflow:sha256:330ec447530a307cd43e15157ca259063071d2cf4c25d1c85435732189168edc",
+      "mapping_version": "961f9c06619d334eee73ddbc3b7609d7bd91da5214a491625f81192654d8b8ec",
+      "catalog_version": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6"
+    },
+    "artifacts": {
+      "sessions": {
+        "path": "/workspace/data/clean/e2-weekly/10/splits",
+        "files": [
+          {
+            "path": "1/test.parquet",
+            "sha256": "5c69cbc13c8e45b14b5f55e2143dd72d67114caca1383b49f64a05eac4829b6c"
+          },
+          {
+            "path": "1/train.parquet",
+            "sha256": "b6e98db81214b1583e8010983c0a43560cc3abd43c134f797268c0c55e9b836a"
+          },
+          {
+            "path": "1/valid.parquet",
+            "sha256": "e72d79f4b907c1f80828ac9d2e5241f22ebe2c6647f7dc142cf30c3b7eb86827"
+          },
+          {
+            "path": "2/test.parquet",
+            "sha256": "f78b4dff2077fc225a41a60c373b2886d23fffcfa52435f765932adf579d8321"
+          },
+          {
+            "path": "2/train.parquet",
+            "sha256": "a0381f487ef3f7a2eba7d890f14b61170361a1fcf5252fc57a14d1ac201a555d"
+          },
+          {
+            "path": "2/valid.parquet",
+            "sha256": "31be240cd16b8e81acb1a74ab8625c479c10492d15bf7336b9ba1185530c0054"
+          },
+          {
+            "path": "3/test.parquet",
+            "sha256": "eb706d928b386df550af2e5fe0ac667020f8dabb9a3713af9ec80b54dff9ce60"
+          },
+          {
+            "path": "3/train.parquet",
+            "sha256": "62ac6d53f66385181029be7556069ddab47b0ff243dc7340c57259aa3aeb4bbc"
+          },
+          {
+            "path": "3/valid.parquet",
+            "sha256": "9b20a6d916a342b8b6d0f63333e49922125d2e47db3f9c9ca9e77d64adacd82b"
+          },
+          {
+            "path": "4/test.parquet",
+            "sha256": "164de951e970c339e22102c6c9f23b5be6dcf39ef49c6e26ef9c240f172d0dc6"
+          },
+          {
+            "path": "4/train.parquet",
+            "sha256": "6ea89a243df8082b2067430cb09260d00390cb7ef2d3b1e4b3a74139dc27ccce"
+          },
+          {
+            "path": "4/valid.parquet",
+            "sha256": "05c69aaf5c5d503b74683a66d307bc18a066c11995de611ed17a8909fc5c955a"
+          },
+          {
+            "path": "5/test.parquet",
+            "sha256": "e9898495fea96356b0dcec7c200a234e74f2c923e842250b661d4bc7bb732ef2"
+          },
+          {
+            "path": "5/train.parquet",
+            "sha256": "851d9314f8ee2d362f5b055962540e03f06888f4aeb27bca41d147eb1ea5eecf"
+          },
+          {
+            "path": "5/valid.parquet",
+            "sha256": "502787de9bea7954d27a18b0fbea210fb738ed8c1ab6d2f00ab67fb2e47c22c9"
+          },
+          {
+            "path": "6/test.parquet",
+            "sha256": "b5de8709f6355349a5b4fff94bde8a841d1e34f3c5cc8a1b1f688329d7054f49"
+          },
+          {
+            "path": "6/train.parquet",
+            "sha256": "6148fc236dec0ae49caa1edf4ba9b3bda4a933a29edec9ef3306f509175a7e03"
+          },
+          {
+            "path": "6/valid.parquet",
+            "sha256": "2c728feab863252e4c6aa8007591135f2bb5120e46a5d1053f8afe39fbf01fa8"
+          },
+          {
+            "path": "7/test.parquet",
+            "sha256": "dd125c52b83c834ebf0c17bdbcde0c34cd9e67d90f1f419bc81f583bdd2a0386"
+          },
+          {
+            "path": "7/train.parquet",
+            "sha256": "c778401bceb400ce70c837f36851fba1ceaf4f9655dc7ce07072b61d44b2ec50"
+          },
+          {
+            "path": "7/valid.parquet",
+            "sha256": "2458cf32289f2770b9f8b0a0da49887824f11a8246d8203b197f63ad61e05762"
+          },
+          {
+            "path": "manifest.json",
+            "sha256": "859142ba5d298d31d59fbbdb3a08a0e67537fc475ccc6f88a977aecea1bbf117"
+          },
+          {
+            "path": "membership.parquet",
+            "sha256": "b5d39462d6e42beb1f1c583e4b129309e2549660547d693ac48ab134d0ccf6f2"
+          }
+        ]
+      },
+      "schema": {
+        "path": "/workspace/data/clean/e2-weekly/10/workflow/processed_nvt/schema.pbtxt",
+        "sha256": "2dbae5364c9955ec90e7b0c098e28f78a0565677d1887c7ed53b3a45ee45c6c8"
+      },
+      "catalog": {
+        "path": "/workspace/data/clean/e2-weekly/10/workflow/catalog.json",
+        "sha256": "04422f11b06f2003e454a57414948dd51aaa8e0bb3b04ff60d15a65c298a5fa6"
+      },
+      "preprocessing_manifest": {
+        "path": "/workspace/data/clean/e2-weekly/10/splits/manifest.json",
+        "sha256": "859142ba5d298d31d59fbbdb3a08a0e67537fc475ccc6f88a977aecea1bbf117"
+      }
+    },
+    "site_config": {
+      "path": "configs/site.local.json",
+      "sha256": "fae663277d1038fe35763c960851eb4e338cb7836258c67fd9a7f860cbbd15b6"
+    },
+    "data_kind": "real",
+    "purpose": "benchmark",
+    "environment": {
+      "path": "/workspace/environment/logs/04-docker-image-inspect.json",
+      "sha256": "f73ebb427f430c7c82389a9e8ef0e3008b8982898c66a3caca7bb77019a5046d"
+    },
+    "pipeline_metrics": null,
+    "pipeline_timing_scope": "TV1 measured stages reused; model process timed fresh",
+    "git_commit": "0fada5fa4e0102381cb29826c343162926e6ddf3"
+  },
+  "run_id": "e1-popularity-010",
+  "output_path": "/workspace/metrics/raw/e1-popularity-010",
+  "started_at": "2026-11-22T04:38:53.426877+00:00",
+  "peak_process_tree_rss_bytes": 110678016,
+  "cpu_memory_unit": "bytes",
+  "rss_sampling_seconds": 0.05,
+  "rss_scope": "sum of sampled parent/child RSS; shared pages may be counted twice",
+  "gpu_memory_bytes_peak": 0,
+  "gpu_memory_unit": "bytes",
+  "gpu_memory_scope": "nvidia-smi compute-app used_memory matched to sampled parent/child PIDs",
+  "gpu_memory_sampling_seconds": 0.05,
+  "gpu_memory_observation_available": false,
+  "gpu_memory_total_used_bytes_peak": 0,
+  "gpu_memory_total_scope": "sum of nvidia-smi memory.used across visible GPUs",
+  "elapsed_seconds_unit": "seconds",
+  "measurement_scope": "entire child process wall time and sampled process-tree RSS; excludes run.json write",
+  "warm_up_policy": "none",
+  "cache_policy": "no cache flush; inherited OS cache state",
+  "stdout": "/workspace/metrics/raw/e1-popularity-010/stdout.txt",
+  "stderr": "/workspace/metrics/raw/e1-popularity-010/stderr.txt",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 9.335651151999997,
+  "finished_at": "2026-11-22T04:39:02.762662+00:00"
+}
